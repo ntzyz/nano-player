@@ -1,0 +1,80 @@
+
+<!doctype html>
+<html>
+    <head>
+        <title>nanoPlayer DEMO page</title>
+        <link href="//cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.css" rel="stylesheet">
+        <meta charset="UTF-8"/>
+        <style>
+            #test {
+                width: 300px;
+                height: 300px;
+                position: relative;
+            }
+            html, body {
+                margin: 0;
+                padding: 0;
+                height: 100%;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="test"></div>
+        <script src="player.js"></script>
+        <script>
+            let player = new Player({
+                parent: document.getElementById('test'),
+                maxBars: 32,
+                logarithmic: false,
+                fftSize: 512,
+                playList: [
+                    {
+                        url: 'media/MYTH & ROID - STYX HELIX.aac',
+                        cover: 'cover/MYTH & ROID - STYX HELIX.jpg',
+                        artist: 'MYTH & ROID',
+                        title: 'STYX HELIX',
+                        lrc: `[00:19.75]Oh please don't let me die [00:22.03]Waiting for your touch [00:24.94] [00:27.57]No, don't give up on life [00:29.76]This endless dead end [00:37.56]狂った時計 刻む命 [00:41.52]こぼれてく記憶の砂 [00:45.40]芽生えた 思いまで [00:49.34]ねえ こんなに呆気なく [00:56.16]消えてしまうの [01:01.50]I wish I was there... [01:02.63] [01:02.88]Oh, please don't let me die [01:04.95]Waiting for your touch [01:07.13]二度と なにも 失くさぬように [01:11.53]私を忘れて 始めて "Restart!" [01:18.33]No, don't give up on life [01:20.57]This endless dead end [01:22.74]君を砕くこの悲しみが [01:27.42]いつか 終わりますように [01:32.46]For now I'll see you off [01:36.32] [01:36.83]My time is spinning around [01:40.53]Your deep black eyes [01:44.59]I forgot what time it is [01:48.29]And our memories are gone...? [01:52.26] [01:53.70]甘い香り放つ [01:57.64]追憶と いう名の罠 [02:01.51]誘われ 囚われ [02:05.42]なぜ 抗えもせずまた [02:12.24]溺れてしまうの [02:17.59]I wish you were here [02:18.75] [02:18.87]Oh, never close your eyes [02:21.02]Searching for a true fate [02:23.25]どこか 消えた あのぬくもりを [02:27.64]追いかけ 続けて 見失う "Restart!" [02:34.43]So, let us try again [02:36.62]From the very first time [02:38.84]"きっときっと" そうやって今も [02:43.44]虚しい 輪を描いてる [02:48.56]For now, see you again [02:51.75] [02:52.68]Fading in Fading out [03:00.46]Fading in Fading out [03:06.39] [03:19.99]I wish we were there [03:20.90] [03:21.30]あの日々には 戻れない [03:25.69]時は強く 哀しく強く [03:30.03]ただただ 進んで ゆくだけ"Restart" [03:36.85]No don't give up on life [03:39.08]This endless dead end [03:41.29]振り返らない そんな強さを [03:45.92]誰も皆演じてる [03:51.01]For now I'll see you off [03:55.22] [03:56.64]And we'll die [03:58.10]Waiting for a new day [04:00.26]二度と... [04:04.46]And we'll start [04:05.94]Waiting for a new day [04:08.08]君と... [04:10.04]Oh please don't let me die [04:16.14]消えないで ah...`,
+                    },
+                    {
+                        url: 'media/SeeB,Mike Posner - I Took A Pill In Ibiza (SeeB Remix).aac',
+                        cover: 'cover/SeeB,Mike Posner - I Took A Pill In Ibiza (SeeB Remix).jpg',
+                        artist: 'SeeB, Mike Posner',
+                        title: 'I Took A Pill In Ibiza (SeeB Remix)',
+                        lrc: `[00:01.08]I took a pill in Ibiza [00:03.65]To show Avicii I was cool [00:06.05]And when I finally got sober, felt 10 years older [00:08.45]But fuck it, it was something to do [00:10.66]I'm living out in LA [00:12.42] [00:12.92]I drive a sports car just to prove [00:15.42]I'm a real big baller cause I made a million dollars [00:17.76]And I spend it on girls and shoes [00:19.89]But you don't wanna be high like me [00:21.97]Never really knowing why like me [00:24.47]You don't ever wanna step off that roller coaster and be all alone [00:28.48] [00:29.17]You don't wanna ride the bus like this [00:31.69]Never knowing who to trust like this [00:34.00]You don't wanna be stuck up on that stage singing [00:37.15] [00:37.56]Stuck up on that stage singing [00:39.58]All I know are sad songs, sad songs [00:48.66]Darling, all I know are sad songs, sad songs [00:57.08] [00:58.68]Hey woah..All I know are sad songs, woah sad songs ... [01:36.66]I'm just a singer who already blew his shot [01:40.66]I get along with old timers [01:42.73]Cause my name's a reminder of a pop song people forgot [01:45.78]And I can't keep a girl, no [01:47.99] [01:48.49]Cause as soon as the sun comes up [01:50.75]I cut 'em all loose and work's my excuse [01:53.44]But the truth is I can't open up [01:55.13]But you don't wanna be high like me [01:57.47]Never really knowing why like me [01:59.66]You don't ever wanna step off that roller coaster and be all alone [02:03.84] [02:04.42]You don't wanna ride the bus like this [02:07.12]Never knowing who to trust like this [02:09.35]You don't wanna be stuck up on that stage singing [02:12.80]Stuck up on that stage singing [02:14.91] [02:15.44]All I know are sad songs, sad songs [02:23.81]Darling, all I know are sad songs, sad songs [02:33.27] [02:34.20]Hey woah..All I know are sad songs, woah sad songs ... [03:19.31] `,
+                    },
+                    {
+                        url: 'media/Shawn Mendes - Stitches.aac',
+                        cover: 'cover/Shawn Mendes - Stitches.jpg',
+                        artist: 'Shawn Mendes',
+                        title: 'Stitches',
+                        lrc: '[00:00.030] [00:00.800] [00:06.840]I thought that I ve been hurt before [00:10.680] [00:12.490]But no one s ever left me quite this sore [00:16.800] [00:19.510]Your words cut deeper than a knife [00:23.580] [00:25.090]Now I need someone to breathe me back to life [00:29.790] [00:32.450]Got a feeling that I m going under [00:35.690]But I know that I ll make it out alive [00:38.900]If I quit calling you my lover [00:42.080]Move on [00:43.610]You watch me bleed until I can t breathe, shaking [00:48.060]Falling onto my knees [00:50.320]And now that I m without your kisses [00:54.520]I ll be needing stitches [00:57.740]Tripping over myself, aching [01:00.920]Begging you to come help [01:02.560] [01:03.160]And now that I m without your kisses [01:07.200]I ll be needing stitches [01:10.180] [01:11.030]Just like a moth drawn to a flame [01:14.610] [01:16.310]Oh, you lured me in I couldn t sense the pain [01:20.900] [01:23.710]Your bitter heart, cold to the touch [01:27.530] [01:28.810]Now I m gonna reap what I sow [01:31.250] [01:31.820]I m left seeing red on my own [01:34.860] [01:36.420]Got a feeing that I m going under [01:39.700]But I know that I ll make it out alive [01:42.940]If I quit calling you my lover [01:46.080]Move on [01:47.660]You watch me bleed until I can t breathe, shaking [01:52.130]Falling onto my knees [01:53.810] [01:54.330]And now that I m without your kisses [01:58.560]I ll be needing stitches [02:01.780]Tripping over myself, aching [02:04.940]Begging you to come help [02:06.600] [02:07.180]And now that I m without your kisses [02:11.230]I ll be needing stitches [02:14.220] [02:21.060]Needle and the thread [02:22.180]Gotta get you out of my head [02:24.150]Needle and the thread [02:25.350]Gonna wind up dead [02:27.300]Needle and the thread [02:28.520]Gotta get you out of my head [02:30.530]Needle and the thread [02:31.740]Gonna wind up dead [02:33.740]Needle and the thread [02:34.900]Gotta get you out of my head [02:36.920]Needle and the thread [02:38.140]Gonna wind up dead [02:40.130]Needle and the thread [02:41.300]Gotta get you out of my head, get you out of my head [02:45.320]You watch me bleed until I can t breathe, shaking [02:49.740]Falling onto my knees [02:51.410] [02:51.950]And now that I m without your kisses [02:56.020]I ll be needing stitches [02:59.310]Tripping over myself, aching [03:02.580]Begging you to come help [03:04.680]And now that I m without your kisses [03:08.960]I ll be needing stitches [03:12.210]Now I m without your kisses [03:15.170]I ll be needing stitches [03:17.770]Now that I m without your kisses [03:21.560]I ll be needing stitches',
+                    },
+                    {
+                        url: 'media/チーム・ハナヤマタ - 花ハ踊レヤいろはにほ.aac',
+                        cover: 'cover/チーム・ハナヤマタ - 花ハ踊レヤいろはにほ.jpg',
+                        artist: 'チーム・ハナヤマタ',
+                        title: '花ハ踊レヤいろはにほ',
+                        lrc: '[00:01.019]パーッとパーッと晴れやかに【噼啪噼啪愉快地绽放】 [00:04.000]咲かせましょう 花のように [00:06.658] [00:07.098] [00:08.960] [00:09.659] [00:11.159] [00:12.260] [00:13.020]欲しいのは少しの踏みだすちからと [00:18.899]弱気な心を 開ける魔法のキー [00:24.290]それでも「ひぃふぅみぃ!」 [00:27.319]勢いよく跳ねて [00:30.319]始まる夢は(本気の)夢は [00:36.200]どんなカタチ? [00:38.770]踊レヤ踊レ [00:41.819]散ラサナイデ [00:43.048]もっともっと一緒に数えたい [00:48.118]新しい景色 [00:50.740] [00:51.208]いろはにほパーッとパーッと [00:53.470]晴れやかに(ハイ) [00:55.060]咲かせましょう 花のように(ハイハイ) [00:58.060]これからの君が見たい [01:03.170]いろはにほパーッとパーッと [01:05.530]晴れやかに(ハイ) [01:07.039]咲かせる想いはつねならむ(ハイハイ) [01:10.449]だって乙女道は風まかせだと… [01:16.309]つぶやいてみた [01:22.370]…乙女心さ! [01:24.378] [01:29.450]迷ってるだけなら何も起こらない [01:35.409]強気で行くんだと瞳で語るよ [01:40.848]そしたら「さあ、おいで!」 [01:43.830]明日がぴかぴかと [01:46.840]輝く夢の(本当さ)夢の [01:52.668]色に変わる [01:54.020] [01:55.388]歌エヤ歌エ [01:58.340]浮カレナガラ [01:59.548]ずっとずっと一緒に游びたい [02:04.610]桜色ハーモニー [02:07.638]ちりぬるをサーッとサーッと流れてく(ハイ) [02:11.520]うたかたの 花のかおり(ハイハイ) [02:14.538]いつまでも君といたい [02:19.610]ちりぬるをサーッとサーッと流れてく(ハイ) [02:23.530]出会いと別れに酔ひもせず(ハイハイ) [02:26.809]そっと見つめ合って君の気配を… [02:32.790]感じていたい [02:38.840]…乙女心の願い! [02:40.458] [02:45.610]踊レヤ いまこんなに嬉しくて [02:48.700]踊レッ ほらこんなに嬉しくて [02:51.888]気分次第で遠くへ飛べそう [02:57.540]歌エヤ いまこんなに楽しくて [03:00.648]歌エッ ほらこんなに楽しくて [03:03.890]ずっともっと一緒に游びたい気持ちが [03:09.960]奏でる桜色ハーモニー [03:14.788] [03:15.220]いろはにほパーッとパーッと [03:17.500]晴れやかに [03:19.020]咲かせましょう 花のように [03:22.059]これからの君が見たい [03:27.190]いろはにほパーッとパーッと [03:29.458]晴れやかに(ハイ) [03:30.989]咲かせる想いはつねならむ(ハイハイ) [03:34.430]だって乙女道は風まかせだと… [03:40.270]つぶやいてみた [03:46.330]…乙女心さ! [03:52.310]色は匂えど [03:58.290]散りたくないの [04:00.250] [04:01.690] [04:05.000] [04:07.440]',
+                    },
+                    {
+                        url: 'media/田中理恵,本多真梨子 - 妄想Katharsis (心次元編オープニング).aac',
+                        cover: 'cover/田中理恵,本多真梨子 - 妄想Katharsis (心次元編オープニング).jpg',
+                        artist: '田中理恵，本多真梨子',
+                        title: '妄想Katharsis (心次元編オープニング)',
+                        lrc: '[00:22.99]深い 深い 暗闇（やみ）の向こうで [00:28.95]扉（ドア）を叩く かすかな声に [00:34.72]耳をすまし 瞳 凝らせば [00:40.61]遠く 揺れている灯光（ひかり） [00:46.38]たとえ 妄想や夢やデジャブでも [00:52.20]どれも大切な私のstory [00:58.04]絶対 誰にも譲れないvictory [01:03.87]胸に誓った i never give up [01:10.27] [01:21.41]はるか違う 次元を超えて [01:27.23]同じ気持ち 分け合いながら [01:32.98]クリスタルの 澄んだheartで [01:38.86]強く 進んでいくんだ [01:45.77]心 ひび割れて夢が滲んでも [01:51.60]散った 悲しみの欠片を抱きしめ [01:57.42]いつか 涙が笑顔に変わる日を [02:03.26]信じているよ forever friend [02:09.87] [02:57.37]今は癒せない切ない痛みも [03:03.30]きっと 優しくなれる道のprocess [03:09.14]頬を濡らした一筋のkatharsis [03:15.04]そうさ ひとりぼっちじゃない [03:20.90]たとえ 妄想や夢やデジャブでも [03:26.73]固い絆で繋がれたstory [03:32.48]眩しい未来へ続いてくhistory [03:38.32]朝がゆっくり明けてゆく [03:44.96]',
+                    },
+                    {
+                        url: 'media/Azis - Hop.aac',
+                        cover: 'cover/Azis - Hop.jpg',
+                        artist: 'Azis',
+                        title: 'Hop',
+                        lrc: '[00:10.90][00:03.77][00:00.00]Lover [00:09.59][00:06.65]F**k here [00:35.27]Мило , обичаш ли ме още? [00:38.15]Бейби , събличаш ли ме нощем? [00:40.96]Карай бавно няма да бързаш. [00:43.96]Как ще стане много мърдаш! [00:58.02][00:46.59]Хоп, и влиза малко по малко. [01:00.90][00:49.52]Хоп, движи се бавно и бавно. [01:03.77][00:52.27]Хоп, и вкарай го точно сега. [01:06.65][00:55.28]Ритъма на любовта! [01:16.65][01:09.52]Lover [01:15.27][01:12.40]F**k here [01:32.34]Гледай без да се ядосваш. [01:35.40]Пипай без да се докосваш. [01:38.34]Недей да свършваш точно сега. [01:41.28]Задръж се малко , да да така. [02:52.36][02:40.99][01:55.32][01:43.84]Хоп, и влиза малко по малко. [02:55.24][02:43.86][01:58.19][01:46.72]Хоп, движи се бавно и бавно. [02:58.17][02:46.74][02:00.94][01:49.59]Хоп, и вкарай го точно сега. [03:00.99][02:49.55][02:03.88][01:52.47]Ритъма на любовта!',
+                    },
+                ]
+            });
+
+            // player.play();
+
+        </script>
+    </body>
+</html>
