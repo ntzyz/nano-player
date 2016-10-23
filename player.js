@@ -111,7 +111,6 @@ class Player {
         cover.style.zIndex = '0';
         cover.style.backgroundImage = `url('${this.nowPlaying.cover}')`;
         cover.style.backgroundSize = 'cover';
-        console.log(cover);
 
         mediainfo.appendChild(songTitle);
         mediainfo.appendChild(songArtist);
@@ -228,9 +227,6 @@ class Player {
         this.lyrics.table.sort((a, b) => {
             return a.offset - b.offset;
         })
-        /*this.lyrics.table.forEach(element => {
-            console.log(element);
-        });*/
         this.domAudio.onseeking = () => {
             this.updateLyrics();
         }
@@ -259,17 +255,17 @@ class Player {
     renderVisualizer()  {
         this.audio.analyser.getByteFrequencyData(this.freq);
         this.progressBar.style.width = 100 * this.domAudio.currentTime / this.domAudio.duration + '%';
-        let dbg = document.getElementById('debug');
+
         if (this.logarithmic) {
             for (let i = 0; i != this.barCount; ++i) {
                 let sum = 0, cnt = 0;
                 let width = Math.log(this.audio.analyser.frequencyBinCount) / this.barCount;
 
-                for (let j = Math.exp(i * width);j <= Math.exp((i + 1) * width); ++j) {
+                for (let j = Math.exp((i-1) * width);j <= Math.exp((i) * width); ++j) {
                     sum += this.freq[Math.ceil(j)];
                     cnt++;
                 }
-                let bar = document.getElementById(`bar${i}`);
+                let bar = this.barArray[i];
                 let value = sum / cnt;
                 value /= 2.56;
                 bar.style.height = value + '%';
@@ -282,7 +278,7 @@ class Player {
                     let offset = i * (this.audio.analyser.frequencyBinCount / this.barCount) + j;
                     sum += this.freq[offset];
                 }
-                let bar = document.getElementById(`bar${i}`);
+                let bar = this.barArray[i];
                 let value = sum / (this.audio.analyser.frequencyBinCount / this.barCount);
                 value = value / 2.56;
                 bar.style.height = value + '%';
@@ -359,7 +355,7 @@ class Player {
             newBar.style.position = 'absolute';
             newBar.style.display = 'inline-block';
             newBar.style.borderTop = 'solid 1px white';
-            //newBar.style.backgroundColor = 'rgba(255, 255, 255, 0.3)';
+            // newBar.style.backgroundColor = 'rgba(255, 255, 255, 0.3)';
             newBar.id = `bar${i}`;
             this.visualNode.appendChild(newBar);
             this.barArray.push(newBar);
