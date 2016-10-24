@@ -24,16 +24,20 @@
         <script>
             let player = new Player({
                 parent: document.getElementById('test'),
-                maxBars: 32,
+                maxBars: 128,
                 logarithmic: false,
                 fftSize: 512,
+                autoStart: true,
+                showVisualizer: true,
+                showProgressBar: true,
+                showLyrics: true,
+                enableBlur: true,
                 playList: [
                     {
-                        url: 'media/MYTH & ROID - STYX HELIX.aac',
-                        cover: 'cover/MYTH & ROID - STYX HELIX.jpg',
-                        artist: 'MYTH & ROID',
-                        title: 'STYX HELIX',
-                        lrc: `[00:19.75]Oh please don't let me die [00:22.03]Waiting for your touch [00:24.94] [00:27.57]No, don't give up on life [00:29.76]This endless dead end [00:37.56]狂った時計 刻む命 [00:41.52]こぼれてく記憶の砂 [00:45.40]芽生えた 思いまで [00:49.34]ねえ こんなに呆気なく [00:56.16]消えてしまうの [01:01.50]I wish I was there... [01:02.63] [01:02.88]Oh, please don't let me die [01:04.95]Waiting for your touch [01:07.13]二度と なにも 失くさぬように [01:11.53]私を忘れて 始めて "Restart!" [01:18.33]No, don't give up on life [01:20.57]This endless dead end [01:22.74]君を砕くこの悲しみが [01:27.42]いつか 終わりますように [01:32.46]For now I'll see you off [01:36.32] [01:36.83]My time is spinning around [01:40.53]Your deep black eyes [01:44.59]I forgot what time it is [01:48.29]And our memories are gone...? [01:52.26] [01:53.70]甘い香り放つ [01:57.64]追憶と いう名の罠 [02:01.51]誘われ 囚われ [02:05.42]なぜ 抗えもせずまた [02:12.24]溺れてしまうの [02:17.59]I wish you were here [02:18.75] [02:18.87]Oh, never close your eyes [02:21.02]Searching for a true fate [02:23.25]どこか 消えた あのぬくもりを [02:27.64]追いかけ 続けて 見失う "Restart!" [02:34.43]So, let us try again [02:36.62]From the very first time [02:38.84]"きっときっと" そうやって今も [02:43.44]虚しい 輪を描いてる [02:48.56]For now, see you again [02:51.75] [02:52.68]Fading in Fading out [03:00.46]Fading in Fading out [03:06.39] [03:19.99]I wish we were there [03:20.90] [03:21.30]あの日々には 戻れない [03:25.69]時は強く 哀しく強く [03:30.03]ただただ 進んで ゆくだけ"Restart" [03:36.85]No don't give up on life [03:39.08]This endless dead end [03:41.29]振り返らない そんな強さを [03:45.92]誰も皆演じてる [03:51.01]For now I'll see you off [03:55.22] [03:56.64]And we'll die [03:58.10]Waiting for a new day [04:00.26]二度と... [04:04.46]And we'll start [04:05.94]Waiting for a new day [04:08.08]君と... [04:10.04]Oh please don't let me die [04:16.14]消えないで ah...`,
+                        url: 'media/Rin\' - リベリオン.mp3',
+                        //cover: 'cover/MYTH & ROID - STYX HELIX.jpg',
+                        //artist: 'Rin\'',
+                        //title: 'リベリオン',
                     },
                     {
                         url: 'media/SeeB,Mike Posner - I Took A Pill In Ibiza (SeeB Remix).aac',

@@ -24,11 +24,11 @@ class Player {
 
         let songTitle = document.createElement('H1');
         songTitle.classList.add('songTitle');
-        songTitle.innerHTML = this.nowPlaying.title;
+        songTitle.innerHTML = this.nowPlaying.title ? this.nowPlaying.title : '未知歌曲';
 
         let songArtist = document.createElement('H2');
         songArtist.classList.add('songArtist');
-        songArtist.innerHTML = this.nowPlaying.artist;
+        songArtist.innerHTML = this.nowPlaying.artist ? this.nowPlaying.artist : '未知艺术家';
 
         let lyrics = document.createElement('DIV');
         lyrics.classList.add('lyrics');
@@ -52,13 +52,9 @@ class Player {
             event.stopPropagation();
             if (playButton.classList.contains('fa-play')) {
                 this.play();
-                playButton.classList.remove('fa-play');
-                playButton.classList.add('fa-pause');
             }
             else {
                 this.pause();
-                playButton.classList.remove('fa-pause');
-                playButton.classList.add('fa-play');
             }
         }
         
@@ -109,8 +105,16 @@ class Player {
         let cover = document.createElement('DIV');
         cover.classList.add('cover');
         cover.style.zIndex = '0';
-        cover.style.backgroundImage = `url('${this.nowPlaying.cover}')`;
-        cover.style.backgroundSize = 'cover';
+        if (this.nowPlaying.cover) {
+            cover.style.backgroundImage = `url('${this.nowPlaying.cover}')`;
+            cover.style.backgroundSize = 'cover';
+        }
+        else {
+            cover.style.backgroundImage = `url('default.svg')`;
+            cover.style.backgroundSize = '50%';
+            cover.style.backgroundRepeat = 'no-repeat';
+            cover.style.backgroundPosition = 'center';
+        }
 
         mediainfo.appendChild(songTitle);
         mediainfo.appendChild(songArtist);
@@ -120,7 +124,8 @@ class Player {
         controls.appendChild(playButton);
         controls.appendChild(nextButton);
         controller.appendChild(controls);
-        controller.appendChild(progress);
+        if (this.showProgressBar)
+            controller.appendChild(progress);
         controller.appendChild(visualizer);
         container.appendChild(controller);
         container.appendChild(overlay);
@@ -130,7 +135,8 @@ class Player {
 
         container.onclick = () => {
             if (this.uiStatus == 'unfocus') {
-                cover.classList.add('blur');
+                if (this.enableBlur)
+                    cover.classList.add('blur');
                 overlay.style.backgroundColor = 'rgba(0, 0, 0, .5)';
                 [mediainfo, controller].forEach(elem => {
                     elem.classList.remove('hidden');
@@ -138,7 +144,8 @@ class Player {
                 this.uiStatus = 'focus';
             }
             else {
-                cover.classList.remove('blur');
+                if (this.enableBlur)
+                    cover.classList.remove('blur');
                 overlay.style.backgroundColor = '';
                 [mediainfo, controller].forEach(elem => {
                     elem.classList.add('hidden');
@@ -188,8 +195,12 @@ class Player {
     }
 
     initLyrics() {
+        if (!this.showLyrics) {
+            return;
+        }
         if (!this.nowPlaying.lrc) {
             this.lyrics = {};
+            this.lrcNode.innerText = '♪～(￣ε￣)'
             return;
         }
         this.lyrics.table = [];
@@ -210,7 +221,7 @@ class Player {
                 let offset = f(item.match(/\[(\d+):(\d+).(\d+)\]/));
                 this.lyrics.table.push({
                     offset: offset,
-                    lyric: 'pending',
+                    lyric: '',
                 });
                 return;
             }
@@ -253,8 +264,12 @@ class Player {
     }
 
     renderVisualizer()  {
+        if (this.showProgressBar)
+            this.progressBar.style.width = 100 * this.domAudio.currentTime / this.domAudio.duration + '%';
+
+        if (!this.showVisualizer)
+            return;
         this.audio.analyser.getByteFrequencyData(this.freq);
-        this.progressBar.style.width = 100 * this.domAudio.currentTime / this.domAudio.duration + '%';
 
         if (this.logarithmic) {
             for (let i = 0; i != this.barCount; ++i) {
@@ -288,12 +303,16 @@ class Player {
 
     play() {
         this.initLyrics();
+        this.uiCollection.playButton.classList.remove('fa-play');
+        this.uiCollection.playButton.classList.add('fa-pause');
         this.intervals.lyrics = setInterval(() => {this.updateLyrics()}, 20);
         this.intervals.visualizer = setInterval(() => {this.renderVisualizer()}, 17);
         this.domAudio.play();
     }
 
     pause() {
+        this.uiCollection.playButton.classList.remove('fa-pause');
+        this.uiCollection.playButton.classList.add('fa-play');
         clearInterval(this.intervals.lyrics);
         clearInterval(this.intervals.visualizer);
         this.domAudio.pause();
@@ -318,22 +337,40 @@ class Player {
 
     reinit() {
         // UI part
-        this.uiCollection.songTitle.innerHTML = this.nowPlaying.title;
-        this.uiCollection.songArtist.innerHTML = this.nowPlaying.artist;
+        this.uiCollection.songTitle.innerHTML = this.nowPlaying.title ? this.nowPlaying.title : '未知歌曲';
+        this.uiCollection.songArtist.innerHTML = this.nowPlaying.artist ? this.nowPlaying.artist : '未知艺术家';
         this.uiCollection.progressInner.style.width = '0';
-        this.uiCollection.cover.style.backgroundImage = `url('${this.nowPlaying.cover}')`;
+        if (this.nowPlaying.cover) {
+            this.uiCollection.cover.style.backgroundImage = `url('${this.nowPlaying.cover}')`;
+            this.uiCollection.cover.style.backgroundSize = 'cover';
+        }
+        else {
+            this.uiCollection.cover.style.backgroundSize = '50%';
+            this.uiCollection.cover.style.backgroundImage = `url('default.svg')`;
+            this.uiCollection.cover.style.backgroundRepeat = 'no-repeat';
+            this.uiCollection.cover.style.backgroundPosition = 'center';
+        }
 
         // Audio part
         this.domAudio.src = this.nowPlaying.url;
+
+        // Lyrics
+        this.initLyrics();
     }
 
     constructor(params) {
         this.element = params.parent;
         this.playList = params.playList;
-        this.currentTrack = 0;
-        this.barCount = params.maxBars;
-        this.logarithmic = params.logarithmic;
+        this.barCount = params.maxBars ? params.maxBars : 128;
+        this.logarithmic = params.logarithmic ? params.logarithmic : false;
         this.fftSize = params.fftSize;
+        this.autoStart = params.autoStart ? params.autoStart : false;
+        this.showVisualizer = params.showVisualizer ? params.showVisualizer : true;
+        this.showProgressBar = params.showProgressBar ? params.showProgressBar : true;;
+        this.enableBlur = params.enableBlur ? params.enableBlur : true;
+        this.showLyrics = params.showLyrics ? params.showLyrics : false;
+
+        this.currentTrack = 0;
         this.intervals = {};
         this.lyrics = {};
 
@@ -341,9 +378,14 @@ class Player {
         this.initAudio();
         this.initLyrics();
         this.initVisualizer();
+
+        if (this.autoStart)
+            this.play();
     }
 
     initVisualizer() {
+        if (!this.showVisualizer)
+            return;
         this.barArray = [];
         this.visualNode.innerHTML = "";
         let barWidth = this.visualNode.clientWidth / this.barCount;
