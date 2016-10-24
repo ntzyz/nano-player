@@ -11,7 +11,7 @@ Working in progress
 
 It's quiet easy:
 
-```
+``` html
 <div id="player"></div>
 <script src="player.js"></script>
 <script>
@@ -20,6 +20,11 @@ let player = new Player({
     maxBars: 32,
     logarithmic: false,
     fftSize: 512,
+    autoStart: true,
+    showVisualizer: true,
+    showProgressBar: true,
+    showLyrics: true,
+    enableBlur: true,
     playList: [
         {
             url: 'media/MYTH & ROID - STYX HELIX.aac',
