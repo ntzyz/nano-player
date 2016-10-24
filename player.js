@@ -10,14 +10,17 @@ class Player {
         this.uiStatus = 'unfocus';
         this.uiCollection = {};
 
+        // Create the stylesheet and HTML elements and append them to the parent node.
         let style = document.createElement('STYLE');
         style.innerHTML = ".cover {position: absolute;width: 100%;height: 100%;transition: all ease 0.3s;color: white;}.blur {filter: blur(10px);}.hidden {opacity: 0;}h1.songTitle {font-weight: normal;margin: 1%;font-size: 150%; text-align: center;}h2.songArtist {font-weight: normal;margin: 0%;font-size: 100%; text-align: center;} div.lyrics {font-weight: normal;margin: 3%;font-size: 80%; text-align: center;} .progress {position: absolute;bottom: 5%;left: 25%;width: 50%;height: 1%;margin: 0 auto;border: 1px solid white;}.controls {position: absolute;height: 20%;width: 100%;bottom: 35%;text-align: center;}.visualizer {position: absolute;bottom: 7%;left: 25%;width: 50%;height: 12%;margin: 0 auto;} i.fa{min-width: 50px; display: inline-block; text-align: center;}"
         this.element.appendChild(style);
 
+        // Container for all elements excluding stylesheet and <audio>.
         let container = document.createElement('DIV');
         container.classList.add('cover');
         container.style.overflow = 'hidden';
 
+        // Container for title, artist and lyrics.
         let mediainfo = document.createElement('DIV');
         mediainfo.classList.add('cover', 'hidden');
         mediainfo.style.zIndex = '2';
@@ -33,6 +36,7 @@ class Player {
         let lyrics = document.createElement('DIV');
         lyrics.classList.add('lyrics');
 
+        // Container for control buttons, progress bar and visualizer
         let controller = document.createElement('DIV');
         controller.classList.add('cover', 'hidden');
         controller.style.zIndex = '2';
@@ -46,10 +50,12 @@ class Player {
         playButton.setAttribute('aria-hidden', 'true');
         playButton.style.fontSize = '3em';
         playButton.style.marginLeft = playButton.style.marginRight = '10%';
+
+        // play <-> pause
         playButton.onclick = () => {
-            if (this.uiStatus == 'unfocus')
+            if (this.uiStatus == 'unfocus')         // Button is hidden, ignore this click event.
                 return;
-            event.stopPropagation();
+            event.stopPropagation();                // Stop parent nodes from getting the click event.
             if (playButton.classList.contains('fa-play')) {
                 this.play();
             }
@@ -62,7 +68,7 @@ class Player {
         nextButton.classList.add('fa', 'fa-forward');
         nextButton.setAttribute('aria-hidden', 'true');
         nextButton.style.fontSize = '3em';
-        nextButton.onclick = () => {
+        nextButton.onclick = () => {                // Same as above.
             if (this.uiStatus == 'unfocus')
                 return;
             event.stopPropagation();
@@ -82,6 +88,7 @@ class Player {
 
         let progress = document.createElement('DIV');
         progress.classList.add('progress');
+        progress.overflow = 'hidden';
         progress.onclick = event => {
             if (this.uiStatus == 'unfocus')
                 return;
@@ -98,24 +105,29 @@ class Player {
         let visualizer = document.createElement('DIV');
         visualizer.classList.add('visualizer');
 
+        // Overlay for album cover, for bluring and darking
         let overlay = document.createElement('DIV');
         overlay.classList.add('cover');
         overlay.style.zIndex = '1';
 
+        // Album cover.
         let cover = document.createElement('DIV');
         cover.classList.add('cover');
         cover.style.zIndex = '0';
         if (this.nowPlaying.cover) {
+            // Load image from playList.
             cover.style.backgroundImage = `url('${this.nowPlaying.cover}')`;
             cover.style.backgroundSize = 'cover';
         }
         else {
+            // No image was ordered, use the default one.
             cover.style.backgroundImage = `url('default.svg')`;
             cover.style.backgroundSize = '50%';
             cover.style.backgroundRepeat = 'no-repeat';
             cover.style.backgroundPosition = 'center';
         }
 
+        // Append all elements to their parent elements.
         mediainfo.appendChild(songTitle);
         mediainfo.appendChild(songArtist);
         mediainfo.appendChild(lyrics);
@@ -133,6 +145,7 @@ class Player {
 
         this.element.appendChild(container);
 
+        // Switching from showing controllers, mediainfo, visualizer or not.
         container.onclick = () => {
             if (this.uiStatus == 'unfocus') {
                 if (this.enableBlur)
@@ -153,10 +166,12 @@ class Player {
                 this.uiStatus = 'unfocus';
             }
         }
+        // Save some useful elements to our player's object.
         this.visualNode = visualizer;
         this.lrcNode = lyrics;
         this.progressBar = progressInner;
 
+        // Save all the elements for further use.
         this.uiCollection = {
             container: container,
             mediainfo: mediainfo,
@@ -177,10 +192,12 @@ class Player {
     }
 
     initAudio() {
+        // The <audio> element.
         this.domAudio = document.createElement('AUDIO');
         this.domAudio.src = this.nowPlaying.url;
         this.domAudio.crossOrigin = 'anonymous';
         this.element.appendChild(this.domAudio);
+        // Variables and others needed by HTML Audio API.
         this.audio = {};
         this.audio.ctx = new AudioContext();
         this.audio.source = this.audio.ctx.createMediaElementSource(this.domAudio);
@@ -199,46 +216,51 @@ class Player {
             return;
         }
         if (!this.nowPlaying.lrc) {
+            // No lyric found, no need to go further.
             this.lyrics = {};
             this.lrcNode.innerText = '♪～(￣ε￣)'
             return;
         }
+        // Storage the parsed lyrics.
         this.lyrics.table = [];
+        // Part of lines with undefined content.
         let pending = [];
         this.nowPlaying.lrc.split('[').forEach((item, off) => {
-            let f = mresult => {
-                return (mresult[1] * 60 + mresult[2] * 1) * 1000 + mresult[3].substr(0,2) * 10;
+            // item -> [%d:%d.%d]%s
+            //          1  2  3  4
+            let f = res => {
+                return (res[1] * 60 + res[2] * 1) * 1000 + res[3].substr(0,2) * 10;
             };
 
-            if (item == '') 
+            if (item == '')                 // Ignore the empty lines.
                 return;
-            if (item[0] != '[')
+            if (item[0] != '[')             // Recover the line.
                 item = '[' + item;
 
             let lyric = item.match(/\[(\d+):(\d+).(\d+)\](.*)/);
-            if (lyric[4] == '') {
+            if (lyric[4] == '') {           // Content unedfined, push current offset into pending list.
                 pending.push(off);
-                let offset = f(item.match(/\[(\d+):(\d+).(\d+)\]/));
+                let offset = f(lyric);
                 this.lyrics.table.push({
                     offset: offset,
                     lyric: '',
                 });
                 return;
             }
-            let offset = f(item.match(/\[(\d+):(\d+).(\d+)\]/));
-            this.lyrics.table.push({
+            let offset = f(lyric);
+            this.lyrics.table.push({        // Pushing parsed result into the lyrics table.
                 offset: offset,
                 lyric: lyric[4],
             });
-            while (pending.length > 0) {
+            while (pending.length > 0) {    // Filling the lines which content is undefined.
                 let off = pending.shift() - 1;
                 this.lyrics.table[off].lyric = lyric[4];
             }
         });
-        this.lyrics.table.sort((a, b) => {
+        this.lyrics.table.sort((a, b) => {  // Sort the table by offset.
             return a.offset - b.offset;
         })
-        this.domAudio.onseeking = () => {
+        this.domAudio.onseeking = () => {   // Immediate update the lyric when seeking.
             this.updateLyrics();
         }
         this.lyrics.lines = 0;
@@ -359,6 +381,7 @@ class Player {
     }
 
     constructor(params) {
+        // Load all the preferences.
         this.element = params.parent;
         this.playList = params.playList;
         this.barCount = params.maxBars ? params.maxBars : 128;
@@ -370,15 +393,18 @@ class Player {
         this.enableBlur = params.enableBlur ? params.enableBlur : true;
         this.showLyrics = params.showLyrics ? params.showLyrics : false;
 
+        // Initialize some global variables
         this.currentTrack = 0;
         this.intervals = {};
         this.lyrics = {};
 
+        // Initialize components.
         this.initUI();
         this.initAudio();
         this.initLyrics();
         this.initVisualizer();
 
+        // let's rock and roll.
         if (this.autoStart)
             this.play();
     }
