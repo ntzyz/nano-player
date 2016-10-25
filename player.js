@@ -9,7 +9,7 @@ class Player {
     initUI() {
         this.uiStatus = 'unfocus';
         this.uiCollection = {};
-        this.prevValueArray = [];
+        this.showingFreq = [];
 
         // Create the stylesheet and HTML elements and append them to the parent node.
         let style = document.createElement('STYLE');
@@ -287,18 +287,18 @@ class Player {
     }
 
     updateBar(offset, value){
-        let bar = this.barArray[pos];
+        let bar = this.barArray[offset];
 
         // Converts a number to a percentage
         value /= 2.56;
         
         // Only in the drop
-        if(value < this.prevValueArray[pos]){
-            let dist = this.prevValueArray[pos] - value;
+        if(value < this.showingFreq[offset]){
+            let dist = this.showingFreq[offset] - value;
             value += dist * (1 - this.dropRate);
         }  
 
-        this.prevValueArray[pos] = value;
+        this.showingFreq[offset] = value;
         bar.style.height = value + '%';
     }
 
@@ -320,7 +320,7 @@ class Player {
                     cnt++;
                 }
                 let value = sum / cnt;
-                this.resetBar(i, value);
+                this.updateBar(i, value);
             }
         }
         else {
@@ -331,7 +331,7 @@ class Player {
                     sum += this.freq[offset];
                 }                
                 let value = sum / (this.audio.analyser.frequencyBinCount / this.barCount);                
-                this.resetBar(i, value);
+                this.updateBar(i, value);
             }
         }
     }
@@ -441,7 +441,7 @@ class Player {
             newBar.id = `bar${i}`;
             this.visualNode.appendChild(newBar);
             this.barArray.push(newBar);
-            this.prevValueArray[i] = 0;
+            this.showingFreq[i] = 0;
         }
     }
 }
