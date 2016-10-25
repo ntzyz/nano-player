@@ -405,7 +405,7 @@ class Player {
         this.showProgressBar = params.showProgressBar ? params.showProgressBar : true;;
         this.enableBlur = params.enableBlur ? params.enableBlur : true;
         this.showLyrics = params.showLyrics ? params.showLyrics : false;
-        this.dropRate = params.dropRate ? params.dropRate : 1;
+        this.dropRate = typeof params.dropRate != 'undefined' ? params.dropRate : 1;
 
         // Initialize some global variables
         this.currentTrack = 0;
