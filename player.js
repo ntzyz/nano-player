@@ -9,7 +9,7 @@ class Player {
     initUI() {
         this.uiStatus = 'unfocus';
         this.uiCollection = {};
-        this.prevLoudnessArray = [];
+        this.prevValueArray = [];
 
         // Create the stylesheet and HTML elements and append them to the parent node.
         let style = document.createElement('STYLE');
@@ -286,19 +286,19 @@ class Player {
         }
     }
 
-    resetBar(pos, value){
+    updateBar(offset, value){
         let bar = this.barArray[pos];
 
         // Converts a number to a percentage
         value /= 2.56;
         
         // Only in the drop
-        if(value < this.prevLoudnessArray[pos]){
-            let dist = this.prevLoudnessArray[pos] - value;
+        if(value < this.prevValueArray[pos]){
+            let dist = this.prevValueArray[pos] - value;
             value += dist * (1 - this.dropRate);
         }  
 
-        this.prevLoudnessArray[pos] = value;
+        this.prevValueArray[pos] = value;
         bar.style.height = value + '%';
     }
 
@@ -441,7 +441,7 @@ class Player {
             newBar.id = `bar${i}`;
             this.visualNode.appendChild(newBar);
             this.barArray.push(newBar);
-            this.prevLoudnessArray[i] = 0;
+            this.prevValueArray[i] = 0;
         }
     }
 }
