@@ -9,7 +9,7 @@ class Player {
     initUI() {
         this.uiStatus = 'unfocus';
         this.uiCollection = {};
-		this.prevLoudnessArray = [];
+        this.prevLoudnessArray = [];
 
         // Create the stylesheet and HTML elements and append them to the parent node.
         let style = document.createElement('STYLE');
@@ -285,23 +285,23 @@ class Player {
             clearInterval(this.intervals.lyrics);
         }
     }
-	
-	resetBar(pos, value){
-		let bar = this.barArray[pos];
-		
-		// Converts a number to a percentage
-		value /= 2.56;
-		
-		// Only in the drop
-		if(value < this.prevLoudnessArray[pos]){					
-			let dist = this.prevLoudnessArray[pos] - value;
-			value += dist * (1 - this.dropRate);	
-		}  
-		
-		this.prevLoudnessArray[pos] = value;
-		bar.style.height = value + '%';			
-	}
-	
+
+    resetBar(pos, value){
+        let bar = this.barArray[pos];
+
+        // Converts a number to a percentage
+        value /= 2.56;
+        
+        // Only in the drop
+        if(value < this.prevLoudnessArray[pos]){
+            let dist = this.prevLoudnessArray[pos] - value;
+            value += dist * (1 - this.dropRate);
+        }  
+
+        this.prevLoudnessArray[pos] = value;
+        bar.style.height = value + '%';
+    }
+
     renderVisualizer()  {
         if (this.showProgressBar)
             this.progressBar.style.width = 100 * this.domAudio.currentTime / this.domAudio.duration + '%';
@@ -320,7 +320,7 @@ class Player {
                     cnt++;
                 }
                 let value = sum / cnt;
-				this.resetBar(i, value);
+                this.resetBar(i, value);
             }
         }
         else {
@@ -331,7 +331,7 @@ class Player {
                     sum += this.freq[offset];
                 }                
                 let value = sum / (this.audio.analyser.frequencyBinCount / this.barCount);                
-				this.resetBar(i, value);
+                this.resetBar(i, value);
             }
         }
     }
@@ -405,8 +405,8 @@ class Player {
         this.showProgressBar = params.showProgressBar ? params.showProgressBar : true;;
         this.enableBlur = params.enableBlur ? params.enableBlur : true;
         this.showLyrics = params.showLyrics ? params.showLyrics : false;
-		this.dropRate = params.dropRate ? params.dropRate : 1;
-		
+        this.dropRate = params.dropRate ? params.dropRate : 1;
+
         // Initialize some global variables
         this.currentTrack = 0;
         this.intervals = {};
@@ -441,7 +441,7 @@ class Player {
             newBar.id = `bar${i}`;
             this.visualNode.appendChild(newBar);
             this.barArray.push(newBar);
-			this.prevLoudnessArray[i] = 0;
+            this.prevLoudnessArray[i] = 0;
         }
     }
 }
