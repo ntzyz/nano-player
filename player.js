@@ -94,7 +94,8 @@ class Player {
             if (this.uiStatus == 'unfocus')
                 return;
             event.stopPropagation();
-            this.domAudio.currentTime = this.domAudio.duration * (event.clientX - progress.offsetLeft) / progress.clientWidth;
+            let {left} = progress.getBoundingClientRect();
+            this.domAudio.currentTime = this.domAudio.duration * (event.clientX - left) / progress.clientWidth;
         }
 
         let progressInner = document.createElement('DIV');

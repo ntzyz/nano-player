@@ -1,7 +1,7 @@
 Nano Player
 ===========
 
-[Demo page](https://www.ntzyz.cn/player/index.html)
+[Demo page](https://new.cczu.edu.cn/~ntzyz/)
 
 #### Status
 
