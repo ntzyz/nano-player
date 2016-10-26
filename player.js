@@ -295,13 +295,12 @@ class Player {
         value /= 2.56;
         
         // Only in the drop
-        
         let prevValue = bar.style.height.substring(0, bar.style.height.length-1);
         prevValue = parseFloat(prevValue);
         if(value < prevValue){
             let dist = prevValue - value;
             value += dist * (1 - this.dropRate);
-        }        
+        }
         bar.style.height = value + '%';
     }
 
