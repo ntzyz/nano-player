@@ -96,6 +96,7 @@ class Player {
             event.stopPropagation();
             let {left} = progress.getBoundingClientRect();
             this.domAudio.currentTime = this.domAudio.duration * (event.clientX - left) / progress.clientWidth;
+            this.renderVisualizer();
         }
 
         let progressInner = document.createElement('DIV');
@@ -294,12 +295,12 @@ class Player {
         value /= 2.56;
         
         // Only in the drop
-        if(value < this.showingFreq[offset]){
-            let dist = this.showingFreq[offset] - value;
+        let prevValue = bar.style.height.substring(0, bar.style.height.length-1);
+        prevValue = parseFloat(prevValue);
+        if(value < prevValue){
+            let dist = prevValue - value;
             value += dist * (1 - this.dropRate);
-        }  
-
-        this.showingFreq[offset] = value;
+        }
         bar.style.height = value + '%';
     }
 
@@ -442,7 +443,6 @@ class Player {
             newBar.id = `bar${i}`;
             this.visualNode.appendChild(newBar);
             this.barArray.push(newBar);
-            this.showingFreq[i] = 0;
         }
     }
 }
