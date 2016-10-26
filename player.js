@@ -53,7 +53,7 @@ class Player {
         playButton.style.marginLeft = playButton.style.marginRight = '10%';
 
         // play <-> pause
-        playButton.onclick = () => {
+        playButton.addEventListener('click', () => {
             if (this.uiStatus == 'unfocus')         // Button is hidden, ignore this click event.
                 return;
             event.stopPropagation();                // Stop parent nodes from getting the click event.
@@ -63,41 +63,41 @@ class Player {
             else {
                 this.pause();
             }
-        }
+        });
         
         let nextButton = document.createElement('I');
         nextButton.classList.add('fa', 'fa-forward');
         nextButton.setAttribute('aria-hidden', 'true');
         nextButton.style.fontSize = '3em';
-        nextButton.onclick = () => {                // Same as above.
+        nextButton.addEventListener('click', () => {    // Same as above.
             if (this.uiStatus == 'unfocus')
                 return;
             event.stopPropagation();
             this.nextTrack();
-        }
+        });
 
         let prevButton = document.createElement('I');
         prevButton.classList.add('fa', 'fa-backward');
         prevButton.setAttribute('aria-hidden', 'true');
         prevButton.style.fontSize = '3em';
-        prevButton.onclick = () => {
+        prevButton.addEventListener('click', () => {
             if (this.uiStatus == 'unfocus')
                 return;
             event.stopPropagation();
             this.prevTrack();
-        }
+        });
 
         let progress = document.createElement('DIV');
         progress.classList.add('progress');
         progress.overflow = 'hidden';
-        progress.onclick = event => {
+        progress.addEventListener('click', event => {
             if (this.uiStatus == 'unfocus')
                 return;
             event.stopPropagation();
             let {left} = progress.getBoundingClientRect();
             this.domAudio.currentTime = this.domAudio.duration * (event.clientX - left) / progress.clientWidth;
             this.renderVisualizer();
-        }
+        });
 
         let progressInner = document.createElement('DIV');
         progressInner.style.height = '100%';
@@ -149,7 +149,7 @@ class Player {
         this.element.appendChild(container);
 
         // Switching from showing controllers, mediainfo, visualizer or not.
-        container.onclick = () => {
+        container.addEventListener('click', () => {
             if (this.uiStatus == 'unfocus') {
                 if (this.enableBlur)
                     cover.classList.add('blur');
@@ -168,7 +168,7 @@ class Player {
                 })
                 this.uiStatus = 'unfocus';
             }
-        }
+        });
         // Save some useful elements to our player's object.
         this.visualNode = visualizer;
         this.lrcNode = lyrics;
@@ -209,9 +209,9 @@ class Player {
         this.audio.source.connect(this.audio.analyser);
         this.audio.source.connect(this.audio.ctx.destination);
         this.freq = new Uint8Array(this.audio.analyser.frequencyBinCount)
-        this.domAudio.onended = () => {
+        this.domAudio.addEventListener('ended', () => {
             this.nextTrack();
-        }
+        });
     }
 
     initLyrics() {
@@ -263,9 +263,9 @@ class Player {
         this.lyrics.table.sort((a, b) => {  // Sort the table by offset.
             return a.offset - b.offset;
         })
-        this.domAudio.onseeking = () => {   // Immediate update the lyric when seeking.
-            this.updateLyrics();
-        }
+        this.domAudio.addEventListener('seeking', () => {
+            this.updateLyrics();            // Immediate update the lyric when seeking.
+        })
         this.lyrics.lines = 0;
     }
 
@@ -290,6 +290,8 @@ class Player {
 
     updateBar(offset, value){
         let bar = this.barArray[offset];
+        if (!bar)
+            return;
 
         // Converts a number to a percentage
         value /= 2.56;
@@ -326,13 +328,14 @@ class Player {
             }
         }
         else {
-            for (let i = 0; i != this.barCount; ++i) {
+            let width = (this.linearRegion[1] - this.linearRegion[0]) * this.audio.analyser.frequencyBinCount;
+            for (let i = 0; i < this.barCount; ++i) {
                 let sum = 0;
-                for (let j = 0; j != this.audio.analyser.frequencyBinCount / this.barCount; ++j) {
-                    let offset = i * (this.audio.analyser.frequencyBinCount / this.barCount) + j;
-                    sum += this.freq[offset];
+                for (let j = 0; j < width / this.barCount; ++j) {
+                    let offset = i * (width / this.barCount) + j + this.audio.analyser.frequencyBinCount * this.linearRegion[0];
+                    sum += this.freq[Math.ceil(offset)];
                 }                
-                let value = sum / (this.audio.analyser.frequencyBinCount / this.barCount);                
+                let value = sum / (width / this.barCount);                
                 this.updateBar(i, value);
             }
         }
@@ -408,6 +411,7 @@ class Player {
         this.enableBlur = params.enableBlur ? params.enableBlur : true;
         this.showLyrics = params.showLyrics ? params.showLyrics : false;
         this.dropRate = typeof params.dropRate != 'undefined' ? params.dropRate : 1;
+        this.linearRegion = params.linearRegion ? params.linearRegion : [0, 1];
 
         // Initialize some global variables
         this.currentTrack = 0;
@@ -438,8 +442,8 @@ class Player {
             newBar.style.bottom = '0';
             newBar.style.position = 'absolute';
             newBar.style.display = 'inline-block';
-            newBar.style.borderTop = 'solid 1px white';
-            // newBar.style.backgroundColor = 'rgba(255, 255, 255, 0.3)';
+            // newBar.style.borderTop = 'solid 1px white';
+            newBar.style.backgroundColor = 'rgba(255, 255, 255, 0.3)';
             newBar.id = `bar${i}`;
             this.visualNode.appendChild(newBar);
             this.barArray.push(newBar);
