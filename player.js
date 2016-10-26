@@ -96,6 +96,7 @@ class Player {
             event.stopPropagation();
             let {left} = progress.getBoundingClientRect();
             this.domAudio.currentTime = this.domAudio.duration * (event.clientX - left) / progress.clientWidth;
+            this.renderVisualizer();
         }
 
         let progressInner = document.createElement('DIV');
