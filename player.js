@@ -9,6 +9,7 @@ class Player {
     initUI() {
         this.uiStatus = 'unfocus';
         this.uiCollection = {};
+        this.showingFreq = [];
 
         // Create the stylesheet and HTML elements and append them to the parent node.
         let style = document.createElement('STYLE');
@@ -286,6 +287,22 @@ class Player {
         }
     }
 
+    updateBar(offset, value){
+        let bar = this.barArray[offset];
+
+        // Converts a number to a percentage
+        value /= 2.56;
+        
+        // Only in the drop
+        if(value < this.showingFreq[offset]){
+            let dist = this.showingFreq[offset] - value;
+            value += dist * (1 - this.dropRate);
+        }  
+
+        this.showingFreq[offset] = value;
+        bar.style.height = value + '%';
+    }
+
     renderVisualizer()  {
         if (this.showProgressBar)
             this.progressBar.style.width = 100 * this.domAudio.currentTime / this.domAudio.duration + '%';
@@ -303,10 +320,8 @@ class Player {
                     sum += this.freq[Math.ceil(j)];
                     cnt++;
                 }
-                let bar = this.barArray[i];
                 let value = sum / cnt;
-                value /= 2.56;
-                bar.style.height = value + '%';
+                this.updateBar(i, value);
             }
         }
         else {
@@ -315,11 +330,9 @@ class Player {
                 for (let j = 0; j != this.audio.analyser.frequencyBinCount / this.barCount; ++j) {
                     let offset = i * (this.audio.analyser.frequencyBinCount / this.barCount) + j;
                     sum += this.freq[offset];
-                }
-                let bar = this.barArray[i];
-                let value = sum / (this.audio.analyser.frequencyBinCount / this.barCount);
-                value = value / 2.56;
-                bar.style.height = value + '%';
+                }                
+                let value = sum / (this.audio.analyser.frequencyBinCount / this.barCount);                
+                this.updateBar(i, value);
             }
         }
     }
@@ -393,6 +406,7 @@ class Player {
         this.showProgressBar = params.showProgressBar ? params.showProgressBar : true;;
         this.enableBlur = params.enableBlur ? params.enableBlur : true;
         this.showLyrics = params.showLyrics ? params.showLyrics : false;
+        this.dropRate = typeof params.dropRate != 'undefined' ? params.dropRate : 1;
 
         // Initialize some global variables
         this.currentTrack = 0;
@@ -428,6 +442,7 @@ class Player {
             newBar.id = `bar${i}`;
             this.visualNode.appendChild(newBar);
             this.barArray.push(newBar);
+            this.showingFreq[i] = 0;
         }
     }
 }
