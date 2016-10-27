@@ -13,7 +13,7 @@ class Player {
 
         // Create the stylesheet and HTML elements and append them to the parent node.
         let style = document.createElement('STYLE');
-        style.innerHTML = ".cover {position: absolute;width: 100%;height: 100%;transition: all ease 0.3s;color: white;}.blur {filter: blur(10px);}.hidden {opacity: 0;}h1.songTitle {font-weight: normal;margin: 1%;font-size: 150%; text-align: center;}h2.songArtist {font-weight: normal;margin: 0%;font-size: 100%; text-align: center;} div.lyrics {font-weight: normal;margin: 3%;font-size: 80%; text-align: center;} .progress {position: absolute;bottom: 5%;left: 25%;width: 50%;height: 1%;margin: 0 auto;border: 1px solid white;}.controls {position: absolute;height: 20%;width: 100%;bottom: 35%;text-align: center;}.visualizer {position: absolute;bottom: 7%;left: 25%;width: 50%;height: 12%;margin: 0 auto;} i.fa{min-width: 50px; display: inline-block; text-align: center;}"
+        style.innerHTML = ".cover {position: absolute;width: 100%;height: 100%;transition: all ease 0.3s;color: white;}.blur {filter: blur(10px);}.hidden {opacity: 0;}h1.songTitle {font-weight: normal;margin: 1%;font-size: 150%; text-align: center;}h2.songArtist {font-weight: normal;margin: 0%;font-size: 100%; text-align: center;} div.lyrics {font-weight: normal;margin: 3%;font-size: 80%; text-align: center;} .progress {position: absolute;bottom: 5%;left: 25%;width: 50%;height: 1%;margin: 0 auto;border: 1px solid white;}.controls {position: absolute;height: 20%;width: 100%;bottom: 35%;text-align: center;}.visualizer {position: absolute;bottom: 7%;left: 25%;width: 50%;height: 12%;margin: 0 auto;} i.fa{min-width: 50px; display: inline-block; text-align: center;} .pointer{cursor: pointer;}"
         this.element.appendChild(style);
 
         // Container for all elements excluding stylesheet and <audio>.
@@ -23,7 +23,7 @@ class Player {
 
         // Container for title, artist and lyrics.
         let mediainfo = document.createElement('DIV');
-        mediainfo.classList.add('cover', 'hidden');
+        mediainfo.className = 'cover hidden';
         mediainfo.style.zIndex = '2';
 
         let songTitle = document.createElement('H1');
@@ -39,7 +39,7 @@ class Player {
 
         // Container for control buttons, progress bar and visualizer
         let controller = document.createElement('DIV');
-        controller.classList.add('cover', 'hidden');
+        controller.className = 'cover hidden';
         controller.style.zIndex = '2';
         controller.style.margin = '0 auto';
 
@@ -47,7 +47,7 @@ class Player {
         controls.classList.add('controls');
 
         let playButton = document.createElement('I');
-        playButton.classList.add('fa', 'fa-play');
+        playButton.className = 'fa fa-play pointer';
         playButton.setAttribute('aria-hidden', 'true');
         playButton.style.fontSize = '3em';
         playButton.style.marginLeft = playButton.style.marginRight = '10%';
@@ -66,7 +66,7 @@ class Player {
         });
         
         let nextButton = document.createElement('I');
-        nextButton.classList.add('fa', 'fa-forward');
+        nextButton.className = 'fa fa-forward pointer';
         nextButton.setAttribute('aria-hidden', 'true');
         nextButton.style.fontSize = '3em';
         nextButton.addEventListener('click', () => {    // Same as above.
@@ -77,7 +77,7 @@ class Player {
         });
 
         let prevButton = document.createElement('I');
-        prevButton.classList.add('fa', 'fa-backward');
+        prevButton.className = 'fa fa-backward pointer';
         prevButton.setAttribute('aria-hidden', 'true');
         prevButton.style.fontSize = '3em';
         prevButton.addEventListener('click', () => {
@@ -88,7 +88,7 @@ class Player {
         });
 
         let progress = document.createElement('DIV');
-        progress.classList.add('progress');
+        progress.className = 'progress pointer';
         progress.overflow = 'hidden';
         progress.addEventListener('click', event => {
             if (this.uiStatus == 'unfocus')
@@ -201,14 +201,20 @@ class Player {
         this.domAudio.crossOrigin = 'anonymous';
         this.element.appendChild(this.domAudio);
         // Variables and others needed by HTML Audio API.
-        this.audio = {};
-        this.audio.ctx = new AudioContext();
-        this.audio.source = this.audio.ctx.createMediaElementSource(this.domAudio);
-        this.audio.analyser = this.audio.ctx.createAnalyser();
-        this.audio.analyser.fftSize = this.fftSize ? this.fftSize : this.audio.analyser.fftSize;
-        this.audio.source.connect(this.audio.analyser);
-        this.audio.source.connect(this.audio.ctx.destination);
-        this.freq = new Uint8Array(this.audio.analyser.frequencyBinCount)
+        try {
+            this.audio = {};
+            this.audio.ctx = new AudioContext();
+            this.audio.source = this.audio.ctx.createMediaElementSource(this.domAudio);
+            this.audio.analyser = this.audio.ctx.createAnalyser();
+            this.audio.analyser.fftSize = this.fftSize ? this.fftSize : this.audio.analyser.fftSize;
+            this.audio.source.connect(this.audio.analyser);
+            this.audio.source.connect(this.audio.ctx.destination);
+            this.freq = new Uint8Array(this.audio.analyser.frequencyBinCount)
+        }
+        catch (ex) {
+            this.audio = null;
+            console.log('Failed on initAudio');     // doing nothing on unsupported browsers.
+        }
         this.domAudio.addEventListener('ended', () => {
             this.nextTrack();
         });
@@ -310,7 +316,7 @@ class Player {
         if (this.showProgressBar)
             this.progressBar.style.width = 100 * this.domAudio.currentTime / this.domAudio.duration + '%';
 
-        if (!this.showVisualizer)
+        if (!this.showVisualizer || this.audio === null)
             return;
         this.audio.analyser.getByteFrequencyData(this.freq);
 
@@ -430,7 +436,7 @@ class Player {
     }
 
     initVisualizer() {
-        if (!this.showVisualizer)
+        if (!this.showVisualizer || this.audio === null)
             return;
         this.barArray = [];
         this.visualNode.innerHTML = "";
