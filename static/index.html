@@ -2,28 +2,68 @@
 <!doctype html>
 <html>
     <head>
-        <title>nanoPlayer DEMO page</title>
+        <title>Nano Player DEMO page</title>
+        <meta name="language" content="zh-cn" />
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta http-equiv="x-ua-compatible" content="ie=edge" />
+        <meta http-equiv="cleartype" content="on" />
         <link href="//cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.css" rel="stylesheet">
         <meta charset="UTF-8"/>
         <style>
-            #test {
-                width: 400px;
-                height: 400px;
+            #player {
+                width: 350px;
+                height: 350px;
                 position: relative;
+                margin: 10px auto;
             }
             html, body {
+                height: 100%;
+                font-family: 'Source Sans Pro', 'Helvetica Neue', Arial, sans-serif;
+                font-weight: 200;
+                -webkit-font-smoothing: antialiased;
+                -moz-osx-font-smoothing: grayscale;
+            }
+            body {
                 margin: 0;
                 padding: 0;
+                background-image: url(bgimg.jpg);
+                background-position: top;
+                background-size: cover;
+            }
+            .container {
+                background-color: rgba(255, 255, 255, 0.8);
+                margin: 0 auto;
                 height: 100%;
+            }
+            .title {
+                font-weight: normal;
+                text-align: center;
+                margin: 0;
+                padding: 10px;
+            }
+            h1.title {
+                padding-top: 20px;
+            }
+            .link {
+                text-align: center;
+                font-size: 0.8em;
+                cursor: pointer;
             }
         </style>
     </head>
     <body>
-        <div id="test"></div>
+        <div class="container">
+            <h1 class="title">nano player</h1>
+            <h2 class="title">make music come alive.</h2>
+            <div id="player"></div>
+            <div style="text-align: center;">
+                <span class="link" onclick="window.open('https://github.com/ntzyz/nano-player')">View source on GitHub</span>
+            </div>
+        </div>
         <script src="player.js"></script>
         <script>
             let player = new Player({
-                parent: document.getElementById('test'),
+                parent: document.getElementById('player'),
                 maxBars: 128,
                 logarithmic: false,
                 fftSize: 512,
@@ -32,7 +72,7 @@
                 showProgressBar: true,
                 showLyrics: true,
                 enableBlur: true,
-                dropRate: 1, //0-1 , slow-fast，
+                dropRate: 1,
                 linearRegion: [0, 0.75],
                 playList: [
                     {
@@ -72,9 +112,6 @@
                     },
                 ]
             });
-
-            // player.play();
-
         </script>
     </body>
 </html>

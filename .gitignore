@@ -1,5 +1,5 @@
-/index.js
 /node_modules
 *.wav
 *.exe
 *.flac
+.DS_Store
