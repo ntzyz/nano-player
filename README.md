@@ -1,6 +1,9 @@
 Nano Player
 ===========
 
+[![License](https://img.shields.io/github/license/mashape/apistatus.svg?maxAge=2592000)](LICENSE)
+[![Build Status](https://travis-ci.org/ntzyz/nano-player.svg?branch=master)](https://travis-ci.org/ntzyz/nano-player)
+
 [Demo page](https://dev.cczu.edu.cn/~ntzyz/)
 
 #### Status
