@@ -7,6 +7,10 @@ Nano Player
 
 Working in progress
 
+Note that Internet Explorer 11 does not support `<audio>` with Advanced Audio Coding (a.k.a AAC), so the demo included in the repo will not work on IE11.
+
+Also, `autoStart` does not work on mobile browsers, set it to `false` seems to be a good choice.
+
 #### How to use
 
 It's quiet easy:
