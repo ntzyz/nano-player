@@ -57,7 +57,7 @@ var Player = function () {
             playButton.style.marginLeft = playButton.style.marginRight = '10%';
 
             // play <-> pause
-            playButton.addEventListener('click', function () {
+            playButton.addEventListener('click', function (event) {
                 if (_this.uiStatus == 'unfocus') // Button is hidden, ignore this click event.
                     return;
                 event.stopPropagation(); // Stop parent nodes from getting the click event.
@@ -72,7 +72,7 @@ var Player = function () {
             nextButton.className = 'fa fa-forward pointer';
             nextButton.setAttribute('aria-hidden', 'true');
             nextButton.style.fontSize = '3em';
-            nextButton.addEventListener('click', function () {
+            nextButton.addEventListener('click', function (event) {
                 // Same as above.
                 if (_this.uiStatus == 'unfocus') return;
                 event.stopPropagation();
@@ -83,7 +83,7 @@ var Player = function () {
             prevButton.className = 'fa fa-backward pointer';
             prevButton.setAttribute('aria-hidden', 'true');
             prevButton.style.fontSize = '3em';
-            prevButton.addEventListener('click', function () {
+            prevButton.addEventListener('click', function (event) {
                 if (_this.uiStatus == 'unfocus') return;
                 event.stopPropagation();
                 _this.prevTrack();
@@ -151,7 +151,7 @@ var Player = function () {
             this.element.appendChild(container);
 
             // Switching from showing controllers, mediainfo, visualizer or not.
-            container.addEventListener('click', function () {
+            container.addEventListener('click', function (event) {
                 if (_this.uiStatus == 'unfocus') {
                     if (_this.enableBlur) cover.classList.add('blur');
                     overlay.style.backgroundColor = 'rgba(0, 0, 0, .5)';
@@ -321,8 +321,7 @@ var Player = function () {
     }, {
         key: 'renderVisualizer',
         value: function renderVisualizer() {
-            if (this.showProgressBar) this.progressBar.style.width = 100 * this.domAudio.currentTime / this.domAudio.duration + '%';
-
+            if (this.showProgressBar) this.progressBar.style.width = 100 * Math.min(this.domAudio.currentTime / this.domAudio.duration, 1) + '%';
             if (!this.showVisualizer || this.audio === null) return;
             this.audio.analyser.getByteFrequencyData(this.freq);
 

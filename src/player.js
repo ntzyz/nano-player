@@ -53,7 +53,7 @@ class Player {
         playButton.style.marginLeft = playButton.style.marginRight = '10%';
 
         // play <-> pause
-        playButton.addEventListener('click', () => {
+        playButton.addEventListener('click', event => {
             if (this.uiStatus == 'unfocus')         // Button is hidden, ignore this click event.
                 return;
             event.stopPropagation();                // Stop parent nodes from getting the click event.
@@ -69,7 +69,7 @@ class Player {
         nextButton.className = 'fa fa-forward pointer';
         nextButton.setAttribute('aria-hidden', 'true');
         nextButton.style.fontSize = '3em';
-        nextButton.addEventListener('click', () => {    // Same as above.
+        nextButton.addEventListener('click', event => {    // Same as above.
             if (this.uiStatus == 'unfocus')
                 return;
             event.stopPropagation();
@@ -80,7 +80,7 @@ class Player {
         prevButton.className = 'fa fa-backward pointer';
         prevButton.setAttribute('aria-hidden', 'true');
         prevButton.style.fontSize = '3em';
-        prevButton.addEventListener('click', () => {
+        prevButton.addEventListener('click', event => {
             if (this.uiStatus == 'unfocus')
                 return;
             event.stopPropagation();
@@ -149,7 +149,7 @@ class Player {
         this.element.appendChild(container);
 
         // Switching from showing controllers, mediainfo, visualizer or not.
-        container.addEventListener('click', () => {
+        container.addEventListener('click', event => {
             if (this.uiStatus == 'unfocus') {
                 if (this.enableBlur)
                     cover.classList.add('blur');
@@ -314,8 +314,7 @@ class Player {
 
     renderVisualizer()  {
         if (this.showProgressBar)
-            this.progressBar.style.width = 100 * this.domAudio.currentTime / this.domAudio.duration + '%';
-
+            this.progressBar.style.width = 100*Math.min((this.domAudio.currentTime / this.domAudio.duration), 1) + '%';
         if (!this.showVisualizer || this.audio === null)
             return;
         this.audio.analyser.getByteFrequencyData(this.freq);
