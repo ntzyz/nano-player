@@ -154,17 +154,27 @@ var Player = function () {
             container.addEventListener('click', function (event) {
                 if (_this.uiStatus == 'unfocus') {
                     if (_this.enableBlur) cover.classList.add('blur');
+
+                    [playButton, prevButton, nextButton, progress].forEach(function (elem) {
+                        elem.classList.add('pointer');
+                    });
                     overlay.style.backgroundColor = 'rgba(0, 0, 0, .5)';
                     [mediainfo, controller].forEach(function (elem) {
                         elem.classList.remove('hidden');
                     });
+
                     _this.uiStatus = 'focus';
                 } else {
                     if (_this.enableBlur) cover.classList.remove('blur');
+
+                    [playButton, prevButton, nextButton, progress].forEach(function (elem) {
+                        elem.classList.remove('pointer');
+                    });
                     overlay.style.backgroundColor = '';
                     [mediainfo, controller].forEach(function (elem) {
                         elem.classList.add('hidden');
                     });
+
                     _this.uiStatus = 'unfocus';
                 }
             });

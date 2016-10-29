@@ -153,19 +153,29 @@ class Player {
             if (this.uiStatus == 'unfocus') {
                 if (this.enableBlur)
                     cover.classList.add('blur');
+
+                [playButton, prevButton, nextButton, progress].forEach(elem => {
+                    elem.classList.add('pointer')
+                })
                 overlay.style.backgroundColor = 'rgba(0, 0, 0, .5)';
                 [mediainfo, controller].forEach(elem => {
                     elem.classList.remove('hidden');
                 })
+
                 this.uiStatus = 'focus';
             }
             else {
                 if (this.enableBlur)
                     cover.classList.remove('blur');
+
+                [playButton, prevButton, nextButton, progress].forEach(elem => {
+                    elem.classList.remove('pointer')
+                })
                 overlay.style.backgroundColor = '';
                 [mediainfo, controller].forEach(elem => {
                     elem.classList.add('hidden');
                 })
+
                 this.uiStatus = 'unfocus';
             }
         });
