@@ -17,7 +17,7 @@ var Player = function () {
 
             // Create the stylesheet and HTML elements and append them to the parent node.
             var style = document.createElement('STYLE');
-            style.innerHTML = ".cover {position: absolute;width: 100%;height: 100%;transition: all ease 0.3s;color: white;}.blur {filter: blur(10px);}.hidden {opacity: 0;}h1.songTitle {font-weight: normal;margin: 1%;font-size: 150%; text-align: center;}h2.songArtist {font-weight: normal;margin: 0%;font-size: 100%; text-align: center;} div.lyrics {font-weight: normal;margin: 3%;font-size: 80%; text-align: center;} .progress {position: absolute;bottom: 5%;left: 25%;width: 50%;height: 1%;margin: 0 auto;border: 1px solid white;}.controls {position: absolute;height: 20%;width: 100%;bottom: 35%;text-align: center;}.visualizer {position: absolute;bottom: 7%;left: 25%;width: 50%;height: 12%;margin: 0 auto;} i.fa{min-width: 50px; display: inline-block; text-align: center;} .pointer{cursor: pointer;}";
+            style.innerHTML = ".cover {position: absolute;width: 100%;height: 100%;transition: all ease 0.3s;color: white; cursor: default;}.blur {filter: blur(10px);}.hidden {opacity: 0;}h1.songTitle {font-weight: normal;margin: 1%;font-size: 150%; text-align: center;}h2.songArtist {font-weight: normal;margin: 0%;font-size: 100%; text-align: center;} div.lyrics {font-weight: normal;margin: 3%;font-size: 80%; text-align: center;} .progress {position: absolute;bottom: 5%;left: 25%;width: 50%;height: 1%;margin: 0 auto;border: 1px solid white;}.controls {position: absolute;height: 20%;width: 100%;bottom: 35%;text-align: center;}.visualizer {position: absolute;bottom: 7%;left: 25%;width: 50%;height: 12%;margin: 0 auto;} i.fa{min-width: 50px; display: inline-block; text-align: center;} .pointer{cursor: pointer;}";
             this.element.appendChild(style);
 
             // Container for all elements excluding stylesheet and <audio>.
@@ -51,7 +51,7 @@ var Player = function () {
             controls.classList.add('controls');
 
             var playButton = document.createElement('I');
-            playButton.className = 'fa fa-play pointer';
+            playButton.className = 'fa fa-play';
             playButton.setAttribute('aria-hidden', 'true');
             playButton.style.fontSize = '3em';
             playButton.style.marginLeft = playButton.style.marginRight = '10%';
@@ -69,7 +69,7 @@ var Player = function () {
             });
 
             var nextButton = document.createElement('I');
-            nextButton.className = 'fa fa-forward pointer';
+            nextButton.className = 'fa fa-forward';
             nextButton.setAttribute('aria-hidden', 'true');
             nextButton.style.fontSize = '3em';
             nextButton.addEventListener('click', function (event) {
@@ -80,7 +80,7 @@ var Player = function () {
             });
 
             var prevButton = document.createElement('I');
-            prevButton.className = 'fa fa-backward pointer';
+            prevButton.className = 'fa fa-backward';
             prevButton.setAttribute('aria-hidden', 'true');
             prevButton.style.fontSize = '3em';
             prevButton.addEventListener('click', function (event) {
@@ -90,7 +90,7 @@ var Player = function () {
             });
 
             var progress = document.createElement('DIV');
-            progress.className = 'progress pointer';
+            progress.className = 'progress';
             progress.overflow = 'hidden';
             progress.addEventListener('click', function (event) {
                 if (_this.uiStatus == 'unfocus') return;
@@ -154,17 +154,27 @@ var Player = function () {
             container.addEventListener('click', function (event) {
                 if (_this.uiStatus == 'unfocus') {
                     if (_this.enableBlur) cover.classList.add('blur');
+
+                    [playButton, prevButton, nextButton, progress].forEach(function (elem) {
+                        elem.classList.add('pointer');
+                    });
                     overlay.style.backgroundColor = 'rgba(0, 0, 0, .5)';
                     [mediainfo, controller].forEach(function (elem) {
                         elem.classList.remove('hidden');
                     });
+
                     _this.uiStatus = 'focus';
                 } else {
                     if (_this.enableBlur) cover.classList.remove('blur');
+
+                    [playButton, prevButton, nextButton, progress].forEach(function (elem) {
+                        elem.classList.remove('pointer');
+                    });
                     overlay.style.backgroundColor = '';
                     [mediainfo, controller].forEach(function (elem) {
                         elem.classList.add('hidden');
                     });
+
                     _this.uiStatus = 'unfocus';
                 }
             });
