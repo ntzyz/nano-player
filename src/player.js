@@ -393,6 +393,9 @@ class Player {
             return;
         this.audio.analyser.getByteFrequencyData(this.freq);
 
+        if(this.domAudio.paused)
+            return;
+
         if (this.logarithmic) {
             for (let i = 0; i != this.barCount; ++i) {
                 let sum = 0, cnt = 0;
@@ -517,7 +520,7 @@ class Player {
         for (let i = 0; i != this.barCount; ++i) {
             let newBar = document.createElement('DIV')
             newBar.style.width = `${barWidth}px`;
-            newBar.style.marginLeft = `${i * barWidth}px`;
+            newBar.style.marginLeft = `${i*barWidth + 1}px`;
             newBar.style.bottom = '0';
             newBar.style.position = 'absolute';
             newBar.style.display = 'inline-block';

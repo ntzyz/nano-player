@@ -335,6 +335,8 @@ var Player = function () {
             if (!this.showVisualizer || this.audio === null) return;
             this.audio.analyser.getByteFrequencyData(this.freq);
 
+            if (this.domAudio.paused) return;
+
             if (this.logarithmic) {
                 for (var i = 0; i != this.barCount; ++i) {
                     var sum = 0,
@@ -476,7 +478,7 @@ var Player = function () {
             for (var i = 0; i != this.barCount; ++i) {
                 var newBar = document.createElement('DIV');
                 newBar.style.width = barWidth + 'px';
-                newBar.style.marginLeft = i * barWidth + 'px';
+                newBar.style.marginLeft = i * barWidth + 1 + 'px';
                 newBar.style.bottom = '0';
                 newBar.style.position = 'absolute';
                 newBar.style.display = 'inline-block';
