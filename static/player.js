@@ -456,7 +456,7 @@ var Player = function () {
                         if (mleft < 0) songTitle.style.marginLeft = mleft + 'px';
                         mleft -= 1;
                         if (mleft + actualWidth <= 0) {
-                            mleft = 0;
+                            mleft = 20;
                         }
                     };
                     _this5.intervals.songTitleMarq = setInterval(renderMarq, 40);

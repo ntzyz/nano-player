@@ -507,7 +507,7 @@ class Player {
                     songTitle.style.marginLeft = `${mleft}px`;
                 mleft -= 1;
                 if (mleft + actualWidth <= 0) {
-                    mleft = 0;
+                    mleft = 20;
                 }
             };
             this.intervals.songTitleMarq = setInterval(renderMarq, 40);
