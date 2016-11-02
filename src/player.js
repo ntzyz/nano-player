@@ -7,6 +7,8 @@ class Player {
     }
 
     initUI() {
+        this.element.classList.add('__nano_player__');
+
         this.uiStatus = 'unfocus';
         this.uiCollection = {};
         this.showingFreq = [];
@@ -33,16 +35,20 @@ class Player {
             '    margin: 1%;',
             '    font-size: 150%;',
             '    text-align: center;',
+            '    white-space: pre;',
+            '    display: inline-block;',
             '}',
             'h2.songArtist {',
             '    font-weight: normal;',
-            '    margin: 0%;',
+            '    margin-top: 2%;',
+            '    margin-bottom: 0;',
             '    font-size: 100%;',
-            ' text-align: center;',
+            '    text-align: center;',
+            '    line-height: 1em;',
             '}',
             'div.lyrics {',
             '    font-weight: normal;',
-            '    margin: 3%;',
+            '    margin: 1%;',
             '    font-size: 80%;',
             '    text-align: center;',
             '}',
@@ -54,7 +60,8 @@ class Player {
             '    height: 1%;',
             '    margin: 0 auto;',
             '    border: 1px solid white;',
-            '}.controls {',
+            '}',
+            '.controls {',
             '    position: absolute;',
             '    height: 20%;',
             '    width: 100%;',
@@ -74,10 +81,16 @@ class Player {
             '    display: inline-block;',
             '    text-align: center;',
             '}',
-            '.pointer{',
+            '.pointer {',
             '    cursor: pointer;',
             '}',
-        ].join(' ');
+        ].map(line => {
+            line = line.trim();
+            if (line.indexOf('{') == line.length - 1)
+                return '.__nano_player__ ' + line;
+            return line;
+        }).join(' ');
+        style.setAttribute('scoped', '');
         this.element.appendChild(style);
 
         // Container for all elements excluding stylesheet and <audio>.
@@ -92,11 +105,9 @@ class Player {
 
         let songTitle = document.createElement('H1');
         songTitle.classList.add('songTitle');
-        songTitle.innerHTML = this.nowPlaying.title ? this.nowPlaying.title : '未知歌曲';
 
         let songArtist = document.createElement('H2');
         songArtist.classList.add('songArtist');
-        songArtist.innerHTML = this.nowPlaying.artist ? this.nowPlaying.artist : '未知艺术家';
 
         let lyrics = document.createElement('DIV');
         lyrics.classList.add('lyrics');
@@ -111,7 +122,7 @@ class Player {
         controls.classList.add('controls');
 
         let playButton = document.createElement('I');
-        playButton.className = 'fa fa-play';
+        playButton.className = 'fa fa-play b';
         playButton.setAttribute('aria-hidden', 'true');
         playButton.style.fontSize = '3em';
         playButton.style.marginLeft = playButton.style.marginRight = '10%';
@@ -165,7 +176,6 @@ class Player {
 
         let progressInner = document.createElement('DIV');
         progressInner.style.height = '100%';
-        progressInner.style.width = '0';
         progressInner.style.backgroundColor = 'white';
         progress.appendChild(progressInner);
 
@@ -181,22 +191,10 @@ class Player {
         let cover = document.createElement('DIV');
         cover.classList.add('cover');
         cover.style.zIndex = '0';
-        if (this.nowPlaying.cover) {
-            // Load image from playList.
-            cover.style.backgroundImage = `url('${this.nowPlaying.cover}')`;
-            cover.style.backgroundSize = 'cover';
-        }
-        else {
-            // No image was ordered, use the default one.
-            cover.style.backgroundImage = `url('default.svg')`;
-            cover.style.backgroundSize = '50%';
-            cover.style.backgroundRepeat = 'no-repeat';
-            cover.style.backgroundPosition = 'center';
-        }
 
         // Append all elements to their parent elements.
-        mediainfo.appendChild(songTitle);
         mediainfo.appendChild(songArtist);
+        mediainfo.appendChild(songTitle);
         mediainfo.appendChild(lyrics);
         container.appendChild(mediainfo);
         controls.appendChild(prevButton);
@@ -211,6 +209,23 @@ class Player {
         container.appendChild(cover);
 
         this.element.appendChild(container);
+
+        // Fix some style issue.
+        songTitle.style.minWidth = this.element.clientWidth + 'px';
+        if (this.element.clientWidth < songTitle.clientWidth) {
+            // We do not hope that the overflow part is really hidden. Fix it.
+            let actualWidth = songTitle.clientWidth;
+            let mleft = 0;
+            songTitle.innerText = songTitle.innerText + '    ' + songTitle.innerText;
+            let renderMarq = () => {
+                songTitle.style.marginLeft = `${mleft}px`;
+                mleft -= 1;
+                if (mleft + actualWidth <= 0) {
+                    mleft = 0;
+                }
+            };
+            this.intervals.songTitleMarq = setInterval(renderMarq, 20);
+        }
 
         // Switching from showing controllers, mediainfo, visualizer or not.
         container.addEventListener('click', event => {
@@ -271,7 +286,6 @@ class Player {
     initAudio() {
         // The <audio> element.
         this.domAudio = document.createElement('AUDIO');
-        this.domAudio.src = this.nowPlaying.url;
         this.domAudio.crossOrigin = 'anonymous';
         this.element.appendChild(this.domAudio);
         // Variables and others needed by HTML Audio API.
@@ -478,6 +492,29 @@ class Player {
 
         // Lyrics
         this.initLyrics();
+
+        clearInterval(this.intervals.songTitleMarq);
+        this.uiCollection.songTitle.style.marginLeft = '';
+        if (this.element.clientWidth < this.uiCollection.songTitle.clientWidth) {
+            // We do not hope that the overflow part is really hidden. Fix it.
+            let songTitle = this.uiCollection.songTitle;
+            songTitle.innerText = songTitle.innerText + '        ';
+            let actualWidth = songTitle.clientWidth;
+            let mleft = 20;
+            songTitle.innerText = songTitle.innerText + songTitle.innerText;
+            let renderMarq = () => {
+                if (mleft < 0)
+                    songTitle.style.marginLeft = `${mleft}px`;
+                mleft -= 1;
+                if (mleft + actualWidth <= 0) {
+                    mleft = 20;
+                }
+            };
+            this.intervals.songTitleMarq = setInterval(renderMarq, 40);
+        }
+
+        // Clear the remaining lyric.
+        this.lrcNode.innerHTML = '';
     }
 
     constructor(params) {
@@ -505,6 +542,7 @@ class Player {
         this.initAudio();
         this.initLyrics();
         this.initVisualizer();
+        this.reinit();      // Immediate fill the data of now playing song.
 
         // let's rock and roll.
         if (this.autoStart)
