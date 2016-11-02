@@ -37,6 +37,7 @@ class Player {
             '    text-align: center;',
             '    white-space: pre;',
             '    display: inline-block;',
+            '    /*transition: margin-left 0.04s*/',
             '}',
             'h2.songArtist {',
             '    font-weight: normal;',
@@ -86,7 +87,7 @@ class Player {
             '}',
         ].map(line => {
             line = line.trim();
-            if (line.indexOf('{') == line.length - 1)
+            if (line[line.length - 1] == '{')
                 return '.__nano_player__ ' + line;
             return line;
         }).join(' ');
@@ -122,7 +123,7 @@ class Player {
         controls.classList.add('controls');
 
         let playButton = document.createElement('I');
-        playButton.className = 'fa fa-play b';
+        playButton.className = 'fa fa-play';
         playButton.setAttribute('aria-hidden', 'true');
         playButton.style.fontSize = '3em';
         playButton.style.marginLeft = playButton.style.marginRight = '10%';
@@ -132,7 +133,7 @@ class Player {
             if (this.uiStatus == 'unfocus')         // Button is hidden, ignore this click event.
                 return;
             event.stopPropagation();                // Stop parent nodes from getting the click event.
-            if (playButton.classList.contains('fa-play')) {
+            if (this.domAudio.paused) {
                 this.play();
             }
             else {
@@ -437,21 +438,30 @@ class Player {
         }
     }
 
+    flushStatus() {
+        if (this.domAudio.paused) {
+            this.uiCollection.playButton.classList.remove('fa-pause');
+            this.uiCollection.playButton.classList.add('fa-play');
+        }
+        else {
+            this.uiCollection.playButton.classList.remove('fa-play');
+            this.uiCollection.playButton.classList.add('fa-pause');
+        }
+    }
+
     play() {
         this.initLyrics();
-        this.uiCollection.playButton.classList.remove('fa-play');
-        this.uiCollection.playButton.classList.add('fa-pause');
         this.intervals.lyrics = setInterval(() => {this.updateLyrics()}, 20);
         this.intervals.visualizer = setInterval(() => {this.renderVisualizer()}, 17);
         this.domAudio.play();
+        this.flushStatus();
     }
 
     pause() {
-        this.uiCollection.playButton.classList.remove('fa-pause');
-        this.uiCollection.playButton.classList.add('fa-play');
         clearInterval(this.intervals.lyrics);
         clearInterval(this.intervals.visualizer);
         this.domAudio.pause();
+        this.flushStatus();
     }
 
     nextTrack() {
@@ -500,17 +510,17 @@ class Player {
             let songTitle = this.uiCollection.songTitle;
             songTitle.innerText = songTitle.innerText + '        ';
             let actualWidth = songTitle.clientWidth;
-            let mleft = 20;
+            let mleft = 40;
             songTitle.innerText = songTitle.innerText + songTitle.innerText;
             let renderMarq = () => {
                 if (mleft < 0)
                     songTitle.style.marginLeft = `${mleft}px`;
-                mleft -= 1;
+                mleft -= 0.5;
                 if (mleft + actualWidth <= 0) {
-                    mleft = 20;
+                    mleft = 40;
                 }
             };
-            this.intervals.songTitleMarq = setInterval(renderMarq, 40);
+            this.intervals.songTitleMarq = setInterval(renderMarq, 20);
         }
 
         // Clear the remaining lyric.
