@@ -28,7 +28,7 @@ let nanoPlayer = new Player({
         {
             url: 'STYX HELIX.aac',      // Required, URL of the song.
             cover: 'STYX HELIX.jpg',    // Recommend, album cover 
-            artist: 'MYTH & ROID',      // Recommend. artist of the song.
+            artist: 'MYTH & ROID',      // Recommend, artist of the song.
             title: 'STYX HELIX',        // Recommend, song title
             lrc: '[00:00.00]LyRiCs',    // Optional, content of the LyRiCs file.
             lrcOffset: 0,               // Optional, lyrics offset for this song.
