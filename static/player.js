@@ -260,10 +260,11 @@ var Player = function () {
             // Part of lines with undefined content.
             var pending = [];
             this.nowPlaying.lrc.split('[').forEach(function (item, off) {
+                _this3.nowPlaying.lrcOffset = _this3.nowPlaying.lrcOffset ? _this3.nowPlaying.lrcOffset : 0;
                 // item -> [%d:%d.%d]%s
                 //          1  2  3  4
                 var f = function f(res) {
-                    return (res[1] * 60 + res[2] * 1) * 1000 + res[3].substr(0, 2) * 10 + _this3.lrcOffset;
+                    return (res[1] * 60 + res[2] * 1) * 1000 + res[3].substr(0, 2) * 10 + _this3.nowPlaying.lrcOffset;
                 };
 
                 if (item == '') // Ignore the empty lines.
@@ -498,7 +499,6 @@ var Player = function () {
         this.showLyrics = params.showLyrics ? params.showLyrics : false;
         this.dropRate = typeof params.dropRate != 'undefined' ? params.dropRate : 1;
         this.linearRegion = params.linearRegion ? params.linearRegion : [0, 1];
-        this.lrcOffset = params.lrcOffset ? params.lrcOffset : 0;
 
         // Initialize some global variables
         this.currentTrack = 0;
