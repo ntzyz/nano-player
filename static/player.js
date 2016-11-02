@@ -19,9 +19,9 @@ var Player = function () {
 
             // Create the stylesheet and HTML elements and append them to the parent node.
             var style = document.createElement('STYLE');
-            style.innerHTML = ['.cover {', '    position: absolute;', '    width: 100%;', '    height: 100%;', '    transition: all ease 0.3s;', '    color: white;', '    cursor: default;', '}', '.blur {', '    filter: blur(10px);', '}', '.hidden {', '    opacity: 0;', '}', 'h1.songTitle {', '    font-weight: normal;', '    margin: 1%;', '    font-size: 150%;', '    text-align: center;', '    white-space: pre;', '    display: inline-block;', '}', 'h2.songArtist {', '    font-weight: normal;', '    margin-top: 2%;', '    margin-bottom: 0;', '    font-size: 100%;', '    text-align: center;', '    line-height: 1em;', '}', 'div.lyrics {', '    font-weight: normal;', '    margin: 1%;', '    font-size: 80%;', '    text-align: center;', '}', '.progress {', '    position: absolute;', '    bottom: 5%;', '    left: 25%;', '    width: 50%;', '    height: 1%;', '    margin: 0 auto;', '    border: 1px solid white;', '}', '.controls {', '    position: absolute;', '    height: 20%;', '    width: 100%;', '    bottom: 35%;', '    text-align: center;', '}', '.visualizer {', '    position: absolute;', '    bottom: 7%;', '    left: 25%;', '    width: 50%;', '    height: 12%;', '    margin: 0 auto;', '}', 'i.fa {', '    min-width: 50px;', '    display: inline-block;', '    text-align: center;', '}', '.pointer {', '    cursor: pointer;', '}'].map(function (line) {
+            style.innerHTML = ['.cover {', '    position: absolute;', '    width: 100%;', '    height: 100%;', '    transition: all ease 0.3s;', '    color: white;', '    cursor: default;', '}', '.blur {', '    filter: blur(10px);', '}', '.hidden {', '    opacity: 0;', '}', 'h1.songTitle {', '    font-weight: normal;', '    margin: 1%;', '    font-size: 150%;', '    text-align: center;', '    white-space: pre;', '    display: inline-block;', '    /*transition: margin-left 0.04s*/', '}', 'h2.songArtist {', '    font-weight: normal;', '    margin-top: 2%;', '    margin-bottom: 0;', '    font-size: 100%;', '    text-align: center;', '    line-height: 1em;', '}', 'div.lyrics {', '    font-weight: normal;', '    margin: 1%;', '    font-size: 80%;', '    text-align: center;', '}', '.progress {', '    position: absolute;', '    bottom: 5%;', '    left: 25%;', '    width: 50%;', '    height: 1%;', '    margin: 0 auto;', '    border: 1px solid white;', '}', '.controls {', '    position: absolute;', '    height: 20%;', '    width: 100%;', '    bottom: 35%;', '    text-align: center;', '}', '.visualizer {', '    position: absolute;', '    bottom: 7%;', '    left: 25%;', '    width: 50%;', '    height: 12%;', '    margin: 0 auto;', '}', 'i.fa {', '    min-width: 50px;', '    display: inline-block;', '    text-align: center;', '}', '.pointer {', '    cursor: pointer;', '}'].map(function (line) {
                 line = line.trim();
-                if (line.indexOf('{') == line.length - 1) return '.__nano_player__ ' + line;
+                if (line[line.length - 1] == '{') return '.__nano_player__ ' + line;
                 return line;
             }).join(' ');
             style.setAttribute('scoped', '');
@@ -56,7 +56,7 @@ var Player = function () {
             controls.classList.add('controls');
 
             var playButton = document.createElement('I');
-            playButton.className = 'fa fa-play b';
+            playButton.className = 'fa fa-play';
             playButton.setAttribute('aria-hidden', 'true');
             playButton.style.fontSize = '3em';
             playButton.style.marginLeft = playButton.style.marginRight = '10%';
@@ -66,7 +66,7 @@ var Player = function () {
                 if (_this.uiStatus == 'unfocus') // Button is hidden, ignore this click event.
                     return;
                 event.stopPropagation(); // Stop parent nodes from getting the click event.
-                if (playButton.classList.contains('fa-play')) {
+                if (_this.domAudio.paused) {
                     _this.play();
                 } else {
                     _this.pause();
@@ -375,13 +375,22 @@ var Player = function () {
             }
         }
     }, {
+        key: 'flushStatus',
+        value: function flushStatus() {
+            if (this.domAudio.paused) {
+                this.uiCollection.playButton.classList.remove('fa-pause');
+                this.uiCollection.playButton.classList.add('fa-play');
+            } else {
+                this.uiCollection.playButton.classList.remove('fa-play');
+                this.uiCollection.playButton.classList.add('fa-pause');
+            }
+        }
+    }, {
         key: 'play',
         value: function play() {
             var _this4 = this;
 
             this.initLyrics();
-            this.uiCollection.playButton.classList.remove('fa-play');
-            this.uiCollection.playButton.classList.add('fa-pause');
             this.intervals.lyrics = setInterval(function () {
                 _this4.updateLyrics();
             }, 20);
@@ -389,15 +398,15 @@ var Player = function () {
                 _this4.renderVisualizer();
             }, 17);
             this.domAudio.play();
+            this.flushStatus();
         }
     }, {
         key: 'pause',
         value: function pause() {
-            this.uiCollection.playButton.classList.remove('fa-pause');
-            this.uiCollection.playButton.classList.add('fa-play');
             clearInterval(this.intervals.lyrics);
             clearInterval(this.intervals.visualizer);
             this.domAudio.pause();
+            this.flushStatus();
         }
     }, {
         key: 'nextTrack',
@@ -450,16 +459,16 @@ var Player = function () {
                     var songTitle = _this5.uiCollection.songTitle;
                     songTitle.innerText = songTitle.innerText + '        ';
                     var actualWidth = songTitle.clientWidth;
-                    var mleft = 20;
+                    var mleft = 40;
                     songTitle.innerText = songTitle.innerText + songTitle.innerText;
                     var renderMarq = function renderMarq() {
                         if (mleft < 0) songTitle.style.marginLeft = mleft + 'px';
-                        mleft -= 1;
+                        mleft -= 0.5;
                         if (mleft + actualWidth <= 0) {
-                            mleft = 20;
+                            mleft = 40;
                         }
                     };
-                    _this5.intervals.songTitleMarq = setInterval(renderMarq, 40);
+                    _this5.intervals.songTitleMarq = setInterval(renderMarq, 20);
                 })();
             }
 
