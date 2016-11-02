@@ -6,45 +6,42 @@ Nano Player
 
 [Demo page](https://dev.cczu.edu.cn/~ntzyz/)
 
-#### Status
+### How to use
 
-Working in progress
-
-Note that Internet Explorer 11 does not support `<audio>` with Advanced Audio Coding (a.k.a AAC), so the demo included in the repo will not work on IE11.
-
-Also, `autoStart` does not work on mobile browsers, set it to `false` seems to be a good choice.
-
-#### How to use
-
-It's quiet easy:
+Here is an example on how to use it:
 
 ``` html
 <div id="player"></div>
 <script src="player.js"></script>
 <script>
-let player = new Player({
-    parent: document.getElementById('player'),
-    maxBars: 32,
-    logarithmic: false,
-    fftSize: 512,
-    autoStart: true,
-    showVisualizer: true,
-    showProgressBar: true,
-    showLyrics: true,
-    enableBlur: true,
+let nanoPlayer = new Player({
+    parent: document.getElementById('player'),      // Required, the DOM element of container for our player
+    maxBars: 32,                // Optional, bar(or band) count for visualizer
+    logarithmic: false,         // Optional, logarithmic scale or linear scale
+    fftSize: 512,               // Optional, must be the power of 2 and between 32 and 32768
+    autoStart: true,            // Optional, doesn't work for mobile browser
+    showVisualizer: true,       // Optional, show visualizer or not
+    showProgressBar: true,      // Optional, show progress bar or not
+    showLyrics: true,           // Optional, show lyrics or not
+    enableBlur: true,           // Optional, enable the blur effect or not
     playList: [
         {
-            url: 'media/MYTH & ROID - STYX HELIX.aac',
-            cover: 'cover/MYTH & ROID - STYX HELIX.jpg',
-            artist: 'MYTH & ROID',
-            title: 'STYX HELIX',
-            lrc: '[00:00.00]This should be the content of the LyRiCs file.',
+            url: 'STYX HELIX.aac',      // Required, URL of the song.
+            cover: 'STYX HELIX.jpg',    // Recommend, album cover 
+            artist: 'MYTH & ROID',      // Recommend. artist of the song.
+            title: 'STYX HELIX',        // Recommend, song title
+            lrc: '[00:00.00]LyRiCs',    // Optional, content of the LyRiCs file.
+            lrcOffset: 0,               // Optional, lyrics offset for this song.
         },
     ]
 }
 </script>
 ```
 
-#### Licenses
+### Known issue
+Internet Explorer 11 does not support `<audio>` with Advanced Audio Coding (a.k.a AAC), so the demo included in the repo will not work on IE11.
+
+
+### Licenses
 
 MIT
