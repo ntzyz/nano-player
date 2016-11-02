@@ -324,10 +324,11 @@ class Player {
         // Part of lines with undefined content.
         let pending = [];
         this.nowPlaying.lrc.split('[').forEach((item, off) => {
+            this.nowPlaying.lrcOffset = this.nowPlaying.lrcOffset ? this.nowPlaying.lrcOffset : 0;
             // item -> [%d:%d.%d]%s
             //          1  2  3  4
             let f = res => {
-                return (res[1] * 60 + res[2] * 1) * 1000 + res[3].substr(0,2) * 10;
+                return (res[1] * 60 + res[2] * 1) * 1000 + res[3].substr(0,2) * 10 + this.nowPlaying.lrcOffset;
             };
 
             if (item == '')                 // Ignore the empty lines.

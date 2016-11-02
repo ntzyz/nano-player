@@ -260,10 +260,11 @@ var Player = function () {
             // Part of lines with undefined content.
             var pending = [];
             this.nowPlaying.lrc.split('[').forEach(function (item, off) {
+                _this3.nowPlaying.lrcOffset = _this3.nowPlaying.lrcOffset ? _this3.nowPlaying.lrcOffset : 0;
                 // item -> [%d:%d.%d]%s
                 //          1  2  3  4
                 var f = function f(res) {
-                    return (res[1] * 60 + res[2] * 1) * 1000 + res[3].substr(0, 2) * 10;
+                    return (res[1] * 60 + res[2] * 1) * 1000 + res[3].substr(0, 2) * 10 + _this3.nowPlaying.lrcOffset;
                 };
 
                 if (item == '') // Ignore the empty lines.
