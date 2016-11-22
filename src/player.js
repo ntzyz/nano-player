@@ -198,8 +198,7 @@ class Player {
 
         let legacyCover = document.createElement('DIV');
         legacyCover.style.zIndex = '-1';
-        legacyCover.style.width = '100%';
-        legacyCover.style.height = '100%';
+        legacyCover.classList.add('cover');
         legacyCover.innerHTML = [
             '<svg x="0px" y="0px" viewBox="0 0 489.164 489.164" style="width: 50%; height: 50%; padding-left: 25%; padding-top: 25%">',
             '<path d="M159.582,75.459v285.32c-14.274-10.374-32.573-16.616-52.5-16.616c-45.491,0-82.5,32.523-82.5,72.5s37.009,72.5,82.5,72.5',
@@ -250,7 +249,7 @@ class Player {
         container.addEventListener('click', event => {
             if (this.uiStatus == 'unfocus') {
                 if (this.enableBlur)
-                    [cover, ].forEach(elem => elem.classList.add('blur'));
+                    [cover, legacyCover].forEach(elem => elem.classList.add('blur'));
 
                 [playButton, prevButton, nextButton, progress].forEach(elem => {
                     elem.classList.add('pointer')
@@ -264,7 +263,7 @@ class Player {
             }
             else {
                 if (this.enableBlur)
-                    [cover, ].forEach(elem => elem.classList.remove('blur'));
+                    [cover, legacyCover].forEach(elem => elem.classList.remove('blur'));
 
                 [playButton, prevButton, nextButton, progress].forEach(elem => {
                     elem.classList.remove('pointer')
@@ -298,7 +297,8 @@ class Player {
             progressInner: progressInner,
             visualizer: visualizer,
             overlay: overlay,
-            cover: cover
+            cover: cover,
+            legacyCover: legacyCover
         }
     }
 

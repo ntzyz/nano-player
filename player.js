@@ -131,8 +131,7 @@ var Player = function () {
 
             var legacyCover = document.createElement('DIV');
             legacyCover.style.zIndex = '-1';
-            legacyCover.style.width = '100%';
-            legacyCover.style.height = '100%';
+            legacyCover.classList.add('cover');
             legacyCover.innerHTML = ['<svg x="0px" y="0px" viewBox="0 0 489.164 489.164" style="width: 50%; height: 50%; padding-left: 25%; padding-top: 25%">', '<path d="M159.582,75.459v285.32c-14.274-10.374-32.573-16.616-52.5-16.616c-45.491,0-82.5,32.523-82.5,72.5s37.009,72.5,82.5,72.5', '	s82.5-32.523,82.5-72.5V168.942l245-60.615v184.416c-14.274-10.374-32.573-16.616-52.5-16.616c-45.491,0-82.5,32.523-82.5,72.5', '	s37.009,72.5,82.5,72.5s82.5-32.523,82.5-72.5V0L159.582,75.459z"/>', '<g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g>', '</svg>'].join('\n');
             legacyCover.style.backgroundColor = 'white';
 
@@ -176,7 +175,7 @@ var Player = function () {
             // Switching from showing controllers, mediainfo, visualizer or not.
             container.addEventListener('click', function (event) {
                 if (_this.uiStatus == 'unfocus') {
-                    if (_this.enableBlur) [cover].forEach(function (elem) {
+                    if (_this.enableBlur) [cover, legacyCover].forEach(function (elem) {
                         return elem.classList.add('blur');
                     });
 
@@ -190,7 +189,7 @@ var Player = function () {
 
                     _this.uiStatus = 'focus';
                 } else {
-                    if (_this.enableBlur) [cover].forEach(function (elem) {
+                    if (_this.enableBlur) [cover, legacyCover].forEach(function (elem) {
                         return elem.classList.remove('blur');
                     });
 
@@ -226,7 +225,8 @@ var Player = function () {
                 progressInner: progressInner,
                 visualizer: visualizer,
                 overlay: overlay,
-                cover: cover
+                cover: cover,
+                legacyCover: legacyCover
             };
         }
     }, {
