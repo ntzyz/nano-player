@@ -1,4 +1,3 @@
-
 'use strict';
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -23,7 +22,7 @@ var Player = function () {
 
             // Create the stylesheet and HTML elements and append them to the parent node.
             var style = document.createElement('STYLE');
-            style.innerHTML = ['.cover {', '    position: absolute;', '    width: 100%;', '    height: 100%;', '    transition: all ease 0.3s;', '    color: white;', '    cursor: default;', '}', '.blur {', '    filter: blur(10px);', '}', '.hidden {', '    opacity: 0;', '}', 'h1.songTitle {', '    font-weight: normal;', '    margin: 1%;', '    font-size: 150%;', '    text-align: center;', '    white-space: pre;', '    display: inline-block;', '    /*transition: margin-left 0.04s*/', '}', 'h2.songArtist {', '    font-weight: normal;', '    margin-top: 2%;', '    margin-bottom: 0;', '    font-size: 100%;', '    text-align: center;', '    line-height: 1em;', '}', 'div.lyrics {', '    font-weight: normal;', '    margin: 1%;', '    font-size: 80%;', '    text-align: center;', '}', '.progress {', '    position: absolute;', '    bottom: 5%;', '    left: 25%;', '    width: 50%;', '    height: 1%;', '    margin: 0 auto;', '    border: 1px solid white;', '}', '.controls {', '    position: absolute;', '    height: 20%;', '    width: 100%;', '    bottom: 35%;', '    text-align: center;', '}', '.visualizer {', '    position: absolute;', '    bottom: 7%;', '    left: 25%;', '    width: 50%;', '    height: 12%;', '    margin: 0 auto;', '}', 'i.fa .controlButton {', '    min-width: 50px;', '    display: inline-block;', '    text-align: center;', '}', '.pointer {', '    cursor: pointer;', '}', '.outside-left {', '    margin-left: -100%;', '}', '.outside-right {', '    margin-left: 100%;', '}'].map(function (line) {
+            style.innerHTML = ['.cover {', '    position: absolute;', '    width: 100%;', '    height: 100%;', '    transition: all ease 0.3s;', '    color: white;', '    cursor: default;', '}', '.blur {', '    filter: blur(10px);', '}', '.hidden {', '    opacity: 0;', '}', 'h1.songTitle {', '    font-weight: normal;', '    margin: 1%;', '    font-size: 150%;', '    text-align: center;', '    white-space: pre;', '    display: inline-block;', '    /*transition: margin-left 0.04s*/', '}', 'h2.songArtist {', '    font-weight: normal;', '    margin-top: 2%;', '    margin-bottom: 0;', '    font-size: 100%;', '    text-align: center;', '    line-height: 1em;', '}', 'div.lyrics {', '    font-weight: normal;', '    margin: 1%;', '    font-size: 80%;', '    text-align: center;', '}', '.progress {', '    position: absolute;', '    bottom: 5%;', '    left: 25%;', '    width: 50%;', '    height: 1%;', '    margin: 0 auto;', '    border: 1px solid white;', '}', '.controls {', '    position: absolute;', '    height: 20%;', '    width: 100%;', '    bottom: 35%;', '    text-align: center;', '}', '.visualizer {', '    position: absolute;', '    bottom: 7%;', '    left: 25%;', '    width: 50%;', '    height: 12%;', '    margin: 0 auto;', '}', 'i.controlButton {', '    min-width: 50px;', '    display: inline-block;', '    text-align: center;', '}', 'i.navButton {', '    cursor: pointer;', '}', '.pointer {', '    cursor: pointer;', '}', '.outside-left {', '    margin-left: -100%;', '}', '.outside-right {', '    margin-left: 100%;', '}', '.playlist {', '    width: 300px;', '    height: 300px;', '    position: relative;', '}', '', '.headbar {', '    background-color: #000;', '    height: 44px;', '    width: 100%;', '    text-align: center;', '}', '', '.list {', '    width: 100%;', '    height: 64px;', '}', '', '.list>.face {', '    position: absolute;', '    height: 64px;', '    width: 64px;', '    display: inline-block;', '    background-size: cover;', '}', '', '.list>.title {', '    position: absolute;', '    padding-left: 1em; ', '    left: 64px;', '    right: 0;', '    display: inline-block;', '    height: 64px;', '    word-wrap: break-word;', '    overflow: hidden;', '    line-height: 64px;', '}'].map(function (line) {
                 line = line.trim();
                 if (line[line.length - 1] == '{') return '.__nano_player__ ' + line;
                 return line;
@@ -121,22 +120,18 @@ var Player = function () {
             visualizer.classList.add('visualizer');
 
             var playListButton = document.createElement('I');
-            playListButton.className = 'fa fa-list-ul';
+            playListButton.className = 'fa fa-list-ul navButton';
             playListButton.setAttribute('aria-hidden', 'true');
             playListButton.style.position = 'absolute';
             playListButton.style.bottom = '3%';
             playListButton.style.right = '3%';
             playListButton.style.fontSize = '1.2em';
             playListButton.style.color = 'white';
-            playListButton.addEventListener('click', function () {
+            playListButton.addEventListener('click', function (event) {
                 if (_this.uiStatus == 'unfocus') return;
                 event.stopPropagation();
                 container.classList.add('outside-left');
                 playList.classList.remove('outside-right');
-                setTimeout(function () {
-                    container.classList.remove('outside-left');
-                    playList.classList.add('outside-right');
-                }, 4000);
             });
 
             // Overlay for album cover, for bluring and darking
@@ -156,11 +151,77 @@ var Player = function () {
             legacyCover.style.backgroundColor = 'white';
 
             var playList = document.createElement('DIV');
-            playList.className = 'cover outside-right';
+            playList.className = 'cover outside-right playlist';
             playList.style.backgroundColor = 'black';
-            playList.innerHTML = '这里是（还在施工中的）播放列表（滑稽）';
 
-            // Append all elements to their parent elements.
+            var headbar = document.createElement('DIV');
+            headbar.className = 'headbar';
+
+            var returnButton = document.createElement('I');
+            returnButton.className = 'fa fa-chevron-left navButton';
+            returnButton.setAttribute('aria-hidden', 'true');
+            returnButton.style.position = 'absolute';
+            returnButton.style.left = '3%';
+            returnButton.style.fontSize = '1.2em';
+            returnButton.style.lineHeight = '44px';
+            returnButton.style.color = 'white';
+            returnButton.addEventListener('click', function (event) {
+                if (_this.uiStatus == 'unfocus') return;
+                event.stopPropagation();
+                container.classList.remove('outside-left');
+                playList.classList.add('outside-right');
+            });
+
+            var titleText = document.createElement('SPAN');
+            titleText.style.lineHeight = '44px';
+            titleText.innerHTML = '播放列表';
+
+            headbar.appendChild(returnButton);
+            headbar.appendChild(titleText);
+
+            playList.appendChild(headbar);
+
+            var _iteratorNormalCompletion = true;
+            var _didIteratorError = false;
+            var _iteratorError = undefined;
+
+            try {
+                for (var _iterator = this.playList[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+                    var song = _step.value;
+
+                    var item = document.createElement('DIV');
+                    item.className = 'list';
+
+                    var face = document.createElement('DIV');
+                    face.className = 'face';
+                    face.style.backgroundImage = 'url(\'' + song.cover + '\')';
+
+                    var title = document.createElement('DIV');
+                    title.className = 'title';
+                    title.innerHTML = song.title;
+
+                    item.appendChild(face);
+                    item.appendChild(title);
+
+                    playList.appendChild(item);
+                }
+
+                // Append all elements to their parent elements.
+            } catch (err) {
+                _didIteratorError = true;
+                _iteratorError = err;
+            } finally {
+                try {
+                    if (!_iteratorNormalCompletion && _iterator.return) {
+                        _iterator.return();
+                    }
+                } finally {
+                    if (_didIteratorError) {
+                        throw _iteratorError;
+                    }
+                }
+            }
+
             mediainfo.appendChild(songArtist);
             mediainfo.appendChild(songTitle);
             mediainfo.appendChild(lyrics);
