@@ -1,4 +1,3 @@
-
 'use strict';
 
 class Player {
@@ -81,10 +80,13 @@ class Player {
             '    height: 12%;',
             '    margin: 0 auto;',
             '}',
-            'i.fa .controlButton {',
+            'i.controlButton {',
             '    min-width: 50px;',
             '    display: inline-block;',
             '    text-align: center;',
+            '}',
+            'i.navButton {',
+            '    cursor: pointer;',
             '}',
             '.pointer {',
             '    cursor: pointer;',
@@ -94,6 +96,43 @@ class Player {
             '}',
             '.outside-right {',
             '    margin-left: 100%;',
+            '}',
+            '.playlist {',
+            '    width: 300px;',
+            '    height: 300px;',
+            '    position: relative;',
+            '}',
+            '',
+            '.headbar {',
+            '    background-color: #000;',
+            '    height: 44px;',
+            '    width: 100%;',
+            '    text-align: center;',
+            '}',
+            '',
+            '.list {',
+            '    width: 100%;',
+            '    height: 64px;',
+            '}',
+            '',
+            '.list>.face {',
+            '    position: absolute;',
+            '    height: 64px;',
+            '    width: 64px;',
+            '    display: inline-block;',
+            '    background-size: cover;',
+            '}',
+            '',
+            '.list>.title {',
+            '    position: absolute;',
+            '    padding-left: 1em; ',
+            '    left: 64px;',
+            '    right: 0;',
+            '    display: inline-block;',
+            '    height: 64px;',
+            '    word-wrap: break-word;',
+            '    overflow: hidden;',
+            '    line-height: 64px;',
             '}',
         ].map(line => {
             line = line.trim();
@@ -140,22 +179,21 @@ class Player {
 
         // play <-> pause
         playButton.addEventListener('click', event => {
-            if (this.uiStatus == 'unfocus')         // Button is hidden, ignore this click event.
+            if (this.uiStatus == 'unfocus') // Button is hidden, ignore this click event.
                 return;
-            event.stopPropagation();                // Stop parent nodes from getting the click event.
+            event.stopPropagation(); // Stop parent nodes from getting the click event.
             if (this.domAudio.paused) {
                 this.play();
-            }
-            else {
+            } else {
                 this.pause();
             }
         });
-        
+
         let nextButton = document.createElement('I');
         nextButton.className = 'fa fa-forward controlButton';
         nextButton.setAttribute('aria-hidden', 'true');
         nextButton.style.fontSize = '3em';
-        nextButton.addEventListener('click', event => {    // Same as above.
+        nextButton.addEventListener('click', event => { // Same as above.
             if (this.uiStatus == 'unfocus')
                 return;
             event.stopPropagation();
@@ -180,7 +218,7 @@ class Player {
             if (this.uiStatus == 'unfocus')
                 return;
             event.stopPropagation();
-            let {left} = progress.getBoundingClientRect();
+            let { left } = progress.getBoundingClientRect();
             this.domAudio.currentTime = this.domAudio.duration * (event.clientX - left) / progress.clientWidth;
             this.renderVisualizer();
         });
@@ -194,23 +232,19 @@ class Player {
         visualizer.classList.add('visualizer');
 
         let playListButton = document.createElement('I');
-        playListButton.className = 'fa fa-list-ul';
+        playListButton.className = 'fa fa-list-ul navButton';
         playListButton.setAttribute('aria-hidden', 'true');
         playListButton.style.position = 'absolute';
         playListButton.style.bottom = '3%';
         playListButton.style.right = '3%';
         playListButton.style.fontSize = '1.2em';
         playListButton.style.color = 'white';
-        playListButton.addEventListener('click', () => {
+        playListButton.addEventListener('click', event => {
             if (this.uiStatus == 'unfocus')
                 return;
             event.stopPropagation();
             container.classList.add('outside-left');
             playList.classList.remove('outside-right');
-            setTimeout(function() {
-                container.classList.remove('outside-left');
-                playList.classList.add('outside-right');
-            }, 4000)
         })
 
         // Overlay for album cover, for bluring and darking
@@ -237,9 +271,55 @@ class Player {
         legacyCover.style.backgroundColor = 'white';
 
         let playList = document.createElement('DIV');
-        playList.className = 'cover outside-right';
+        playList.className = 'cover outside-right playlist';
         playList.style.backgroundColor = 'black';
-        playList.innerHTML = '这里是（还在施工中的）播放列表（滑稽）';
+
+        let headbar = document.createElement('DIV');
+        headbar.className = 'headbar';
+
+        let returnButton = document.createElement('I');
+        returnButton.className = 'fa fa-chevron-left navButton';
+        returnButton.setAttribute('aria-hidden', 'true');
+        returnButton.style.position = 'absolute';
+        returnButton.style.left = '3%';
+        returnButton.style.fontSize = '1.2em';
+        returnButton.style.lineHeight = '44px';
+        returnButton.style.color = 'white';
+        returnButton.addEventListener('click', event => {
+            if (this.uiStatus == 'unfocus')
+                return;
+            event.stopPropagation();
+            container.classList.remove('outside-left');
+            playList.classList.add('outside-right');
+        });
+
+        let titleText = document.createElement('SPAN');
+        titleText.style.lineHeight = '44px';
+        titleText.innerHTML = '播放列表';
+
+        headbar.appendChild(returnButton);
+        headbar.appendChild(titleText);
+
+        playList.appendChild(headbar);
+
+        for (let song of this.playList) {
+            let item = document.createElement('DIV');
+            item.className = 'list';
+
+            let face = document.createElement('DIV');
+            face.className = 'face';
+            face.style.backgroundImage = `url('${song.cover}')`;
+
+
+            let title = document.createElement('DIV');
+            title.className = 'title';
+            title.innerHTML = song.title;
+
+            item.appendChild(face);
+            item.appendChild(title);
+
+            playList.appendChild(item);
+        }
 
 
         // Append all elements to their parent elements.
@@ -295,8 +375,7 @@ class Player {
                 })
 
                 this.uiStatus = 'focus';
-            }
-            else {
+            } else {
                 if (this.enableBlur)
                     [cover, legacyCover].forEach(elem => elem.classList.remove('blur'));
 
@@ -352,10 +431,9 @@ class Player {
             this.audio.source.connect(this.audio.analyser);
             this.audio.source.connect(this.audio.ctx.destination);
             this.freq = new Uint8Array(this.audio.analyser.frequencyBinCount)
-        }
-        catch (ex) {
+        } catch (ex) {
             this.audio = null;
-            console.log('Failed on initAudio');     // doing nothing on unsupported browsers.
+            console.log('Failed on initAudio'); // doing nothing on unsupported browsers.
         }
         this.domAudio.addEventListener('ended', () => {
             this.nextTrack();
@@ -384,8 +462,7 @@ class Player {
                     this.lrcNode.innerText = this.lyrics.table[this.lyrics.lines].lyric;
                     this.lyrics.lines++;
                 }
-            }
-            catch(e) {
+            } catch (e) {
                 clearInterval(this.intervals.lyrics);
             }
         }
@@ -407,16 +484,16 @@ class Player {
             // item -> [%d:%d.%d]%s
             //          1  2  3  4
             let f = res => {
-                return (res[1] * 60 + res[2] * 1) * 1000 + res[3].substr(0,2) * 10 + this.nowPlaying.lrcOffset;
+                return (res[1] * 60 + res[2] * 1) * 1000 + res[3].substr(0, 2) * 10 + this.nowPlaying.lrcOffset;
             };
 
-            if (item == '')                 // Ignore the empty lines.
+            if (item == '') // Ignore the empty lines.
                 return;
-            if (item[0] != '[')             // Recover the line.
+            if (item[0] != '[') // Recover the line.
                 item = '[' + item;
 
             let lyric = item.match(/\[(\d+):(\d+).(\d+)\](.*)/);
-            if (lyric[4] == '') {           // Content unedfined, push current offset into pending list.
+            if (lyric[4] == '') { // Content unedfined, push current offset into pending list.
                 pending.push(off);
                 let offset = f(lyric);
                 this.lyrics.table.push({
@@ -426,16 +503,16 @@ class Player {
                 return;
             }
             let offset = f(lyric);
-            this.lyrics.table.push({        // Pushing parsed result into the lyrics table.
+            this.lyrics.table.push({ // Pushing parsed result into the lyrics table.
                 offset: offset,
                 lyric: lyric[4],
             });
-            while (pending.length > 0) {    // Filling the lines which content is undefined.
+            while (pending.length > 0) { // Filling the lines which content is undefined.
                 let off = pending.shift() - 1;
                 this.lyrics.table[off].lyric = lyric[4];
             }
         });
-        this.lyrics.table.sort((a, b) => {  // Sort the table by offset.
+        this.lyrics.table.sort((a, b) => { // Sort the table by offset.
             return a.offset - b.offset;
         })
         if (!this.lyrics.hasListener) {
@@ -445,56 +522,56 @@ class Player {
         this.lyrics.lines = 0;
     }
 
-    updateBar(offset, value){
+    updateBar(offset, value) {
         let bar = this.barArray[offset];
         if (!bar)
             return;
 
         // Converts a number to a percentage
         value /= 2.56;
-        
+
         // Only in the drop
-        let prevValue = bar.style.height.substring(0, bar.style.height.length-1);
+        let prevValue = bar.style.height.substring(0, bar.style.height.length - 1);
         prevValue = parseFloat(prevValue);
-        if(value < prevValue){
+        if (value < prevValue) {
             let dist = prevValue - value;
             value += dist * (1 - this.dropRate);
         }
         bar.style.height = value + '%';
     }
 
-    renderVisualizer()  {
+    renderVisualizer() {
         if (this.showProgressBar)
-            this.progressBar.style.width = 100*Math.min((this.domAudio.currentTime / this.domAudio.duration), 1) + '%';
+            this.progressBar.style.width = 100 * Math.min((this.domAudio.currentTime / this.domAudio.duration), 1) + '%';
         if (!this.showVisualizer || this.audio === null)
             return;
         this.audio.analyser.getByteFrequencyData(this.freq);
 
-        if(this.domAudio.paused)
+        if (this.domAudio.paused)
             return;
 
         if (this.logarithmic) {
             for (let i = 0; i != this.barCount; ++i) {
-                let sum = 0, cnt = 0;
+                let sum = 0,
+                    cnt = 0;
                 let width = Math.log(this.audio.analyser.frequencyBinCount) / this.barCount;
 
-                for (let j = Math.exp((i-1) * width);j <= Math.exp((i) * width); ++j) {
+                for (let j = Math.exp((i - 1) * width); j <= Math.exp((i) * width); ++j) {
                     sum += this.freq[Math.ceil(j)];
                     cnt++;
                 }
                 let value = sum / cnt;
                 this.updateBar(i, value);
             }
-        }
-        else {
+        } else {
             let width = (this.linearRegion[1] - this.linearRegion[0]) * this.audio.analyser.frequencyBinCount;
             for (let i = 0; i < this.barCount; ++i) {
                 let sum = 0;
                 for (let j = 0; j < width / this.barCount; ++j) {
                     let offset = i * (width / this.barCount) + j + this.audio.analyser.frequencyBinCount * this.linearRegion[0];
                     sum += this.freq[Math.ceil(offset)];
-                }                
-                let value = sum / (width / this.barCount);                
+                }
+                let value = sum / (width / this.barCount);
                 this.updateBar(i, value);
             }
         }
@@ -504,8 +581,7 @@ class Player {
         if (this.domAudio.paused) {
             this.uiCollection.playButton.classList.remove('fa-pause');
             this.uiCollection.playButton.classList.add('fa-play');
-        }
-        else {
+        } else {
             this.uiCollection.playButton.classList.remove('fa-play');
             this.uiCollection.playButton.classList.add('fa-pause');
         }
@@ -513,8 +589,8 @@ class Player {
 
     play() {
         this.initLyrics();
-        this.intervals.lyrics = setInterval(() => {this.updateLyrics()}, 20);
-        this.intervals.visualizer = setInterval(() => {this.renderVisualizer()}, 17);
+        this.intervals.lyrics = setInterval(() => { this.updateLyrics() }, 20);
+        this.intervals.visualizer = setInterval(() => { this.renderVisualizer() }, 17);
         this.domAudio.play();
         this.flushStatus();
     }
@@ -551,8 +627,7 @@ class Player {
         if (this.nowPlaying.cover) {
             this.uiCollection.cover.style.backgroundImage = `url('${this.nowPlaying.cover}')`;
             this.uiCollection.cover.style.backgroundSize = 'cover';
-        }
-        else {
+        } else {
             this.uiCollection.cover.style.backgroundSize = '50%';
             //this.uiCollection.cover.style.backgroundImage = `url('default.svg')`;
             this.uiCollection.cover.style.backgroundRepeat = 'no-repeat';
@@ -592,7 +667,7 @@ class Player {
     constructor(params) {
         // Load all the preferences.
         this.element = params.parent;
-        this.style = params.style || {}; 
+        this.style = params.style || {};
         this.playList = params.playList;
         this.barCount = params.maxBars ? params.maxBars : 128;
         this.logarithmic = params.logarithmic ? params.logarithmic : false;
@@ -615,7 +690,7 @@ class Player {
         this.initAudio();
         this.initLyrics();
         this.initVisualizer();
-        this.reinit();      // Immediate fill the data of now playing song.
+        this.reinit(); // Immediate fill the data of now playing song.
 
         // let's rock and roll.
         if (this.autoStart)
