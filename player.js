@@ -22,7 +22,7 @@ var Player = function () {
 
             // Create the stylesheet and HTML elements and append them to the parent node.
             var style = document.createElement('STYLE');
-            style.innerHTML = ['.cover {', '    position: absolute;', '    width: 100%;', '    height: 100%;', '    transition: all ease 0.3s;', '    color: white;', '    cursor: default;', '}', '.blur {', '    filter: blur(10px);', '}', '.hidden {', '    opacity: 0;', '}', 'h1.songTitle {', '    font-weight: normal;', '    margin: 1%;', '    font-size: 150%;', '    text-align: center;', '    white-space: pre;', '    display: inline-block;', '    /*transition: margin-left 0.04s*/', '}', 'h2.songArtist {', '    font-weight: normal;', '    margin-top: 2%;', '    margin-bottom: 0;', '    font-size: 100%;', '    text-align: center;', '    line-height: 1em;', '}', 'div.lyrics {', '    font-weight: normal;', '    margin: 1%;', '    font-size: 80%;', '    text-align: center;', '}', '.progress {', '    position: absolute;', '    bottom: 5%;', '    left: 25%;', '    width: 50%;', '    height: 1%;', '    margin: 0 auto;', '    border: 1px solid white;', '}', '.controls {', '    position: absolute;', '    height: 20%;', '    width: 100%;', '    bottom: 35%;', '    text-align: center;', '}', '.visualizer {', '    position: absolute;', '    bottom: 7%;', '    left: 25%;', '    width: 50%;', '    height: 12%;', '    margin: 0 auto;', '}', 'i.controlButton {', '    min-width: 50px;', '    display: inline-block;', '    text-align: center;', '}', 'i.navButton {', '    cursor: pointer;', '}', '.pointer {', '    cursor: pointer;', '}', '.outside-left {', '    margin-left: -100%;', '}', '.outside-right {', '    margin-left: 100%;', '}', '.playlist {', '    width: 300px;', '    height: 300px;', '    position: relative;', '}', '', '.headbar {', '    background-color: #000;', '    height: 44px;', '    width: 100%;', '    text-align: center;', '}', '', '.list {', '    width: 100%;', '    height: 64px;', '}', '', '.list>.face {', '    position: absolute;', '    height: 64px;', '    width: 64px;', '    display: inline-block;', '    background-size: cover;', '}', '', '.list>.title {', '    position: absolute;', '    padding-left: 1em; ', '    left: 64px;', '    right: 0;', '    display: inline-block;', '    height: 64px;', '    word-wrap: break-word;', '    overflow: hidden;', '    line-height: 64px;', '}'].map(function (line) {
+            style.innerHTML = ['.cover {', '    position: absolute;', '    width: 100%;', '    height: 100%;', '    transition: all ease 0.3s;', '    color: white;', '    cursor: default;', '}', '.blur {', '    filter: blur(10px);', '}', '.hidden {', '    opacity: 0;', '}', 'h1.songTitle {', '    font-weight: normal;', '    margin: 1%;', '    font-size: 150%;', '    text-align: center;', '    white-space: pre;', '    display: inline-block;', '    /*transition: margin-left 0.04s*/', '}', 'h2.songArtist {', '    font-weight: normal;', '    margin-top: 2%;', '    margin-bottom: 0;', '    font-size: 100%;', '    text-align: center;', '    line-height: 1em;', '}', 'div.lyrics {', '    font-weight: normal;', '    margin: 1%;', '    font-size: 80%;', '    text-align: center;', '}', '.progress {', '    position: absolute;', '    bottom: 5%;', '    left: 25%;', '    width: 50%;', '    height: 1%;', '    margin: 0 auto;', '    border: 1px solid white;', '}', '.controls {', '    position: absolute;', '    height: 20%;', '    width: 100%;', '    bottom: 35%;', '    text-align: center;', '}', '.visualizer {', '    position: absolute;', '    bottom: 7%;', '    left: 25%;', '    width: 50%;', '    height: 12%;', '    margin: 0 auto;', '}', 'i.controlButton {', '    min-width: 50px;', '    display: inline-block;', '    text-align: center;', '}', 'i.navButton {', '    cursor: pointer;', '}', '.pointer {', '    cursor: pointer;', '}', '.outside-left {', '    margin-left: -100%;', '}', '.outside-right {', '    margin-left: 100%;', '}', '.playlist {', '    position: absolute;', '    overflow: hidden;', '}', '', '.headbar {', '    background-color: #000;', '    height: 44px;', '    width: 100%;', '    text-align: center;', '    position: absolute;', '}', '', '.list {', '    width: 100%;', '    height: 64px;', '}', '.listContainer {', '    position: absolute;', '    top: 44px;', '    left: 0;', '    right: -18px;', '    bottom: 0;', '    overflow-y: scroll;', '}', '.list>.face {', '    position: absolute;', '    height: 64px;', '    width: 64px;', '    display: inline-block;', '    background-size: cover;', '}', '', '.list>.title {', '    position: absolute;', '    padding-left: 1em; ', '    left: 64px;', '    right: 0;', '    display: inline-block;', '    height: 64px;', '    text-overflow: ellipsis;', '    overflow: hidden;', '    line-height: 64px;', '}'].map(function (line) {
                 line = line.trim();
                 if (line[line.length - 1] == '{') return '.__nano_player__ ' + line;
                 return line;
@@ -181,6 +181,14 @@ var Player = function () {
 
             playList.appendChild(headbar);
 
+            var listContainer = document.createElement('DIV');
+            listContainer.className = 'listContainer';
+            playList.appendChild(listContainer);
+
+            var listWrapper = document.createElement('DIV');
+            listWrapper.style.paddingRight = '18px';
+            listContainer.appendChild(listWrapper);
+
             var _iteratorNormalCompletion = true;
             var _didIteratorError = false;
             var _iteratorError = undefined;
@@ -203,7 +211,7 @@ var Player = function () {
                     item.appendChild(face);
                     item.appendChild(title);
 
-                    playList.appendChild(item);
+                    listWrapper.appendChild(item);
                 }
 
                 // Append all elements to their parent elements.

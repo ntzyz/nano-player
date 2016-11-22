@@ -98,9 +98,8 @@ class Player {
             '    margin-left: 100%;',
             '}',
             '.playlist {',
-            '    width: 300px;',
-            '    height: 300px;',
-            '    position: relative;',
+            '    position: absolute;',
+            '    overflow: hidden;',
             '}',
             '',
             '.headbar {',
@@ -108,13 +107,21 @@ class Player {
             '    height: 44px;',
             '    width: 100%;',
             '    text-align: center;',
+            '    position: absolute;',
             '}',
             '',
             '.list {',
             '    width: 100%;',
             '    height: 64px;',
             '}',
-            '',
+            '.listContainer {',
+            '    position: absolute;',
+            '    top: 44px;',
+            '    left: 0;',
+            '    right: -18px;',
+            '    bottom: 0;',
+            '    overflow-y: scroll;',
+            '}',
             '.list>.face {',
             '    position: absolute;',
             '    height: 64px;',
@@ -130,7 +137,7 @@ class Player {
             '    right: 0;',
             '    display: inline-block;',
             '    height: 64px;',
-            '    word-wrap: break-word;',
+            '    text-overflow: ellipsis;',
             '    overflow: hidden;',
             '    line-height: 64px;',
             '}',
@@ -302,6 +309,14 @@ class Player {
 
         playList.appendChild(headbar);
 
+        let listContainer = document.createElement('DIV');
+        listContainer.className = 'listContainer';
+        playList.appendChild(listContainer);
+
+        let listWrapper = document.createElement('DIV');
+        listWrapper.style.paddingRight = '18px';
+        listContainer.appendChild(listWrapper);
+
         for (let song of this.playList) {
             let item = document.createElement('DIV');
             item.className = 'list';
@@ -318,7 +333,7 @@ class Player {
             item.appendChild(face);
             item.appendChild(title);
 
-            playList.appendChild(item);
+            listWrapper.appendChild(item);
         }
 
 
