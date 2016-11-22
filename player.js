@@ -11,6 +11,9 @@ var Player = function () {
         value: function initUI() {
             var _this = this;
 
+            this.element.style.position = 'relative';
+            this.element.style.width = this.style.width || '300px';
+            this.element.style.height = this.style.height || '300px';
             this.element.classList.add('__nano_player__');
 
             this.uiStatus = 'unfocus';
@@ -126,6 +129,13 @@ var Player = function () {
             cover.classList.add('cover');
             cover.style.zIndex = '0';
 
+            var legacyCover = document.createElement('DIV');
+            legacyCover.style.zIndex = '-1';
+            legacyCover.style.width = '100%';
+            legacyCover.style.height = '100%';
+            legacyCover.innerHTML = ['<svg x="0px" y="0px" viewBox="0 0 489.164 489.164" style="width: 50%; height: 50%; padding-left: 25%; padding-top: 25%">', '<path d="M159.582,75.459v285.32c-14.274-10.374-32.573-16.616-52.5-16.616c-45.491,0-82.5,32.523-82.5,72.5s37.009,72.5,82.5,72.5', '	s82.5-32.523,82.5-72.5V168.942l245-60.615v184.416c-14.274-10.374-32.573-16.616-52.5-16.616c-45.491,0-82.5,32.523-82.5,72.5', '	s37.009,72.5,82.5,72.5s82.5-32.523,82.5-72.5V0L159.582,75.459z"/>', '<g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g>', '</svg>'].join('\n');
+            legacyCover.style.backgroundColor = 'white';
+
             // Append all elements to their parent elements.
             mediainfo.appendChild(songArtist);
             mediainfo.appendChild(songTitle);
@@ -140,6 +150,7 @@ var Player = function () {
             container.appendChild(controller);
             container.appendChild(overlay);
             container.appendChild(cover);
+            container.appendChild(legacyCover);
 
             this.element.appendChild(container);
 
@@ -165,7 +176,9 @@ var Player = function () {
             // Switching from showing controllers, mediainfo, visualizer or not.
             container.addEventListener('click', function (event) {
                 if (_this.uiStatus == 'unfocus') {
-                    if (_this.enableBlur) cover.classList.add('blur');
+                    if (_this.enableBlur) [cover].forEach(function (elem) {
+                        return elem.classList.add('blur');
+                    });
 
                     [playButton, prevButton, nextButton, progress].forEach(function (elem) {
                         elem.classList.add('pointer');
@@ -177,7 +190,9 @@ var Player = function () {
 
                     _this.uiStatus = 'focus';
                 } else {
-                    if (_this.enableBlur) cover.classList.remove('blur');
+                    if (_this.enableBlur) [cover].forEach(function (elem) {
+                        return elem.classList.remove('blur');
+                    });
 
                     [playButton, prevButton, nextButton, progress].forEach(function (elem) {
                         elem.classList.remove('pointer');
@@ -249,7 +264,27 @@ var Player = function () {
             if (!this.showLyrics) {
                 return;
             }
+            this.updateLyrics = function () {
+                try {
+                    var currentOffset = _this3.domAudio.currentTime * 1000;
+                    var lastLines = _this3.lyrics.lines;
+
+                    if (_this3.lyrics.table.length == _this3.lyrics.lines) clearInterval(_this3.intervals.lyrics);
+                    while (_this3.lyrics.table[_this3.lyrics.lines - 1] && _this3.lyrics.table[_this3.lyrics.lines - 1].offset > currentOffset) {
+                        _this3.lyrics.lines--;
+                    }
+                    while (_this3.lyrics.table[_this3.lyrics.lines].offset <= currentOffset) {
+                        _this3.lrcNode.innerText = _this3.lyrics.table[_this3.lyrics.lines].lyric;
+                        _this3.lyrics.lines++;
+                    }
+                } catch (e) {
+                    clearInterval(_this3.intervals.lyrics);
+                }
+            };
             if (!this.nowPlaying.lrc) {
+                if (this.lyrics.hasListener) {
+                    this.domAudio.removeEventListener('seeking', this.updateLyrics);
+                }
                 // No lyric found, no need to go further.
                 this.lyrics = {};
                 this.lrcNode.innerText = '♪～(￣ε￣)';
@@ -298,29 +333,11 @@ var Player = function () {
                 // Sort the table by offset.
                 return a.offset - b.offset;
             });
-            this.domAudio.addEventListener('seeking', function () {
-                _this3.updateLyrics(); // Immediate update the lyric when seeking.
-            });
-            this.lyrics.lines = 0;
-        }
-    }, {
-        key: 'updateLyrics',
-        value: function updateLyrics() {
-            try {
-                var currentOffset = this.domAudio.currentTime * 1000;
-                var lastLines = this.lyrics.lines;
-
-                if (this.lyrics.table.length == this.lyrics.lines) clearInterval(this.intervals.lyrics);
-                while (this.lyrics.table[this.lyrics.lines - 1] && this.lyrics.table[this.lyrics.lines - 1].offset > currentOffset) {
-                    this.lyrics.lines--;
-                }
-                while (this.lyrics.table[this.lyrics.lines].offset <= currentOffset) {
-                    this.lrcNode.innerText = this.lyrics.table[this.lyrics.lines].lyric;
-                    this.lyrics.lines++;
-                }
-            } catch (e) {
-                clearInterval(this.intervals.lyrics);
+            if (!this.lyrics.hasListener) {
+                this.domAudio.addEventListener('seeking', this.updateLyrics);
+                this.lyrics.hasListener = true;
             }
+            this.lyrics.lines = 0;
         }
     }, {
         key: 'updateBar',
@@ -441,7 +458,7 @@ var Player = function () {
                 this.uiCollection.cover.style.backgroundSize = 'cover';
             } else {
                 this.uiCollection.cover.style.backgroundSize = '50%';
-                this.uiCollection.cover.style.backgroundImage = 'url(\'default.svg\')';
+                //this.uiCollection.cover.style.backgroundImage = `url('default.svg')`;
                 this.uiCollection.cover.style.backgroundRepeat = 'no-repeat';
                 this.uiCollection.cover.style.backgroundPosition = 'center';
             }
@@ -488,6 +505,7 @@ var Player = function () {
 
         // Load all the preferences.
         this.element = params.parent;
+        this.style = params.style || {};
         this.playList = params.playList;
         this.barCount = params.maxBars ? params.maxBars : 128;
         this.logarithmic = params.logarithmic ? params.logarithmic : false;
@@ -497,7 +515,7 @@ var Player = function () {
         this.showProgressBar = params.showProgressBar ? params.showProgressBar : true;;
         this.enableBlur = params.enableBlur ? params.enableBlur : true;
         this.showLyrics = params.showLyrics ? params.showLyrics : false;
-        this.dropRate = typeof params.dropRate != 'undefined' ? params.dropRate : 1;
+        this.dropRate = typeof params.dropRate !== 'undefined' ? params.dropRate : 1;
         this.linearRegion = params.linearRegion ? params.linearRegion : [0, 1];
 
         // Initialize some global variables
