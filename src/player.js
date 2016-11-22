@@ -565,7 +565,7 @@ class Player {
         this.autoStart = params.autoStart ? params.autoStart : false;
         this.showVisualizer = params.showVisualizer ? params.showVisualizer : true;
         this.showProgressBar = params.showProgressBar ? params.showProgressBar : true;;
-        this.enableBlur = params.enableBlur ? params.enableBlur : true;
+        this.enableBlur = typeof params.enableBlur !== 'undefined' ? params.enableBlur : true;
         this.showLyrics = params.showLyrics ? params.showLyrics : false;
         this.dropRate = typeof params.dropRate !== 'undefined' ? params.dropRate : 1;
         this.linearRegion = params.linearRegion ? params.linearRegion : [0, 1];

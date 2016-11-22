@@ -264,6 +264,11 @@ var Player = function () {
             if (!this.showLyrics) {
                 return;
             }
+
+            // We need this function to be an arrow function, as we need the this of 
+            // the whole class but not HTMLAudioElement.
+            // Also, the reason for not using anonymous lambda function is that 
+            // cleatInterval would treat them as different event handler.
             this.updateLyrics = function () {
                 try {
                     var currentOffset = _this3.domAudio.currentTime * 1000;
@@ -513,7 +518,7 @@ var Player = function () {
         this.autoStart = params.autoStart ? params.autoStart : false;
         this.showVisualizer = params.showVisualizer ? params.showVisualizer : true;
         this.showProgressBar = params.showProgressBar ? params.showProgressBar : true;;
-        this.enableBlur = params.enableBlur ? params.enableBlur : true;
+        this.enableBlur = typeof params.enableBlur !== 'undefined' ? params.enableBlur : true;
         this.showLyrics = params.showLyrics ? params.showLyrics : false;
         this.dropRate = typeof params.dropRate !== 'undefined' ? params.dropRate : 1;
         this.linearRegion = params.linearRegion ? params.linearRegion : [0, 1];
