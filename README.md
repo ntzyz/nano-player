@@ -16,6 +16,10 @@ Here is an example on how to use it:
 <script>
 let nanoPlayer = new Player({
     parent: document.getElementById('player'),      // Required, the DOM element of container for our player
+    style: {
+        width: '300px',
+        height: '300px',
+    },
     maxBars: 32,                // Optional, bar(or band) count for visualizer
     logarithmic: false,         // Optional, logarithmic scale or linear scale
     fftSize: 512,               // Optional, must be the power of 2 and between 32 and 32768
@@ -37,10 +41,6 @@ let nanoPlayer = new Player({
 }
 </script>
 ```
-
-### Known issue
-Internet Explorer 11 does not support `<audio>` with Advanced Audio Coding (a.k.a AAC), so the demo included in the repo will not work on IE11.
-
 
 ### Licenses
 
