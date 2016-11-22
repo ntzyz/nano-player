@@ -10,6 +10,7 @@ class Player {
         this.element.style.position = 'relative';
         this.element.style.width = this.style.width || '300px';
         this.element.style.height = this.style.height || '300px';
+        this.element.style.overflow = 'hidden';
         this.element.classList.add('__nano_player__');
 
         this.uiStatus = 'unfocus';
@@ -80,13 +81,19 @@ class Player {
             '    height: 12%;',
             '    margin: 0 auto;',
             '}',
-            'i.fa {',
+            'i.fa .controlButton {',
             '    min-width: 50px;',
             '    display: inline-block;',
             '    text-align: center;',
             '}',
             '.pointer {',
             '    cursor: pointer;',
+            '}',
+            '.outside-left {',
+            '    margin-left: -100%;',
+            '}',
+            '.outside-right {',
+            '    margin-left: 100%;',
             '}',
         ].map(line => {
             line = line.trim();
@@ -126,7 +133,7 @@ class Player {
         controls.classList.add('controls');
 
         let playButton = document.createElement('I');
-        playButton.className = 'fa fa-play';
+        playButton.className = 'fa fa-play controlButton';
         playButton.setAttribute('aria-hidden', 'true');
         playButton.style.fontSize = '3em';
         playButton.style.marginLeft = playButton.style.marginRight = '10%';
@@ -145,7 +152,7 @@ class Player {
         });
         
         let nextButton = document.createElement('I');
-        nextButton.className = 'fa fa-forward';
+        nextButton.className = 'fa fa-forward controlButton';
         nextButton.setAttribute('aria-hidden', 'true');
         nextButton.style.fontSize = '3em';
         nextButton.addEventListener('click', event => {    // Same as above.
@@ -156,7 +163,7 @@ class Player {
         });
 
         let prevButton = document.createElement('I');
-        prevButton.className = 'fa fa-backward';
+        prevButton.className = 'fa fa-backward controlButton';
         prevButton.setAttribute('aria-hidden', 'true');
         prevButton.style.fontSize = '3em';
         prevButton.addEventListener('click', event => {
@@ -186,6 +193,26 @@ class Player {
         let visualizer = document.createElement('DIV');
         visualizer.classList.add('visualizer');
 
+        let playListButton = document.createElement('I');
+        playListButton.className = 'fa fa-list-ul';
+        playListButton.setAttribute('aria-hidden', 'true');
+        playListButton.style.position = 'absolute';
+        playListButton.style.bottom = '3%';
+        playListButton.style.right = '3%';
+        playListButton.style.fontSize = '1.2em';
+        playListButton.style.color = 'white';
+        playListButton.addEventListener('click', () => {
+            if (this.uiStatus == 'unfocus')
+                return;
+            event.stopPropagation();
+            container.classList.add('outside-left');
+            playList.classList.remove('outside-right');
+            setTimeout(function() {
+                container.classList.remove('outside-left');
+                playList.classList.add('outside-right');
+            }, 4000)
+        })
+
         // Overlay for album cover, for bluring and darking
         let overlay = document.createElement('DIV');
         overlay.classList.add('cover');
@@ -209,6 +236,12 @@ class Player {
         ].join('\n');
         legacyCover.style.backgroundColor = 'white';
 
+        let playList = document.createElement('DIV');
+        playList.className = 'cover outside-right';
+        playList.style.backgroundColor = 'black';
+        playList.innerHTML = '这里是（还在施工中的）播放列表（滑稽）';
+
+
         // Append all elements to their parent elements.
         mediainfo.appendChild(songArtist);
         mediainfo.appendChild(songTitle);
@@ -221,12 +254,14 @@ class Player {
         if (this.showProgressBar)
             controller.appendChild(progress);
         controller.appendChild(visualizer);
+        controller.appendChild(playListButton);
         container.appendChild(controller);
         container.appendChild(overlay);
         container.appendChild(cover);
         container.appendChild(legacyCover);
 
         this.element.appendChild(container);
+        this.element.appendChild(playList);
 
         // Fix some style issue.
         songTitle.style.minWidth = this.element.clientWidth + 'px';

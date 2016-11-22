@@ -14,6 +14,7 @@ var Player = function () {
             this.element.style.position = 'relative';
             this.element.style.width = this.style.width || '300px';
             this.element.style.height = this.style.height || '300px';
+            this.element.style.overflow = 'hidden';
             this.element.classList.add('__nano_player__');
 
             this.uiStatus = 'unfocus';
@@ -22,7 +23,7 @@ var Player = function () {
 
             // Create the stylesheet and HTML elements and append them to the parent node.
             var style = document.createElement('STYLE');
-            style.innerHTML = ['.cover {', '    position: absolute;', '    width: 100%;', '    height: 100%;', '    transition: all ease 0.3s;', '    color: white;', '    cursor: default;', '}', '.blur {', '    filter: blur(10px);', '}', '.hidden {', '    opacity: 0;', '}', 'h1.songTitle {', '    font-weight: normal;', '    margin: 1%;', '    font-size: 150%;', '    text-align: center;', '    white-space: pre;', '    display: inline-block;', '    /*transition: margin-left 0.04s*/', '}', 'h2.songArtist {', '    font-weight: normal;', '    margin-top: 2%;', '    margin-bottom: 0;', '    font-size: 100%;', '    text-align: center;', '    line-height: 1em;', '}', 'div.lyrics {', '    font-weight: normal;', '    margin: 1%;', '    font-size: 80%;', '    text-align: center;', '}', '.progress {', '    position: absolute;', '    bottom: 5%;', '    left: 25%;', '    width: 50%;', '    height: 1%;', '    margin: 0 auto;', '    border: 1px solid white;', '}', '.controls {', '    position: absolute;', '    height: 20%;', '    width: 100%;', '    bottom: 35%;', '    text-align: center;', '}', '.visualizer {', '    position: absolute;', '    bottom: 7%;', '    left: 25%;', '    width: 50%;', '    height: 12%;', '    margin: 0 auto;', '}', 'i.fa {', '    min-width: 50px;', '    display: inline-block;', '    text-align: center;', '}', '.pointer {', '    cursor: pointer;', '}'].map(function (line) {
+            style.innerHTML = ['.cover {', '    position: absolute;', '    width: 100%;', '    height: 100%;', '    transition: all ease 0.3s;', '    color: white;', '    cursor: default;', '}', '.blur {', '    filter: blur(10px);', '}', '.hidden {', '    opacity: 0;', '}', 'h1.songTitle {', '    font-weight: normal;', '    margin: 1%;', '    font-size: 150%;', '    text-align: center;', '    white-space: pre;', '    display: inline-block;', '    /*transition: margin-left 0.04s*/', '}', 'h2.songArtist {', '    font-weight: normal;', '    margin-top: 2%;', '    margin-bottom: 0;', '    font-size: 100%;', '    text-align: center;', '    line-height: 1em;', '}', 'div.lyrics {', '    font-weight: normal;', '    margin: 1%;', '    font-size: 80%;', '    text-align: center;', '}', '.progress {', '    position: absolute;', '    bottom: 5%;', '    left: 25%;', '    width: 50%;', '    height: 1%;', '    margin: 0 auto;', '    border: 1px solid white;', '}', '.controls {', '    position: absolute;', '    height: 20%;', '    width: 100%;', '    bottom: 35%;', '    text-align: center;', '}', '.visualizer {', '    position: absolute;', '    bottom: 7%;', '    left: 25%;', '    width: 50%;', '    height: 12%;', '    margin: 0 auto;', '}', 'i.fa .controlButton {', '    min-width: 50px;', '    display: inline-block;', '    text-align: center;', '}', '.pointer {', '    cursor: pointer;', '}', '.outside-left {', '    margin-left: -100%;', '}', '.outside-right {', '    margin-left: 100%;', '}'].map(function (line) {
                 line = line.trim();
                 if (line[line.length - 1] == '{') return '.__nano_player__ ' + line;
                 return line;
@@ -59,7 +60,7 @@ var Player = function () {
             controls.classList.add('controls');
 
             var playButton = document.createElement('I');
-            playButton.className = 'fa fa-play';
+            playButton.className = 'fa fa-play controlButton';
             playButton.setAttribute('aria-hidden', 'true');
             playButton.style.fontSize = '3em';
             playButton.style.marginLeft = playButton.style.marginRight = '10%';
@@ -77,7 +78,7 @@ var Player = function () {
             });
 
             var nextButton = document.createElement('I');
-            nextButton.className = 'fa fa-forward';
+            nextButton.className = 'fa fa-forward controlButton';
             nextButton.setAttribute('aria-hidden', 'true');
             nextButton.style.fontSize = '3em';
             nextButton.addEventListener('click', function (event) {
@@ -88,7 +89,7 @@ var Player = function () {
             });
 
             var prevButton = document.createElement('I');
-            prevButton.className = 'fa fa-backward';
+            prevButton.className = 'fa fa-backward controlButton';
             prevButton.setAttribute('aria-hidden', 'true');
             prevButton.style.fontSize = '3em';
             prevButton.addEventListener('click', function (event) {
@@ -119,6 +120,25 @@ var Player = function () {
             var visualizer = document.createElement('DIV');
             visualizer.classList.add('visualizer');
 
+            var playListButton = document.createElement('I');
+            playListButton.className = 'fa fa-list-ul';
+            playListButton.setAttribute('aria-hidden', 'true');
+            playListButton.style.position = 'absolute';
+            playListButton.style.bottom = '3%';
+            playListButton.style.right = '3%';
+            playListButton.style.fontSize = '1.2em';
+            playListButton.style.color = 'white';
+            playListButton.addEventListener('click', function () {
+                if (_this.uiStatus == 'unfocus') return;
+                event.stopPropagation();
+                container.classList.add('outside-left');
+                playList.classList.remove('outside-right');
+                setTimeout(function () {
+                    container.classList.remove('outside-left');
+                    playList.classList.add('outside-right');
+                }, 4000);
+            });
+
             // Overlay for album cover, for bluring and darking
             var overlay = document.createElement('DIV');
             overlay.classList.add('cover');
@@ -135,6 +155,11 @@ var Player = function () {
             legacyCover.innerHTML = ['<svg x="0px" y="0px" viewBox="0 0 489.164 489.164" style="width: 50%; height: 50%; padding-left: 25%; padding-top: 25%">', '<path d="M159.582,75.459v285.32c-14.274-10.374-32.573-16.616-52.5-16.616c-45.491,0-82.5,32.523-82.5,72.5s37.009,72.5,82.5,72.5', '	s82.5-32.523,82.5-72.5V168.942l245-60.615v184.416c-14.274-10.374-32.573-16.616-52.5-16.616c-45.491,0-82.5,32.523-82.5,72.5', '	s37.009,72.5,82.5,72.5s82.5-32.523,82.5-72.5V0L159.582,75.459z"/>', '<g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g>', '</svg>'].join('\n');
             legacyCover.style.backgroundColor = 'white';
 
+            var playList = document.createElement('DIV');
+            playList.className = 'cover outside-right';
+            playList.style.backgroundColor = 'black';
+            playList.innerHTML = '这里是（还在施工中的）播放列表（滑稽）';
+
             // Append all elements to their parent elements.
             mediainfo.appendChild(songArtist);
             mediainfo.appendChild(songTitle);
@@ -146,12 +171,14 @@ var Player = function () {
             controller.appendChild(controls);
             if (this.showProgressBar) controller.appendChild(progress);
             controller.appendChild(visualizer);
+            controller.appendChild(playListButton);
             container.appendChild(controller);
             container.appendChild(overlay);
             container.appendChild(cover);
             container.appendChild(legacyCover);
 
             this.element.appendChild(container);
+            this.element.appendChild(playList);
 
             // Fix some style issue.
             songTitle.style.minWidth = this.element.clientWidth + 'px';
