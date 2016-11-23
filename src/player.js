@@ -268,6 +268,7 @@ class Player {
         let cover = document.createElement('DIV');
         cover.classList.add('cover');
         cover.style.zIndex = '1';
+        cover.style.backgroundSize = 'cover';
 
         // Legacy album cover.
         let legacyCover = document.createElement('DIV');
@@ -346,6 +347,7 @@ class Player {
                 this.currentTrack = item.offset;
                 this.reinit();
                 this.domAudio.play();
+                this.flushStatus();
             })
 
             listWrapper.appendChild(item);
@@ -655,15 +657,7 @@ class Player {
         this.uiCollection.songTitle.innerHTML = this.nowPlaying.title ? this.nowPlaying.title : '未知歌曲';
         this.uiCollection.songArtist.innerHTML = this.nowPlaying.artist ? this.nowPlaying.artist : '未知艺术家';
         this.uiCollection.progressInner.style.width = '0';
-        if (this.nowPlaying.cover) {
-            this.uiCollection.cover.style.backgroundImage = `url('${this.nowPlaying.cover}')`;
-            this.uiCollection.cover.style.backgroundSize = 'cover';
-        } else {
-            this.uiCollection.cover.style.backgroundSize = '50%';
-            //this.uiCollection.cover.style.backgroundImage = `url('default.svg')`;
-            this.uiCollection.cover.style.backgroundRepeat = 'no-repeat';
-            this.uiCollection.cover.style.backgroundPosition = 'center';
-        }
+        this.uiCollection.cover.style.backgroundImage = `url('${this.nowPlaying.cover}')`;
         this.playListElem.forEach((item, offset) => {
             if (offset == this.currentTrack) {
                 item.classList.add('now_playing');
