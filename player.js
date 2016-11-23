@@ -22,7 +22,7 @@ var Player = function () {
 
             // Create the stylesheet and HTML elements and append them to the parent node.
             var style = document.createElement('STYLE');
-            style.innerHTML = ['.cover {', '    position: absolute;', '    width: 100%;', '    height: 100%;', '    transition: all ease 0.3s;', '    color: white;', '    cursor: default;', '}', '.blur {', '    filter: blur(10px);', '}', '.hidden {', '    opacity: 0;', '}', 'h1.songTitle {', '    font-weight: normal;', '    margin: 1%;', '    font-size: 150%;', '    text-align: center;', '    white-space: pre;', '    display: inline-block;', '    /*transition: margin-left 0.04s*/', '}', 'h2.songArtist {', '    font-weight: normal;', '    margin-top: 2%;', '    margin-bottom: 0;', '    font-size: 100%;', '    text-align: center;', '    line-height: 1em;', '}', 'div.lyrics {', '    font-weight: normal;', '    margin: 1%;', '    font-size: 80%;', '    text-align: center;', '}', '.progress {', '    position: absolute;', '    bottom: 5%;', '    left: 25%;', '    width: 50%;', '    height: 1%;', '    margin: 0 auto;', '    border: 1px solid white;', '}', '.controls {', '    position: absolute;', '    height: 20%;', '    width: 100%;', '    bottom: 35%;', '    text-align: center;', '}', '.visualizer {', '    position: absolute;', '    bottom: 7%;', '    left: 25%;', '    width: 50%;', '    height: 12%;', '    margin: 0 auto;', '}', 'i.controlButton {', '    min-width: 50px;', '    display: inline-block;', '    text-align: center;', '}', 'i.navButton {', '    cursor: pointer;', '}', '.pointer {', '    cursor: pointer;', '}', '.outside-left {', '    margin-left: -100%;', '}', '.outside-right {', '    margin-left: 100%;', '}', '.playlist {', '    position: absolute;', '    overflow: hidden;', '}', '', '.headbar {', '    background-color: #000;', '    height: 44px;', '    width: 100%;', '    text-align: center;', '    position: absolute;', '}', '', '.list {', '    width: 100%;', '    height: 64px;', '}', '.listContainer {', '    position: absolute;', '    top: 44px;', '    left: 0;', '    right: -18px;', '    bottom: 0;', '    overflow-y: scroll;', '}', '.list>.face {', '    position: absolute;', '    height: 64px;', '    width: 64px;', '    display: inline-block;', '    background-size: cover;', '}', '', '.list>.title {', '    position: absolute;', '    padding-left: 1em; ', '    left: 64px;', '    right: 0;', '    display: inline-block;', '    height: 64px;', '    text-overflow: ellipsis;', '    overflow: hidden;', '    line-height: 64px;', '}'].map(function (line) {
+            style.innerHTML = ['.cover {', '    position: absolute;', '    width: 100%;', '    height: 100%;', '    transition: all ease 0.3s;', '    color: white;', '    cursor: default;', '}', '.blur {', '    filter: blur(10px);', '}', '.hidden {', '    opacity: 0;', '}', 'h1.songTitle {', '    font-weight: normal;', '    margin: 1%;', '    font-size: 150%;', '    text-align: center;', '    white-space: pre;', '    display: inline-block;', '    /*transition: margin-left 0.04s*/', '}', 'h2.songArtist {', '    font-weight: normal;', '    margin-top: 2%;', '    margin-bottom: 0;', '    font-size: 100%;', '    text-align: center;', '    line-height: 1em;', '}', 'div.lyrics {', '    font-weight: normal;', '    margin: 1%;', '    font-size: 80%;', '    text-align: center;', '}', '.progress {', '    position: absolute;', '    bottom: 5%;', '    left: 25%;', '    width: 50%;', '    height: 1%;', '    margin: 0 auto;', '    border: 1px solid white;', '}', '.controls {', '    position: absolute;', '    height: 20%;', '    width: 100%;', '    bottom: 35%;', '    text-align: center;', '}', '.visualizer {', '    position: absolute;', '    bottom: 7%;', '    left: 25%;', '    width: 50%;', '    height: 12%;', '    margin: 0 auto;', '}', 'i.controlButton {', '    min-width: 50px;', '    display: inline-block;', '    text-align: center;', '}', 'i.navButton {', '    cursor: pointer;', '}', '.pointer {', '    cursor: pointer;', '}', '.outside-left {', '    margin-left: -100%;', '}', '.outside-right {', '    margin-left: 100%;', '}', '.playlist {', '    position: absolute;', '    overflow: hidden;', '}', '', '.headbar {', '    background-color: #000;', '    height: 44px;', '    width: 100%;', '    text-align: center;', '    position: absolute;', '}', '', '.list {', '    width: 100%;', '    height: 64px;', '    transition: all ease 0.2s;', '}', '.now_playing {', '    background-color: #333;', '}', '.listContainer {', '    position: absolute;', '    top: 44px;', '    left: 0;', '    right: -17px;', '    bottom: 0;', '    overflow-y: scroll;', '}', '.list>.face {', '    position: absolute;', '    height: 64px;', '    width: 64px;', '    display: inline-block;', '    background-size: cover;', '}', '', '.list>.title {', '    position: absolute;', '    padding-left: 12px; ', '    left: 64px;', '    right: 0;', '    padding-top: 12px;', '    display: inline-block;', '    text-overflow: ellipsis;', '    overflow: hidden;', '    line-height: 20px;', '    white-space: nowrap;', '}'].map(function (line) {
                 line = line.trim();
                 if (line[line.length - 1] == '{') return '.__nano_player__ ' + line;
                 return line;
@@ -38,7 +38,7 @@ var Player = function () {
             // Container for title, artist and lyrics.
             var mediainfo = document.createElement('DIV');
             mediainfo.className = 'cover hidden';
-            mediainfo.style.zIndex = '2';
+            mediainfo.style.zIndex = '3';
 
             var songTitle = document.createElement('H1');
             songTitle.classList.add('songTitle');
@@ -52,7 +52,7 @@ var Player = function () {
             // Container for control buttons, progress bar and visualizer
             var controller = document.createElement('DIV');
             controller.className = 'cover hidden';
-            controller.style.zIndex = '2';
+            controller.style.zIndex = '3';
             controller.style.margin = '0 auto';
 
             var controls = document.createElement('DIV');
@@ -137,19 +137,21 @@ var Player = function () {
             // Overlay for album cover, for bluring and darking
             var overlay = document.createElement('DIV');
             overlay.classList.add('cover');
-            overlay.style.zIndex = '1';
+            overlay.style.zIndex = '2';
 
             // Album cover.
             var cover = document.createElement('DIV');
             cover.classList.add('cover');
-            cover.style.zIndex = '0';
+            cover.style.zIndex = '1';
 
+            // Legacy album cover.
             var legacyCover = document.createElement('DIV');
-            legacyCover.style.zIndex = '-1';
+            legacyCover.style.zIndex = '0';
             legacyCover.classList.add('cover');
             legacyCover.innerHTML = ['<svg x="0px" y="0px" viewBox="0 0 489.164 489.164" style="width: 50%; height: 50%; padding-left: 25%; padding-top: 25%">', '<path d="M159.582,75.459v285.32c-14.274-10.374-32.573-16.616-52.5-16.616c-45.491,0-82.5,32.523-82.5,72.5s37.009,72.5,82.5,72.5', '	s82.5-32.523,82.5-72.5V168.942l245-60.615v184.416c-14.274-10.374-32.573-16.616-52.5-16.616c-45.491,0-82.5,32.523-82.5,72.5', '	s37.009,72.5,82.5,72.5s82.5-32.523,82.5-72.5V0L159.582,75.459z"/>', '<g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g>', '</svg>'].join('\n');
             legacyCover.style.backgroundColor = 'white';
 
+            // PlayList view.
             var playList = document.createElement('DIV');
             playList.className = 'cover outside-right playlist';
             playList.style.backgroundColor = 'black';
@@ -186,50 +188,42 @@ var Player = function () {
             playList.appendChild(listContainer);
 
             var listWrapper = document.createElement('DIV');
-            listWrapper.style.paddingRight = '18px';
             listContainer.appendChild(listWrapper);
 
-            var _iteratorNormalCompletion = true;
-            var _didIteratorError = false;
-            var _iteratorError = undefined;
+            this.playListElem = [];
 
-            try {
-                for (var _iterator = this.playList[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-                    var song = _step.value;
+            var _loop = function _loop(offset) {
+                var item = document.createElement('DIV');
+                item.className = 'list';
+                item.offset = offset;
 
-                    var item = document.createElement('DIV');
-                    item.className = 'list';
+                var face = document.createElement('DIV');
+                face.className = 'face';
+                face.style.backgroundImage = 'url(\'' + _this.playList[offset].cover + '\')';
 
-                    var face = document.createElement('DIV');
-                    face.className = 'face';
-                    face.style.backgroundImage = 'url(\'' + song.cover + '\')';
+                var title = document.createElement('DIV');
+                title.className = 'title';
+                title.innerHTML = _this.playList[offset].title + ' <br /> <span style="font-size: 0.8em">' + _this.playList[offset].artist + '</span>';
 
-                    var title = document.createElement('DIV');
-                    title.className = 'title';
-                    title.innerHTML = song.title;
+                item.appendChild(face);
+                item.appendChild(title);
 
-                    item.appendChild(face);
-                    item.appendChild(title);
+                item.addEventListener('click', function () {
+                    _this.domAudio.pause();
+                    _this.currentTrack = item.offset;
+                    _this.reinit();
+                    _this.domAudio.play();
+                });
 
-                    listWrapper.appendChild(item);
-                }
+                listWrapper.appendChild(item);
+                _this.playListElem.push(item);
+            };
 
-                // Append all elements to their parent elements.
-            } catch (err) {
-                _didIteratorError = true;
-                _iteratorError = err;
-            } finally {
-                try {
-                    if (!_iteratorNormalCompletion && _iterator.return) {
-                        _iterator.return();
-                    }
-                } finally {
-                    if (_didIteratorError) {
-                        throw _iteratorError;
-                    }
-                }
+            for (var offset in this.playList) {
+                _loop(offset);
             }
 
+            // Append all elements to their parent elements.
             mediainfo.appendChild(songArtist);
             mediainfo.appendChild(songTitle);
             mediainfo.appendChild(lyrics);
@@ -563,7 +557,13 @@ var Player = function () {
                 this.uiCollection.cover.style.backgroundRepeat = 'no-repeat';
                 this.uiCollection.cover.style.backgroundPosition = 'center';
             }
-
+            this.playListElem.forEach(function (item, offset) {
+                if (offset == _this5.currentTrack) {
+                    item.classList.add('now_playing');
+                } else {
+                    item.classList.remove('now_playing');
+                }
+            });
             // Audio part
             this.domAudio.src = this.nowPlaying.url;
 
@@ -593,6 +593,9 @@ var Player = function () {
 
             // Clear the remaining lyric.
             this.lrcNode.innerHTML = '';
+
+            // flush Status
+            this.flushStatus();
         }
     }, {
         key: 'nowPlaying',

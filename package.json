@@ -4,7 +4,8 @@
   "description": "Music player written with pure JavaScript with visualizer and lyrics support. ",
   "main": "player.js",
   "scripts": {
-    "build": "node node_modules/babel-cli/bin/babel src/player.js --out-file player.js"
+    "build": "node node_modules/babel-cli/bin/babel src/player.js --out-file player.js",
+    "compress": "node node_modules/uglify-js/bin/uglifyjs --output player.min.js player.js"
   },
   "repository": {
     "type": "git",
@@ -18,6 +19,7 @@
   "homepage": "https://github.com/ntzyz/nano-player#readme",
   "devDependencies": {
     "babel-cli": "^6.18.0",
-    "babel-preset-es2015": "^6.18.0"
+    "babel-preset-es2015": "^6.18.0",
+    "uglify-js": "^2.7.4"
   }
 }

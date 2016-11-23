@@ -113,12 +113,16 @@ class Player {
             '.list {',
             '    width: 100%;',
             '    height: 64px;',
+            '    transition: all ease 0.2s;',
+            '}',
+            '.now_playing {',
+            '    background-color: #333;',
             '}',
             '.listContainer {',
             '    position: absolute;',
             '    top: 44px;',
             '    left: 0;',
-            '    right: -18px;',
+            '    right: -17px;',
             '    bottom: 0;',
             '    overflow-y: scroll;',
             '}',
@@ -132,14 +136,15 @@ class Player {
             '',
             '.list>.title {',
             '    position: absolute;',
-            '    padding-left: 1em; ',
+            '    padding-left: 12px; ',
             '    left: 64px;',
             '    right: 0;',
+            '    padding-top: 12px;',
             '    display: inline-block;',
-            '    height: 64px;',
             '    text-overflow: ellipsis;',
             '    overflow: hidden;',
-            '    line-height: 64px;',
+            '    line-height: 20px;',
+            '    white-space: nowrap;',
             '}',
         ].map(line => {
             line = line.trim();
@@ -158,7 +163,7 @@ class Player {
         // Container for title, artist and lyrics.
         let mediainfo = document.createElement('DIV');
         mediainfo.className = 'cover hidden';
-        mediainfo.style.zIndex = '2';
+        mediainfo.style.zIndex = '3';
 
         let songTitle = document.createElement('H1');
         songTitle.classList.add('songTitle');
@@ -172,7 +177,7 @@ class Player {
         // Container for control buttons, progress bar and visualizer
         let controller = document.createElement('DIV');
         controller.className = 'cover hidden';
-        controller.style.zIndex = '2';
+        controller.style.zIndex = '3';
         controller.style.margin = '0 auto';
 
         let controls = document.createElement('DIV');
@@ -257,15 +262,16 @@ class Player {
         // Overlay for album cover, for bluring and darking
         let overlay = document.createElement('DIV');
         overlay.classList.add('cover');
-        overlay.style.zIndex = '1';
+        overlay.style.zIndex = '2';
 
         // Album cover.
         let cover = document.createElement('DIV');
         cover.classList.add('cover');
-        cover.style.zIndex = '0';
+        cover.style.zIndex = '1';
 
+        // Legacy album cover.
         let legacyCover = document.createElement('DIV');
-        legacyCover.style.zIndex = '-1';
+        legacyCover.style.zIndex = '0';
         legacyCover.classList.add('cover');
         legacyCover.innerHTML = [
             '<svg x="0px" y="0px" viewBox="0 0 489.164 489.164" style="width: 50%; height: 50%; padding-left: 25%; padding-top: 25%">',
@@ -277,6 +283,7 @@ class Player {
         ].join('\n');
         legacyCover.style.backgroundColor = 'white';
 
+        // PlayList view.
         let playList = document.createElement('DIV');
         playList.className = 'cover outside-right playlist';
         playList.style.backgroundColor = 'black';
@@ -314,26 +321,35 @@ class Player {
         playList.appendChild(listContainer);
 
         let listWrapper = document.createElement('DIV');
-        listWrapper.style.paddingRight = '18px';
         listContainer.appendChild(listWrapper);
 
-        for (let song of this.playList) {
+        this.playListElem = [];
+        for (let offset in this.playList) {
             let item = document.createElement('DIV');
             item.className = 'list';
+            item.offset = offset;
 
             let face = document.createElement('DIV');
             face.className = 'face';
-            face.style.backgroundImage = `url('${song.cover}')`;
+            face.style.backgroundImage = `url('${this.playList[offset].cover}')`;
 
 
             let title = document.createElement('DIV');
             title.className = 'title';
-            title.innerHTML = song.title;
+            title.innerHTML = `${this.playList[offset].title} <br /> <span style="font-size: 0.8em">${this.playList[offset].artist}</span>`;
 
             item.appendChild(face);
             item.appendChild(title);
 
+            item.addEventListener('click', () => {
+                this.domAudio.pause();
+                this.currentTrack = item.offset;
+                this.reinit();
+                this.domAudio.play();
+            })
+
             listWrapper.appendChild(item);
+            this.playListElem.push(item);
         }
 
 
@@ -648,7 +664,14 @@ class Player {
             this.uiCollection.cover.style.backgroundRepeat = 'no-repeat';
             this.uiCollection.cover.style.backgroundPosition = 'center';
         }
-
+        this.playListElem.forEach((item, offset) => {
+            if (offset == this.currentTrack) {
+                item.classList.add('now_playing');
+            }
+            else {
+                item.classList.remove('now_playing');
+            }
+        });
         // Audio part
         this.domAudio.src = this.nowPlaying.url;
 
@@ -677,6 +700,9 @@ class Player {
 
         // Clear the remaining lyric.
         this.lrcNode.innerHTML = '';
+
+        // flush Status
+        this.flushStatus();
     }
 
     constructor(params) {
