@@ -22,7 +22,7 @@ var Player = function () {
 
             // Create the stylesheet and HTML elements and append them to the parent node.
             var style = document.createElement('STYLE');
-            style.innerHTML = ['.cover {', '    position: absolute;', '    width: 100%;', '    height: 100%;', '    transition: all ease 0.3s;', '    color: white;', '    cursor: default;', '}', '.blur {', '    filter: blur(10px);', '}', '.hidden {', '    opacity: 0;', '}', 'h1.songTitle {', '    font-weight: normal;', '    margin: 1%;', '    font-size: 150%;', '    text-align: center;', '    white-space: pre;', '    display: inline-block;', '    /*transition: margin-left 0.04s*/', '}', 'h2.songArtist {', '    font-weight: normal;', '    margin-top: 2%;', '    margin-bottom: 0;', '    font-size: 100%;', '    text-align: center;', '    line-height: 1em;', '}', 'div.lyrics {', '    font-weight: normal;', '    margin: 1%;', '    font-size: 80%;', '    text-align: center;', '}', '.progress {', '    position: absolute;', '    bottom: 5%;', '    left: 25%;', '    width: 50%;', '    height: 1%;', '    margin: 0 auto;', '    border: 1px solid white;', '}', '.controls {', '    position: absolute;', '    height: 20%;', '    width: 100%;', '    bottom: 35%;', '    text-align: center;', '}', '.visualizer {', '    position: absolute;', '    bottom: 7%;', '    left: 25%;', '    width: 50%;', '    height: 12%;', '    margin: 0 auto;', '}', 'i.controlButton {', '    min-width: 50px;', '    display: inline-block;', '    text-align: center;', '}', 'i.navButton {', '    cursor: pointer;', '}', '.pointer {', '    cursor: pointer;', '}', '.outside-left {', '    margin-left: -100%;', '}', '.outside-right {', '    margin-left: 100%;', '}', '.playlist {', '    position: absolute;', '    overflow: hidden;', '}', '', '.headbar {', '    background-color: #000;', '    height: 44px;', '    width: 100%;', '    text-align: center;', '    position: absolute;', '}', '', '.list {', '    width: 100%;', '    height: 64px;', '    transition: all ease 0.2s;', '}', '.now_playing {', '    background-color: #333;', '}', '.listContainer {', '    position: absolute;', '    top: 44px;', '    left: 0;', '    right: -17px;', '    bottom: 0;', '    overflow-y: scroll;', '}', '.list>.face {', '    position: absolute;', '    height: 64px;', '    width: 64px;', '    display: inline-block;', '    background-size: cover;', '}', '', '.list>.title {', '    position: absolute;', '    padding-left: 12px; ', '    left: 64px;', '    right: 0;', '    padding-top: 12px;', '    display: inline-block;', '    text-overflow: ellipsis;', '    overflow: hidden;', '    line-height: 20px;', '    white-space: nowrap;', '}'].map(function (line) {
+            style.innerHTML = ['.cover {', '    position: absolute;', '    width: 100%;', '    height: 100%;', '    transition: all ease 0.3s;', '    color: white;', '    cursor: default;', '}', '.blur {', '    filter: blur(10px);', '}', '.hidden {', '    opacity: 0;', '}', 'h1.songTitle {', '    font-weight: normal;', '    margin: 1%;', '    font-size: 150%;', '    text-align: center;', '    white-space: pre;', '    display: inline-block;', '    /*transition: margin-left 0.04s*/', '}', 'h2.songArtist {', '    font-weight: normal;', '    margin-top: 2%;', '    margin-bottom: 0;', '    font-size: 100%;', '    text-align: center;', '    line-height: 1em;', '}', 'div.lyrics {', '    font-weight: normal;', '    margin: 1%;', '    font-size: 80%;', '    text-align: center;', '    transition: all ease 0.05s', '}', '.progress {', '    position: absolute;', '    bottom: 5%;', '    left: 25%;', '    width: 50%;', '    height: 1%;', '    margin: 0 auto;', '    border: 1px solid white;', '}', '.controls {', '    position: absolute;', '    height: 20%;', '    width: 100%;', '    bottom: 35%;', '    text-align: center;', '}', '.visualizer {', '    position: absolute;', '    bottom: 7%;', '    left: 25%;', '    width: 50%;', '    height: 12%;', '    margin: 0 auto;', '}', 'i.controlButton {', '    min-width: 50px;', '    display: inline-block;', '    text-align: center;', '}', 'i.navButton {', '    cursor: pointer;', '}', '.pointer {', '    cursor: pointer;', '}', '.outside-left {', '    margin-left: -100%;', '}', '.outside-right {', '    margin-left: 100%;', '}', '.playlist {', '    position: absolute;', '    overflow: hidden;', '}', '', '.headbar {', '    background-color: #000;', '    height: 44px;', '    width: 100%;', '    text-align: center;', '    position: absolute;', '}', '', '.list {', '    width: 100%;', '    height: 64px;', '    transition: all ease 0.2s;', '}', '.now_playing {', '    background-color: #333;', '}', '.listContainer {', '    position: absolute;', '    top: 44px;', '    left: 0;', '    right: -17px;', '    bottom: 0;', '    overflow-y: scroll;', '}', '.list>.face {', '    position: absolute;', '    height: 64px;', '    width: 64px;', '    display: inline-block;', '    background-size: cover;', '}', '', '.list>.title {', '    position: absolute;', '    padding-left: 12px; ', '    left: 64px;', '    right: 0;', '    padding-top: 12px;', '    display: inline-block;', '    text-overflow: ellipsis;', '    overflow: hidden;', '    line-height: 20px;', '    white-space: nowrap;', '}'].map(function (line) {
                 line = line.trim();
                 if (line[line.length - 1] == '{') return '.__nano_player__ ' + line;
                 return line;
@@ -362,6 +362,8 @@ var Player = function () {
             // Also, the reason for not using anonymous lambda function is that 
             // cleatInterval would treat them as different event handler.
             this.updateLyrics = function () {
+                var immediateUpdate = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : true;
+
                 try {
                     var currentOffset = _this3.domAudio.currentTime * 1000;
                     var lastLines = _this3.lyrics.lines;
@@ -371,8 +373,17 @@ var Player = function () {
                         _this3.lyrics.lines--;
                     }
                     while (_this3.lyrics.table[_this3.lyrics.lines].offset <= currentOffset) {
-                        _this3.lrcNode.innerText = _this3.lyrics.table[_this3.lyrics.lines].lyric;
-                        _this3.lyrics.lines++;
+                        if (immediateUpdate) {
+                            _this3.lrcNode.innerText = _this3.lyrics.table[_this3.lyrics.lines].lyric;
+                            _this3.lyrics.lines++;
+                        } else {
+                            _this3.lrcNode.style.opacity = 0.5;
+                            _this3.lyrics.lines++;
+                            setTimeout(function () {
+                                _this3.lrcNode.innerText = _this3.lyrics.table[_this3.lyrics.lines - 1].lyric;
+                                _this3.lrcNode.style.opacity = 1;
+                            }, 50);
+                        }
                     }
                 } catch (e) {
                     clearInterval(_this3.intervals.lyrics);
@@ -507,7 +518,7 @@ var Player = function () {
 
             this.initLyrics();
             this.intervals.lyrics = setInterval(function () {
-                _this4.updateLyrics();
+                _this4.updateLyrics(false);
             }, 20);
             this.intervals.visualizer = setInterval(function () {
                 _this4.renderVisualizer();

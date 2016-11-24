@@ -55,6 +55,7 @@ class Player {
             '    margin: 1%;',
             '    font-size: 80%;',
             '    text-align: center;',
+            '    transition: all ease 0.05s',
             '}',
             '.progress {',
             '    position: absolute;',
@@ -482,7 +483,7 @@ class Player {
         // the whole class but not HTMLAudioElement.
         // Also, the reason for not using anonymous lambda function is that 
         // cleatInterval would treat them as different event handler.
-        this.updateLyrics = () => {
+        this.updateLyrics = (immediateUpdate = true) => {
             try {
                 let currentOffset = this.domAudio.currentTime * 1000;
                 let lastLines = this.lyrics.lines;
@@ -492,8 +493,18 @@ class Player {
                     this.lyrics.lines--;
                 }
                 while (this.lyrics.table[this.lyrics.lines].offset <= currentOffset) {
-                    this.lrcNode.innerText = this.lyrics.table[this.lyrics.lines].lyric;
-                    this.lyrics.lines++;
+                    if (immediateUpdate) {
+                        this.lrcNode.innerText = this.lyrics.table[this.lyrics.lines].lyric;
+                        this.lyrics.lines++;
+                    }
+                    else {
+                        this.lrcNode.style.opacity = 0.5;
+                        this.lyrics.lines++;
+                        setTimeout(() => {
+                            this.lrcNode.innerText = this.lyrics.table[this.lyrics.lines - 1].lyric;
+                            this.lrcNode.style.opacity = 1;
+                        }, 50)
+                    }
                 }
             } catch (e) {
                 clearInterval(this.intervals.lyrics);
@@ -622,7 +633,7 @@ class Player {
 
     play() {
         this.initLyrics();
-        this.intervals.lyrics = setInterval(() => { this.updateLyrics() }, 20);
+        this.intervals.lyrics = setInterval(() => { this.updateLyrics(false) }, 20);
         this.intervals.visualizer = setInterval(() => { this.renderVisualizer() }, 17);
         this.domAudio.play();
         this.flushStatus();
