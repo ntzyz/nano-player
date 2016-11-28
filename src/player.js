@@ -1,5 +1,8 @@
 'use strict';
 
+require('./style.css');
+// require('babel-polyfill');
+
 class Player {
     get nowPlaying() {
         return this.playList[this.currentTrack];
@@ -15,146 +18,6 @@ class Player {
         this.uiStatus = 'unfocus';
         this.uiCollection = {};
         this.showingFreq = [];
-
-        // Create the stylesheet and HTML elements and append them to the parent node.
-        let style = document.createElement('STYLE');
-        style.innerHTML = [
-            '.cover {',
-            '    position: absolute;',
-            '    width: 100%;',
-            '    height: 100%;',
-            '    transition: all ease 0.3s;',
-            '    color: white;',
-            '    cursor: default;',
-            '}',
-            '.blur {',
-            '    filter: blur(10px);',
-            '}',
-            '.hidden {',
-            '    opacity: 0;',
-            '}',
-            'h1.songTitle {',
-            '    font-weight: normal;',
-            '    margin: 1%;',
-            '    font-size: 150%;',
-            '    text-align: center;',
-            '    white-space: pre;',
-            '    display: inline-block;',
-            '    /*transition: margin-left 0.04s*/',
-            '}',
-            'h2.songArtist {',
-            '    font-weight: normal;',
-            '    margin-top: 2%;',
-            '    margin-bottom: 0;',
-            '    font-size: 100%;',
-            '    text-align: center;',
-            '    line-height: 1em;',
-            '}',
-            'div.lyrics {',
-            '    font-weight: normal;',
-            '    margin: 1%;',
-            '    font-size: 80%;',
-            '    text-align: center;',
-            '    transition: all ease 0.05s',
-            '}',
-            '.progress {',
-            '    position: absolute;',
-            '    bottom: 5%;',
-            '    left: 25%;',
-            '    width: 50%;',
-            '    height: 1%;',
-            '    margin: 0 auto;',
-            '    border: 1px solid white;',
-            '}',
-            '.controls {',
-            '    position: absolute;',
-            '    height: 20%;',
-            '    width: 100%;',
-            '    bottom: 35%;',
-            '    text-align: center;',
-            '}',
-            '.visualizer {',
-            '    position: absolute;',
-            '    bottom: 7%;',
-            '    left: 25%;',
-            '    width: 50%;',
-            '    height: 12%;',
-            '    margin: 0 auto;',
-            '}',
-            'i.controlButton {',
-            '    min-width: 50px;',
-            '    display: inline-block;',
-            '    text-align: center;',
-            '}',
-            'i.navButton {',
-            '    cursor: pointer;',
-            '}',
-            '.pointer {',
-            '    cursor: pointer;',
-            '}',
-            '.outside-left {',
-            '    margin-left: -100%;',
-            '}',
-            '.outside-right {',
-            '    margin-left: 100%;',
-            '}',
-            '.playlist {',
-            '    position: absolute;',
-            '    overflow: hidden;',
-            '}',
-            '',
-            '.headbar {',
-            '    background-color: #000;',
-            '    height: 44px;',
-            '    width: 100%;',
-            '    text-align: center;',
-            '    position: absolute;',
-            '}',
-            '',
-            '.list {',
-            '    width: 100%;',
-            '    height: 64px;',
-            '    transition: all ease 0.2s;',
-            '}',
-            '.now_playing {',
-            '    background-color: #333;',
-            '}',
-            '.listContainer {',
-            '    position: absolute;',
-            '    top: 44px;',
-            '    left: 0;',
-            '    right: -17px;',
-            '    bottom: 0;',
-            '    overflow-y: scroll;',
-            '}',
-            '.list>.face {',
-            '    position: absolute;',
-            '    height: 64px;',
-            '    width: 64px;',
-            '    display: inline-block;',
-            '    background-size: cover;',
-            '}',
-            '',
-            '.list>.title {',
-            '    position: absolute;',
-            '    padding-left: 12px; ',
-            '    left: 64px;',
-            '    right: 0;',
-            '    padding-top: 12px;',
-            '    display: inline-block;',
-            '    text-overflow: ellipsis;',
-            '    overflow: hidden;',
-            '    line-height: 20px;',
-            '    white-space: nowrap;',
-            '}',
-        ].map(line => {
-            line = line.trim();
-            if (line[line.length - 1] == '{')
-                return '.__nano_player__ ' + line;
-            return line;
-        }).join(' ');
-        style.setAttribute('scoped', '');
-        this.element.appendChild(style);
 
         // Container for all elements excluding stylesheet and <audio>.
         let container = document.createElement('DIV');
@@ -764,3 +627,5 @@ class Player {
         }
     }
 }
+
+window.Player = Player;

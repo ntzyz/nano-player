@@ -1,0 +1,127 @@
+.__nano_player__ .cover {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    transition: all ease 0.3s;
+    color: white;
+    cursor: default;
+}
+.__nano_player__ .blur {
+    filter: blur(10px);
+}
+.__nano_player__ .hidden {
+    opacity: 0;
+}
+.__nano_player__ h1.songTitle {
+    font-weight: normal;
+    margin: 1%;
+    font-size: 150%;
+    text-align: center;
+    white-space: pre;
+    display: inline-block;
+}
+.__nano_player__ h2.songArtist {
+    font-weight: normal;
+    margin-top: 2%;
+    margin-bottom: 0;
+    font-size: 100%;
+    text-align: center;
+    line-height: 1em;
+}
+.__nano_player__ div.lyrics {
+    font-weight: normal;
+    margin: 1%;
+    font-size: 80%;
+    text-align: center;
+    transition: all ease 0.05s
+}
+.__nano_player__ .progress {
+    position: absolute;
+    bottom: 5%;
+    left: 25%;
+    width: 50%;
+    height: 1%;
+    margin: 0 auto;
+    border: 1px solid white;
+}
+.__nano_player__ .controls {
+    position: absolute;
+    height: 20%;
+    width: 100%;
+    bottom: 35%;
+    text-align: center;
+}
+.__nano_player__ .visualizer {
+    position: absolute;
+    bottom: 7%;
+    left: 25%;
+    width: 50%;
+    height: 12%;
+    margin: 0 auto;
+}
+.__nano_player__ i.controlButton {
+    min-width: 50px;
+    display: inline-block;
+    text-align: center;
+}
+.__nano_player__ i.navButton {
+    cursor: pointer;
+}
+.__nano_player__ .pointer {
+    cursor: pointer;
+}
+.__nano_player__ .outside-left {
+    margin-left: -100%;
+}
+.__nano_player__ .outside-right {
+    margin-left: 100%;
+}
+.__nano_player__ .playlist {
+    position: absolute;
+    overflow: hidden;
+}
+
+.__nano_player__ .headbar {
+    background-color: #000;
+    height: 44px;
+    width: 100%;
+    text-align: center;
+    position: absolute;
+}
+
+.__nano_player__ .list {
+    width: 100%;
+    height: 64px;
+    transition: all ease 0.2s;
+}
+.__nano_player__ .now_playing {
+    background-color: #333;
+}
+.__nano_player__ .listContainer {
+    position: absolute;
+    top: 44px;
+    left: 0;
+    right: -17px;
+    bottom: 0;
+    overflow-y: scroll;
+}
+.__nano_player__ .list>.face {
+    position: absolute;
+    height: 64px;
+    width: 64px;
+    display: inline-block;
+    background-size: cover;
+}
+
+.__nano_player__ .list>.title {
+    position: absolute;
+    padding-left: 12px; 
+    left: 64px;
+    right: 0;
+    padding-top: 12px;
+    display: inline-block;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    line-height: 20px;
+    white-space: nowrap;
+}
