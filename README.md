@@ -11,6 +11,7 @@ Nano Player
 Here is an example on how to use it:
 
 ``` html
+<link href="//cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.css" rel="stylesheet">
 <div id="player"></div>
 <script src="player.js"></script>
 <script>
@@ -38,8 +39,18 @@ let nanoPlayer = new Player({
             lrcOffset: 0,               // Optional, lyrics offset for this song.
         },
     ]
-}
+});
 </script>
+```
+
+### Tips
+The blur filter provided by CSS3 should be disabled on most mobile devices for performance issue. You can initialize player with this option to do that:
+``` JavaScript
+{
+    // ...
+    enableBlur: navigator.userAgent.match(/Mobile|Android/) === null,
+    // ...
+}
 ```
 
 ### Licenses

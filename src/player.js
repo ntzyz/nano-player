@@ -479,8 +479,8 @@ class Player {
             return;
         }
 
-        // We need this function to be an arrow function, as we need the this of 
-        // the whole class but not HTMLAudioElement.
+        // We need this function to be an arrow function, as we need this pointing to 
+        // the whole class but not the HTMLAudioElement.
         // Also, the reason for not using anonymous lambda function is that 
         // cleatInterval would treat them as different event handler.
         this.updateLyrics = (immediateUpdate = true) => {
