@@ -4,8 +4,7 @@
   "description": "Music player written with pure JavaScript with visualizer and lyrics support. ",
   "main": "player.js",
   "scripts": {
-    "build": "node node_modules/babel-cli/bin/babel src/player.js --out-file player.js",
-    "compress": "node node_modules/uglify-js/bin/uglifyjs --output player.min.js player.js"
+    "build": "webpack",
   },
   "repository": {
     "type": "git",
