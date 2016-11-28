@@ -1,7 +1,7 @@
 'use strict';
 
+require('classlist-polyfill');
 require('./style.css');
-// require('babel-polyfill');
 
 class Player {
     get nowPlaying() {
@@ -138,14 +138,7 @@ class Player {
         let legacyCover = document.createElement('DIV');
         legacyCover.style.zIndex = '0';
         legacyCover.classList.add('cover');
-        legacyCover.innerHTML = [
-            '<svg x="0px" y="0px" viewBox="0 0 489.164 489.164" style="width: 50%; height: 50%; padding-left: 25%; padding-top: 25%">',
-            '<path d="M159.582,75.459v285.32c-14.274-10.374-32.573-16.616-52.5-16.616c-45.491,0-82.5,32.523-82.5,72.5s37.009,72.5,82.5,72.5',
-            '	s82.5-32.523,82.5-72.5V168.942l245-60.615v184.416c-14.274-10.374-32.573-16.616-52.5-16.616c-45.491,0-82.5,32.523-82.5,72.5',
-            '	s37.009,72.5,82.5,72.5s82.5-32.523,82.5-72.5V0L159.582,75.459z"/>',
-            '<g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g>',
-            '</svg>'
-        ].join('\n');
+        legacyCover.innerHTML = require('./defaultcover');
         legacyCover.style.backgroundColor = 'white';
 
         // PlayList view.
