@@ -4,7 +4,7 @@
   "description": "Music player written with pure JavaScript with visualizer and lyrics support. ",
   "main": "player.js",
   "scripts": {
-    "build": "webpack",
+    "build": "webpack"
   },
   "repository": {
     "type": "git",
