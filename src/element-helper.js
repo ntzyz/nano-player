@@ -18,9 +18,7 @@ let createElement = (options) => {
     }
 
     if (options.classList) {
-        for (let item of options.classList) {
-            element.classList.add(item);
-        }
+        element.className = options.classList.join(' ');
     }
 
     if (options.eventListener) {
