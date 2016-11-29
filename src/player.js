@@ -3,6 +3,8 @@
 require('classlist-polyfill');
 require('./style.css');
 
+let createElement = require('./element-helper');
+
 class Player {
     get nowPlaying() {
         return this.playList[this.currentTrack];
@@ -19,167 +21,260 @@ class Player {
         this.uiCollection = {};
         this.showingFreq = [];
 
-        // Container for all elements excluding stylesheet and <audio>.
-        let container = document.createElement('DIV');
-        container.classList.add('cover');
-        container.style.overflow = 'hidden';
-
-        // Container for title, artist and lyrics.
-        let mediainfo = document.createElement('DIV');
-        mediainfo.className = 'cover hidden';
-        mediainfo.style.zIndex = '3';
-
-        let songTitle = document.createElement('H1');
-        songTitle.classList.add('songTitle');
-
-        let songArtist = document.createElement('H2');
-        songArtist.classList.add('songArtist');
-
-        let lyrics = document.createElement('DIV');
-        lyrics.classList.add('lyrics');
-
-        // Container for control buttons, progress bar and visualizer
-        let controller = document.createElement('DIV');
-        controller.className = 'cover hidden';
-        controller.style.zIndex = '3';
-        controller.style.margin = '0 auto';
-
-        let controls = document.createElement('DIV');
-        controls.classList.add('controls');
-
-        let playButton = document.createElement('I');
-        playButton.className = 'fa fa-play controlButton';
-        playButton.setAttribute('aria-hidden', 'true');
-        playButton.style.fontSize = '3em';
-        playButton.style.marginLeft = playButton.style.marginRight = '10%';
-
-        // play <-> pause
-        playButton.addEventListener('click', event => {
-            if (this.uiStatus == 'unfocus') // Button is hidden, ignore this click event.
-                return;
-            event.stopPropagation(); // Stop parent nodes from getting the click event.
-            if (this.domAudio.paused) {
-                this.play();
-            } else {
-                this.pause();
+        let container = createElement({
+            tagName: 'div',
+            classList: ['cover'],
+            style: {
+                overflow: 'hidden',
             }
         });
 
-        let nextButton = document.createElement('I');
-        nextButton.className = 'fa fa-forward controlButton';
-        nextButton.setAttribute('aria-hidden', 'true');
-        nextButton.style.fontSize = '3em';
-        nextButton.addEventListener('click', event => { // Same as above.
-            if (this.uiStatus == 'unfocus')
-                return;
-            event.stopPropagation();
-            this.nextTrack();
+        // Container for title, artist and lyrics.
+        let mediainfo = createElement({
+            tagName: 'div',
+            classList: ['cover', 'hidden'],
+            style: {
+                zIndex: 3,
+            },
         });
 
-        let prevButton = document.createElement('I');
-        prevButton.className = 'fa fa-backward controlButton';
-        prevButton.setAttribute('aria-hidden', 'true');
-        prevButton.style.fontSize = '3em';
-        prevButton.addEventListener('click', event => {
-            if (this.uiStatus == 'unfocus')
-                return;
-            event.stopPropagation();
-            this.prevTrack();
+        let songTitle = createElement({
+            tagName: 'h1',
+            classList: ['songTitle'],
         });
 
-        let progress = document.createElement('DIV');
-        progress.className = 'progress';
-        progress.overflow = 'hidden';
-        progress.addEventListener('click', event => {
-            if (this.uiStatus == 'unfocus')
-                return;
-            event.stopPropagation();
-            let { left } = progress.getBoundingClientRect();
-            this.domAudio.currentTime = this.domAudio.duration * (event.clientX - left) / progress.clientWidth;
-            this.renderVisualizer();
+        let songArtist = createElement({
+            tagName: 'h2',
+            classList: ['songArtist'],
         });
 
-        let progressInner = document.createElement('DIV');
-        progressInner.style.height = '100%';
-        progressInner.style.backgroundColor = 'white';
+        let lyrics = createElement({
+            tagName: 'div',
+            classList: ['lyrics'],
+        });
+
+        // Container for control buttons, progress bar and visualizer
+        let controller = createElement({
+            tagName: 'div',
+            classList: ['cover', 'hidden'],
+            style: {
+                zIndex: '3',
+                margin: '0 auto',
+            }
+        });
+
+        let controls = createElement({
+            tagName: 'div',
+            classList: ['controls'],
+        });
+
+        let playButton = createElement({
+            tagName: 'i',
+            classList: ['fa', 'fa-play', 'controlButton'],
+            attr: {
+                'aria-hidden': true,
+            },
+            style: {
+                fontSize: '3em',
+                marginLeft: '10%',
+                marginRight: '10%',
+            },
+            eventListener: {
+                click: event => {   // play <-> pause
+                    if (this.uiStatus == 'unfocus') // Button is hidden, ignore this click event.
+                        return;
+                    event.stopPropagation(); // Stop parent nodes from getting the click event.
+                    if (this.domAudio.paused) {
+                        this.play();
+                    } else {
+                        this.pause();
+                    }
+                }
+            }
+        });
+
+        let nextButton = createElement({
+            tagName: 'i',
+            classList: ['fa', 'fa-forward', 'controlButton'],
+            attr: {
+                'aria-hidden': true,
+            },
+            style: {
+                fontSize: '3em',
+            },
+            eventListener: {
+                click: event => { // Same as above.
+                    if (this.uiStatus == 'unfocus')
+                        return;
+                    event.stopPropagation();
+                    this.nextTrack();
+                }
+            }
+        });
+
+        let prevButton = createElement({
+            tagName: 'i',
+            classList: ['fa', 'fa-forward', 'controlButton'],
+            attr: {
+                'aria-hidden': true,
+            },
+            style: {
+                fontSize: '3em',
+            },
+            eventListener: {
+                click: event => {
+                    if (this.uiStatus == 'unfocus')
+                        return;
+                    event.stopPropagation();
+                    this.prevTrack();
+                }
+            }
+        });
+
+        let progress = createElement({
+            tagName: 'div',
+            classList: ['progress'],
+            style: {
+                overflow: 'hidden',
+            },
+            eventListener: {
+                click: event => {
+                    if (this.uiStatus == 'unfocus')
+                        return;
+                    event.stopPropagation();
+                    let { left } = progress.getBoundingClientRect();
+                    this.domAudio.currentTime = this.domAudio.duration * (event.clientX - left) / progress.clientWidth;
+                    this.renderVisualizer();
+                }
+            }
+        });
+
+        let progressInner = createElement({
+            tagName: 'div',
+            style: {
+                height: '100%',
+                backgroundColor: 'white',
+            }
+        });
         progress.appendChild(progressInner);
 
-        let visualizer = document.createElement('DIV');
-        visualizer.classList.add('visualizer');
-
-        let playListButton = document.createElement('I');
-        playListButton.className = 'fa fa-list-ul navButton';
-        playListButton.setAttribute('aria-hidden', 'true');
-        playListButton.style.position = 'absolute';
-        playListButton.style.bottom = '3%';
-        playListButton.style.right = '3%';
-        playListButton.style.fontSize = '1.2em';
-        playListButton.style.color = 'white';
-        playListButton.addEventListener('click', event => {
-            if (this.uiStatus == 'unfocus')
-                return;
-            event.stopPropagation();
-            container.classList.add('outside-left');
-            playList.classList.remove('outside-right');
-        })
-
-        // Overlay for album cover, for bluring and darking
-        let overlay = document.createElement('DIV');
-        overlay.classList.add('cover');
-        overlay.style.zIndex = '2';
-
-        // Album cover.
-        let cover = document.createElement('DIV');
-        cover.classList.add('cover');
-        cover.style.zIndex = '1';
-        cover.style.backgroundSize = 'cover';
-
-        // Legacy album cover.
-        let legacyCover = document.createElement('DIV');
-        legacyCover.style.zIndex = '0';
-        legacyCover.classList.add('cover');
-        legacyCover.innerHTML = require('./defaultcover');
-        legacyCover.style.backgroundColor = 'white';
-
-        // PlayList view.
-        let playList = document.createElement('DIV');
-        playList.className = 'cover outside-right playlist';
-        playList.style.backgroundColor = 'black';
-
-        let headbar = document.createElement('DIV');
-        headbar.className = 'headbar';
-
-        let returnButton = document.createElement('I');
-        returnButton.className = 'fa fa-chevron-left navButton';
-        returnButton.setAttribute('aria-hidden', 'true');
-        returnButton.style.position = 'absolute';
-        returnButton.style.left = '3%';
-        returnButton.style.fontSize = '1.2em';
-        returnButton.style.lineHeight = '44px';
-        returnButton.style.color = 'white';
-        returnButton.addEventListener('click', event => {
-            if (this.uiStatus == 'unfocus')
-                return;
-            event.stopPropagation();
-            container.classList.remove('outside-left');
-            playList.classList.add('outside-right');
+        let visualizer = createElement({
+            tagName: 'div',
+            classList: ['visualizer'],
         });
 
-        let titleText = document.createElement('SPAN');
-        titleText.style.lineHeight = '44px';
-        titleText.innerHTML = '播放列表';
+        let playListButton = createElement({
+            tagName: 'i',
+            classList: ['fa', 'fa-list-ul', 'navButton'],
+            attr: {
+                'aria-hidden': true,
+            },
+            style: {
+                position: 'absolute',
+                bottom: '3%',
+                right: '3%',
+                fontSize: '1.2em',
+                color: 'white',
+            },
+            eventListener: {
+                click: event => {
+                    if (this.uiStatus == 'unfocus')
+                        return;
+                    event.stopPropagation();
+                    container.classList.add('outside-left');
+                    playList.classList.remove('outside-right');
+                }
+            }
+        });
 
-        headbar.appendChild(returnButton);
-        headbar.appendChild(titleText);
+        // Overlay for album cover, for bluring and darking
+        let overlay = createElement({
+            tagName: 'div',
+            classList: ['cover'],
+            style: {
+                zIndex: '2',
+            }
+        });
 
-        playList.appendChild(headbar);
+        // Album cover.
+        let cover =  createElement({
+            tagName: 'div',
+            classList: ['cover'],
+            style: {
+                zIndex: '1',
+                backgroundSize: 'cover'
+            }
+        });
 
-        let listContainer = document.createElement('DIV');
-        listContainer.className = 'listContainer';
-        playList.appendChild(listContainer);
+        // Legacy album cover.
+        let legacyCover = createElement({
+            tagName: 'div',
+            classList: ['cover'],
+            innerHTML: require('./defaultcover'),
+            style: {
+                backgroundColor: 'white',
+            }
+        });
 
-        let listWrapper = document.createElement('DIV');
-        listContainer.appendChild(listWrapper);
+        // PlayList view.
+        let playList = createElement({
+            tagName: 'div',
+            classList: ['cover', 'outside-right', 'playlist'],
+            style: {
+                backgroundColor: 'black'
+            }
+        });
+
+        let headbar = createElement({
+            tagName: 'div',
+            parent: playList,
+            classList: ['headbar'],
+        });
+
+        let returnButton = createElement({
+            tagName: 'i',
+            parent: headbar,
+            classList: ['fa', 'fa-chevron-left', 'navButton'],
+            attr: {
+                'aria-hidden': true,
+            },
+            style: {
+                position: 'absolute',
+                left: '3%',
+                fontSize: '1.2em',
+                lineHeight: '44px',
+                color: 'white',
+            },
+            eventListener: {
+                click: event => {
+                    if (this.uiStatus == 'unfocus')
+                        return;
+                    event.stopPropagation();
+                    container.classList.remove('outside-left');
+                    playList.classList.add('outside-right');
+                }
+            }
+        });
+
+        let titleText = createElement({
+            tagName: 'span',
+            parent: headbar,
+            style: {
+                lineHeight: '44px',
+            },
+            innerHTML: '播放列表'
+        });
+
+        let listContainer = createElement({
+            tagName: 'div',
+            classList: ['listContainer'],
+            parent: playList
+        });
+
+        let listWrapper = createElement({
+            tagName: 'div',
+            parent: listContainer,
+        });
 
         this.playListElem = [];
         for (let offset in this.playList) {
@@ -287,22 +382,12 @@ class Player {
 
         // Save all the elements for further use.
         this.uiCollection = {
-            container: container,
-            mediainfo: mediainfo,
-            songTitle: songTitle,
-            songArtist: songArtist,
-            lyrics: lyrics,
-            controller: controller,
-            controls: controls,
-            playButton: playButton,
-            nextButton: nextButton,
-            prevButton: prevButton,
-            progress: progress,
-            progressInner: progressInner,
-            visualizer: visualizer,
-            overlay: overlay,
-            cover: cover,
-            legacyCover: legacyCover
+            container,      mediainfo,      songTitle,
+            songArtist,     lyrics,         controller,
+            controls,       playButton,     nextButton,
+            prevButton,     progress,       progressInner,
+            visualizer,     overlay,        cover,
+            legacyCover
         }
     }
 
