@@ -295,11 +295,7 @@ class Player {
             item.appendChild(title);
 
             item.addEventListener('click', () => {
-                this.domAudio.pause();
-                this.currentTrack = item.offset;
-                this.reinit();
-                this.domAudio.play();
-                this.flushStatus();
+                this.switchTo(item.offset);
             })
 
             listWrapper.appendChild(item);
@@ -588,20 +584,11 @@ class Player {
     }
 
     nextTrack() {
-        this.pause();
-        this.currentTrack++;
-        this.currentTrack %= this.playList.length;
-        this.reinit();
-        this.play();
+        this.switchTo(this.currentTrack + 1);
     }
 
     prevTrack() {
-        this.currentTrack--;
-        if (this.currentTrack < 0)
-            this.currentTrack += this.playList.length;
-        this.currentTrack %= this.playList.length;
-        this.reinit();
-        this.play();
+        this.switchTo(this.currentTrack - 1);
     }
 
     reinit() {
@@ -681,7 +668,7 @@ class Player {
 
         // let's rock and roll.
         if (this.autoStart)
-            this.play();
+            this.switchTo(0, true)
     }
 
     initVisualizer() {
@@ -703,6 +690,19 @@ class Player {
             this.visualNode.appendChild(newBar);
             this.barArray.push(newBar);
         }
+    }
+
+    switchTo(track, isFirst) {
+        this.pause();
+        if (this.nowPlaying.onfinish && !isFirst)
+            this.nowPlaying.onfinish.call();
+        this.currentTrack = track;
+        this.currentTrack %= this.playList.length;
+        this.reinit();
+        if (this.nowPlaying.onstart)
+            this.nowPlaying.onstart.call();
+        this.play();
+        this.flushStatus();
     }
 }
 
