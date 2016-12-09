@@ -114,7 +114,7 @@ class Player {
 
         let prevButton = createElement({
             tagName: 'i',
-            classList: ['fa', 'fa-forward', 'controlButton'],
+            classList: ['fa', 'fa-backward', 'controlButton'],
             attr: {
                 'aria-hidden': true,
             },
