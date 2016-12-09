@@ -378,7 +378,9 @@ class Player {
 
         let visualizerRect = visualizer.getBoundingClientRect();
         visualizer.width = visualizerRect.width;
-        visualizer.height = visualizerRect.height;
+        visualizer.style.width = `${visualizerRect.width}px`;
+        visualizer.height = visualizer.style.height = visualizerRect.height;
+        visualizer.style.height = `${visualizerRect.height}px`;
 
         // Save all the elements for further use.
         this.uiCollection = {
