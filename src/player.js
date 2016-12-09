@@ -159,7 +159,7 @@ class Player {
         progress.appendChild(progressInner);
 
         let visualizer = createElement({
-            tagName: 'div',
+            tagName: 'canvas',
             classList: ['visualizer'],
         });
 
@@ -376,6 +376,10 @@ class Player {
         this.lrcNode = lyrics;
         this.progressBar = progressInner;
 
+        let visualizerRect = visualizer.getBoundingClientRect();
+        visualizer.width = visualizerRect.width;
+        visualizer.height = visualizerRect.height;
+
         // Save all the elements for further use.
         this.uiCollection = {
             container,      mediainfo,      songTitle,
@@ -503,22 +507,11 @@ class Player {
         this.lyrics.lines = 0;
     }
 
-    updateBar(offset, value) {
-        let bar = this.barArray[offset];
-        if (!bar)
-            return;
-
-        // Converts a number to a percentage
-        value /= 2.56;
-
-        // Only in the drop
-        let prevValue = bar.style.height.substring(0, bar.style.height.length - 1);
-        prevValue = parseFloat(prevValue);
-        if (value < prevValue) {
-            let dist = prevValue - value;
-            value += dist * (1 - this.dropRate);
-        }
-        bar.style.height = value + '%';
+    updateBar(offset, value, canvas, ctx) {
+        let width = canvas.width / this.barCount;
+        value /= 256;
+        ctx.lineTo(offset * width, (1 - value) * canvas.height);
+        ctx.lineTo((offset + 1) * width, (1 - value) * canvas.height);
     }
 
     renderVisualizer() {
@@ -530,6 +523,12 @@ class Player {
 
         if (this.domAudio.paused)
             return;
+        
+        let ctx = this.visualNode.getContext('2d');
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
+        ctx.clearRect(0, 0, this.visualNode.width, this.visualNode.height);
+        ctx.beginPath();
+        ctx.moveTo(0, this.visualNode.height);
 
         if (this.logarithmic) {
             for (let i = 0; i != this.barCount; ++i) {
@@ -542,7 +541,7 @@ class Player {
                     cnt++;
                 }
                 let value = sum / cnt;
-                this.updateBar(i, value);
+                this.updateBar(i, value, this.visualNode, ctx);
             }
         } else {
             let width = (this.linearRegion[1] - this.linearRegion[0]) * this.audio.analyser.frequencyBinCount;
@@ -553,9 +552,12 @@ class Player {
                     sum += this.freq[Math.ceil(offset)];
                 }
                 let value = sum / (width / this.barCount);
-                this.updateBar(i, value);
+                this.updateBar(i, value, this.visualNode, ctx);
             }
         }
+        ctx.lineTo(this.visualNode.width, this.visualNode.height);
+        ctx.lineTo(0, this.visualNode.height);
+        ctx.fill();
     }
 
     flushStatus() {
@@ -663,7 +665,7 @@ class Player {
         this.initUI();
         this.initAudio();
         this.initLyrics();
-        this.initVisualizer();
+        // this.initVisualizer();
         this.reinit(); // Immediate fill the data of now playing song.
 
         // let's rock and roll.
