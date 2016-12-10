@@ -2,6 +2,7 @@
 
 require('classlist-polyfill');
 require('./style.css');
+// require('./hidpi-canvas');
 
 let createElement = require('./element-helper');
 
@@ -158,10 +159,19 @@ class Player {
         });
         progress.appendChild(progressInner);
 
-        let visualizer = createElement({
-            tagName: 'canvas',
-            classList: ['visualizer'],
-        });
+        let visualizer
+        if (this.renderMode === 'canvas') {
+            visualizer = createElement({
+                tagName: 'canvas',
+                classList: ['visualizer'],
+            });
+        }
+        else {
+            visualizer = createElement({
+                tagName: 'div',
+                classList: ['visualizer'],
+            });
+        }
 
         let playListButton = createElement({
             tagName: 'i',
@@ -376,11 +386,14 @@ class Player {
         this.lrcNode = lyrics;
         this.progressBar = progressInner;
 
-        let visualizerRect = visualizer.getBoundingClientRect();
-        visualizer.width = visualizerRect.width;
-        visualizer.style.width = `${visualizerRect.width}px`;
-        visualizer.height = visualizer.style.height = visualizerRect.height;
-        visualizer.style.height = `${visualizerRect.height}px`;
+        if (this.renderMode === 'canvas') {
+            let visualizerRect = visualizer.getBoundingClientRect();
+            // visualizer.width = visualizerRect.width;
+            // visualizer.style.width = `${visualizerRect.width}px`;
+            // visualizer.height = visualizer.style.height = visualizerRect.height;
+            // visualizer.style.height = `${visualizerRect.height}px`;
+            this.ctx = this.visualNode.getContext('2d');
+        }
 
         // Save all the elements for further use.
         this.uiCollection = {
@@ -510,10 +523,27 @@ class Player {
     }
 
     updateBar(offset, value, canvas, ctx) {
-        let width = canvas.width / this.barCount;
-        value /= 256;
-        ctx.lineTo(offset * width, (1 - value) * canvas.height);
-        ctx.lineTo((offset + 1) * width, (1 - value) * canvas.height);
+        if (this.renderMode === 'canvas') {
+            let width = canvas.width / this.barCount;
+            value /= 256;
+            ctx.lineTo(offset * width, (1 - value) * canvas.height);
+            ctx.lineTo((offset + 1) * width, (1 - value) * canvas.height);
+        }
+        else {
+            let bar = this.barArray[offset];
+            if (!bar)
+                return;
+            // Converts a number to a percentage
+            value /= 2.56;
+            // Only in the drop
+            let prevValue = bar.style.height.substring(0, bar.style.height.length - 1);
+            prevValue = parseFloat(prevValue);
+            if (value < prevValue) {
+                let dist = prevValue - value;
+                value += dist * (1 - this.dropRate);
+            }
+            bar.style.height = value + '%';
+        }
     }
 
     renderVisualizer() {
@@ -525,12 +555,14 @@ class Player {
 
         if (this.domAudio.paused)
             return;
-        
-        let ctx = this.visualNode.getContext('2d');
-        ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
-        ctx.clearRect(0, 0, this.visualNode.width, this.visualNode.height);
-        ctx.beginPath();
-        ctx.moveTo(0, this.visualNode.height);
+
+        let ctx = this.ctx;
+        if (this.renderMode === 'canvas') {
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.3)';
+            ctx.clearRect(0, 0, this.visualNode.width, this.visualNode.height);
+            ctx.beginPath();
+            ctx.moveTo(0, this.visualNode.height);
+        }
 
         if (this.logarithmic) {
             for (let i = 0; i != this.barCount; ++i) {
@@ -557,9 +589,12 @@ class Player {
                 this.updateBar(i, value, this.visualNode, ctx);
             }
         }
-        ctx.lineTo(this.visualNode.width, this.visualNode.height);
-        ctx.lineTo(0, this.visualNode.height);
-        ctx.fill();
+
+        if (this.renderMode === 'canvas') {
+            ctx.lineTo(this.visualNode.width, this.visualNode.height);
+            ctx.lineTo(0, this.visualNode.height);
+            ctx.fill();
+        }
     }
 
     flushStatus() {
@@ -575,7 +610,7 @@ class Player {
     play() {
         this.initLyrics();
         this.intervals.lyrics = setInterval(() => { this.updateLyrics(false) }, 20);
-        this.intervals.visualizer = setInterval(() => { this.renderVisualizer() }, 17);
+        this.intervals.visualizer = setInterval(() => { this.renderVisualizer() }, 20);
         this.domAudio.play();
         this.flushStatus();
     }
@@ -657,6 +692,7 @@ class Player {
         this.showLyrics = params.showLyrics ? params.showLyrics : false;
         this.dropRate = typeof params.dropRate !== 'undefined' ? params.dropRate : 1;
         this.linearRegion = params.linearRegion ? params.linearRegion : [0, 1];
+        this.renderMode = params.renderMode || 'dom';
 
         // Initialize some global variables
         this.currentTrack = 0;
@@ -667,7 +703,7 @@ class Player {
         this.initUI();
         this.initAudio();
         this.initLyrics();
-        // this.initVisualizer();
+        this.renderMode === 'canvas' || this.initVisualizer();
         this.reinit(); // Immediate fill the data of now playing song.
 
         // let's rock and roll.
@@ -684,7 +720,7 @@ class Player {
         for (let i = 0; i != this.barCount; ++i) {
             let newBar = document.createElement('DIV')
             newBar.style.width = `${barWidth}px`;
-            newBar.style.marginLeft = `${i*barWidth + 1}px`;
+            newBar.style.marginLeft = `${i*barWidth}px`;
             newBar.style.bottom = '0';
             newBar.style.position = 'absolute';
             newBar.style.display = 'inline-block';
