@@ -388,9 +388,9 @@ class Player {
 
         if (this.renderMode === 'canvas') {
             let visualizerRect = visualizer.getBoundingClientRect();
-            // visualizer.width = visualizerRect.width;
+            visualizer.width = visualizerRect.width * window.devicePixelRatio;
             // visualizer.style.width = `${visualizerRect.width}px`;
-            // visualizer.height = visualizer.style.height = visualizerRect.height;
+            visualizer.height = visualizerRect.height * window.devicePixelRatio;
             // visualizer.style.height = `${visualizerRect.height}px`;
             this.ctx = this.visualNode.getContext('2d');
         }
@@ -585,7 +585,7 @@ class Player {
                     let offset = i * (width / this.barCount) + j + this.audio.analyser.frequencyBinCount * this.linearRegion[0];
                     sum += this.freq[Math.ceil(offset)];
                 }
-                let value = sum / (width / this.barCount);
+                let value = sum / Math.ceil(width / this.barCount);
                 this.updateBar(i, value, this.visualNode, ctx);
             }
         }
@@ -692,7 +692,7 @@ class Player {
         this.showLyrics = params.showLyrics ? params.showLyrics : false;
         this.dropRate = typeof params.dropRate !== 'undefined' ? params.dropRate : 1;
         this.linearRegion = params.linearRegion ? params.linearRegion : [0, 1];
-        this.renderMode = params.renderMode || 'dom';
+        this.renderMode = params.renderMode || 'canvas';
 
         // Initialize some global variables
         this.currentTrack = 0;
