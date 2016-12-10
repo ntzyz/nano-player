@@ -388,9 +388,9 @@ class Player {
 
         if (this.renderMode === 'canvas') {
             let visualizerRect = visualizer.getBoundingClientRect();
-            visualizer.width = visualizerRect.width * window.devicePixelRatio;
+            visualizer.width = visualizerRect.width * window.devicePixelRatio * 2;
             // visualizer.style.width = `${visualizerRect.width}px`;
-            visualizer.height = visualizerRect.height * window.devicePixelRatio;
+            visualizer.height = visualizerRect.height * window.devicePixelRatio * 2;
             // visualizer.style.height = `${visualizerRect.height}px`;
             this.ctx = this.visualNode.getContext('2d');
         }
@@ -526,8 +526,8 @@ class Player {
         if (this.renderMode === 'canvas') {
             let width = canvas.width / this.barCount;
             value /= 256;
-            ctx.lineTo(offset * width, (1 - value) * canvas.height);
-            ctx.lineTo((offset + 1) * width, (1 - value) * canvas.height);
+            ctx.lineTo(Math.ceil(offset * width), Math.ceil((1 - value) * canvas.height));
+            ctx.lineTo(Math.ceil((offset + 1) * width), Math.ceil((1 - value) * canvas.height));
         }
         else {
             let bar = this.barArray[offset];
