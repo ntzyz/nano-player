@@ -55,7 +55,7 @@ The blur filter provided by CSS3 should be disabled on most mobile devices for p
 ```
 
 ### Advanced
-You can set up two callback on each song: onstart, onfinish. Here is a complex example using this two callbacks to replace cover with a `<video>` tag.
+You can set up two callback for each song: onstart, onfinish. Here is a complex example using this two callbacks to replace cover with a `<video>` tag.
 
 [View demo](https://dev.cczu.edu.cn/~ntzyz/video.html)
 
