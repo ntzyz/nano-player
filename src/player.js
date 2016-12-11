@@ -735,14 +735,14 @@ class Player {
     switchTo(track, isFirst) {
         this.pause();
         if (this.nowPlaying.onfinish && !isFirst)
-            this.nowPlaying.onfinish.call();
+            this.nowPlaying.onfinish(this);
         this.currentTrack = track;
         if (this.currentTrack < 0)
             this.currentTrack += this.playList.length;
         this.currentTrack %= this.playList.length;
         this.reinit();
         if (this.nowPlaying.onstart)
-            this.nowPlaying.onstart.call();
+            this.nowPlaying.onstart(this);
         this.play();
         this.flushStatus();
     }
