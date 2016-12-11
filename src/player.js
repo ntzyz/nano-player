@@ -737,6 +737,8 @@ class Player {
         if (this.nowPlaying.onfinish && !isFirst)
             this.nowPlaying.onfinish.call();
         this.currentTrack = track;
+        if (this.currentTrack < 0)
+            this.currentTrack += this.playList.length;
         this.currentTrack %= this.playList.length;
         this.reinit();
         if (this.nowPlaying.onstart)
