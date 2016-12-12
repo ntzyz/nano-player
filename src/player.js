@@ -428,6 +428,10 @@ class Player {
         this.domAudio.addEventListener('ended', () => {
             this.nextTrack();
         });
+        
+        this.showingBuoy = [];
+        for (let i = 0; i != this.barCount; ++i)
+            this.showingBuoy[i] = this.visualNode.height;
     }
 
     initLyrics() {
@@ -522,6 +526,20 @@ class Player {
         this.lyrics.lines = 0;
     }
 
+    updateBuoy(offset, value, canvas, ctx) {
+        let width = canvas.width / this.barCount;
+        value /= 256;
+        let height = Math.ceil((1 - value) * canvas.height);
+        if (this.showingBuoy[offset] > height)
+            this.showingBuoy[offset] = height;
+        else {
+            let dt = height - this.showingBuoy[offset];
+            this.showingBuoy[offset] += Math.ceil(dt/100);            
+        }
+        ctx.moveTo(Math.ceil(offset * width), this.showingBuoy[offset]);
+        ctx.lineTo(Math.ceil((offset+1) * width), this.showingBuoy[offset]);
+    }
+    
     updateBar(offset, value, canvas, ctx) {
         if (this.renderMode === 'canvas') {
             let width = canvas.width / this.barCount;
@@ -564,6 +582,7 @@ class Player {
             ctx.moveTo(0, this.visualNode.height);
         }
 
+        let tempValue = [];
         if (this.logarithmic) {
             for (let i = 0; i != this.barCount; ++i) {
                 let sum = 0,
@@ -575,6 +594,7 @@ class Player {
                     cnt++;
                 }
                 let value = sum / cnt;
+                tempValue[i] = value;
                 this.updateBar(i, value, this.visualNode, ctx);
             }
         } else {
@@ -586,6 +606,7 @@ class Player {
                     sum += this.freq[Math.ceil(offset)];
                 }
                 let value = sum / Math.ceil(width / this.barCount);
+                tempValue[i] = value;
                 this.updateBar(i, value, this.visualNode, ctx);
             }
         }
@@ -595,6 +616,16 @@ class Player {
             ctx.lineTo(0, this.visualNode.height);
             ctx.fill();
         }
+        
+        if (this.showBuoy) {
+            ctx.strokeStyle ='rgba(255, 255, 255, 1)';
+            ctx.beginPath();
+            for (let i = 0; i<this.barCount; ++i) {
+                this.updateBuoy(i, tempValue[i], this.visualNode, ctx);
+            }
+            ctx.stroke();
+        }
+
     }
 
     flushStatus() {
@@ -693,6 +724,7 @@ class Player {
         this.dropRate = typeof params.dropRate !== 'undefined' ? params.dropRate : 1;
         this.linearRegion = params.linearRegion ? params.linearRegion : [0, 1];
         this.renderMode = params.renderMode || 'canvas';
+        this.showBuoy = params.showBuoy ? params.showBuoy : false;
 
         // Initialize some global variables
         this.currentTrack = 0;
