@@ -534,10 +534,10 @@ class Player {
             this.showingBuoy[offset] = height;
         else {
             let dt = height - this.showingBuoy[offset];
-            this.showingBuoy[offset] += Math.ceil(dt/100);            
+            this.showingBuoy[offset] += dt/10;            
         }
-        ctx.moveTo(Math.ceil(offset * width), this.showingBuoy[offset]);
-        ctx.lineTo(Math.ceil((offset+1) * width), this.showingBuoy[offset]);
+        ctx.moveTo(Math.ceil(offset * width), Math.ceil(this.showingBuoy[offset])-1);
+        ctx.lineTo(Math.ceil((offset+1) * width), Math.ceil(this.showingBuoy[offset])-1);
     }
     
     updateBar(offset, value, canvas, ctx) {
