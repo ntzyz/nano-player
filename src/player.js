@@ -2,9 +2,9 @@
 
 require('classlist-polyfill');
 require('./style.css');
-// require('./hidpi-canvas');
 
 let createElement = require('./element-helper');
+let Spectral = require('./spectral');
 
 class Player {
     get nowPlaying() {
@@ -411,27 +411,10 @@ class Player {
         this.domAudio = document.createElement('AUDIO');
         this.domAudio.crossOrigin = 'anonymous';
         this.element.appendChild(this.domAudio);
-        // Variables and others needed by HTML Audio API.
-        try {
-            this.audio = {};
-            this.audio.ctx = new AudioContext();
-            this.audio.source = this.audio.ctx.createMediaElementSource(this.domAudio);
-            this.audio.analyser = this.audio.ctx.createAnalyser();
-            this.audio.analyser.fftSize = this.fftSize ? this.fftSize : this.audio.analyser.fftSize;
-            this.audio.source.connect(this.audio.analyser);
-            this.audio.source.connect(this.audio.ctx.destination);
-            this.freq = new Uint8Array(this.audio.analyser.frequencyBinCount)
-        } catch (ex) {
-            this.audio = null;
-            console.log('Failed on initAudio'); // doing nothing on unsupported browsers.
-        }
+
         this.domAudio.addEventListener('ended', () => {
             this.nextTrack();
         });
-        
-        this.showingBuoy = [];
-        for (let i = 0; i != this.barCount; ++i)
-            this.showingBuoy[i] = this.visualNode.height;
     }
 
     initLyrics() {
@@ -496,6 +479,8 @@ class Player {
             if (item[0] != '[') // Recover the line.
                 item = '[' + item;
 
+            if (!/\[(\d+):(\d+).(\d+)\](.*)/.test(lyric))
+                return;
             let lyric = item.match(/\[(\d+):(\d+).(\d+)\](.*)/);
             if (lyric[4] == '') { // Content unedfined, push current offset into pending list.
                 pending.push(off);
@@ -526,106 +511,9 @@ class Player {
         this.lyrics.lines = 0;
     }
 
-    updateBuoy(offset, value, canvas, ctx) {
-        let width = canvas.width / this.barCount;
-        value /= 256;
-        let height = Math.ceil((1 - value) * canvas.height);
-        if (this.showingBuoy[offset] > height)
-            this.showingBuoy[offset] = height;
-        else {
-            let dt = height - this.showingBuoy[offset];
-            this.showingBuoy[offset] += dt/10;            
-        }
-        ctx.moveTo(Math.ceil(offset * width), Math.ceil(this.showingBuoy[offset])-1);
-        ctx.lineTo(Math.ceil((offset+1) * width), Math.ceil(this.showingBuoy[offset])-1);
-    }
-    
-    updateBar(offset, value, canvas, ctx) {
-        if (this.renderMode === 'canvas') {
-            let width = canvas.width / this.barCount;
-            value /= 256;
-            ctx.lineTo(Math.ceil(offset * width), Math.ceil((1 - value) * canvas.height));
-            ctx.lineTo(Math.ceil((offset + 1) * width), Math.ceil((1 - value) * canvas.height));
-        }
-        else {
-            let bar = this.barArray[offset];
-            if (!bar)
-                return;
-            // Converts a number to a percentage
-            value /= 2.56;
-            // Only in the drop
-            let prevValue = bar.style.height.substring(0, bar.style.height.length - 1);
-            prevValue = parseFloat(prevValue);
-            if (value < prevValue) {
-                let dist = prevValue - value;
-                value += dist * (1 - this.dropRate);
-            }
-            bar.style.height = value + '%';
-        }
-    }
-
-    renderVisualizer() {
+    updateProgress() {
         if (this.showProgressBar)
             this.progressBar.style.width = 100 * Math.min((this.domAudio.currentTime / this.domAudio.duration), 1) + '%';
-        if (!this.showVisualizer || this.audio === null)
-            return;
-        this.audio.analyser.getByteFrequencyData(this.freq);
-
-        if (this.domAudio.paused)
-            return;
-
-        let ctx = this.ctx;
-        if (this.renderMode === 'canvas') {
-            ctx.fillStyle = 'rgba(255, 255, 255, 0.3)';
-            ctx.clearRect(0, 0, this.visualNode.width, this.visualNode.height);
-            ctx.beginPath();
-            ctx.moveTo(0, this.visualNode.height);
-        }
-
-        let tempValue = [];
-        if (this.logarithmic) {
-            for (let i = 0; i != this.barCount; ++i) {
-                let sum = 0,
-                    cnt = 0;
-                let width = Math.log(this.audio.analyser.frequencyBinCount) / this.barCount;
-
-                for (let j = Math.exp((i - 1) * width); j <= Math.exp((i) * width); ++j) {
-                    sum += this.freq[Math.ceil(j)];
-                    cnt++;
-                }
-                let value = sum / cnt;
-                tempValue[i] = value;
-                this.updateBar(i, value, this.visualNode, ctx);
-            }
-        } else {
-            let width = (this.linearRegion[1] - this.linearRegion[0]) * this.audio.analyser.frequencyBinCount;
-            for (let i = 0; i < this.barCount; ++i) {
-                let sum = 0;
-                for (let j = 0; j < width / this.barCount; ++j) {
-                    let offset = i * (width / this.barCount) + j + this.audio.analyser.frequencyBinCount * this.linearRegion[0];
-                    sum += this.freq[Math.ceil(offset)];
-                }
-                let value = sum / Math.ceil(width / this.barCount);
-                tempValue[i] = value;
-                this.updateBar(i, value, this.visualNode, ctx);
-            }
-        }
-
-        if (this.renderMode === 'canvas') {
-            ctx.lineTo(this.visualNode.width, this.visualNode.height);
-            ctx.lineTo(0, this.visualNode.height);
-            ctx.fill();
-        }
-        
-        if (this.showBuoy) {
-            ctx.strokeStyle ='rgba(255, 255, 255, 1)';
-            ctx.beginPath();
-            for (let i = 0; i<this.barCount; ++i) {
-                this.updateBuoy(i, tempValue[i], this.visualNode, ctx);
-            }
-            ctx.stroke();
-        }
-
     }
 
     flushStatus() {
@@ -641,14 +529,15 @@ class Player {
     play() {
         this.initLyrics();
         this.intervals.lyrics = setInterval(() => { this.updateLyrics(false) }, 20);
-        this.intervals.visualizer = setInterval(() => { this.renderVisualizer() }, 20);
+        this.intervals.progress = setInterval(() => { this.updateProgress() }, 200);
+        this.spectral.start();
         this.domAudio.play();
         this.flushStatus();
     }
 
     pause() {
         clearInterval(this.intervals.lyrics);
-        clearInterval(this.intervals.visualizer);
+        this.spectral.pause();
         this.domAudio.pause();
         this.flushStatus();
     }
@@ -735,33 +624,24 @@ class Player {
         this.initUI();
         this.initAudio();
         this.initLyrics();
-        this.renderMode === 'canvas' || this.initVisualizer();
-        this.reinit(); // Immediate fill the data of now playing song.
+
+        // Immediate fill the data of now playing song.
+        this.reinit();
+
+        if (this.showVisualizer) {
+            this.spectral = new Spectral({
+                audio: this.domAudio,
+                canvas: this.visualNode,
+                logarithmic: this.logarithmic,
+                bandCount: this.barCount,
+                linearRegion: this.linearRegion,
+                showBuoy: this.showBuoy,
+            })
+        }
 
         // let's rock and roll.
         if (this.autoStart)
             this.switchTo(0, true)
-    }
-
-    initVisualizer() {
-        if (!this.showVisualizer || this.audio === null)
-            return;
-        this.barArray = [];
-        this.visualNode.innerHTML = "";
-        let barWidth = this.visualNode.clientWidth / this.barCount;
-        for (let i = 0; i != this.barCount; ++i) {
-            let newBar = document.createElement('DIV')
-            newBar.style.width = `${barWidth}px`;
-            newBar.style.marginLeft = `${i*barWidth}px`;
-            newBar.style.bottom = '0';
-            newBar.style.position = 'absolute';
-            newBar.style.display = 'inline-block';
-            // newBar.style.borderTop = 'solid 1px white';
-            newBar.style.backgroundColor = 'rgba(255, 255, 255, 0.3)';
-            newBar.id = `bar${i}`;
-            this.visualNode.appendChild(newBar);
-            this.barArray.push(newBar);
-        }
     }
 
     switchTo(track, isFirst) {
