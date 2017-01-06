@@ -145,7 +145,7 @@ class Player {
                     event.stopPropagation();
                     let { left } = progress.getBoundingClientRect();
                     this.domAudio.currentTime = this.domAudio.duration * (event.clientX - left) / progress.clientWidth;
-                    this.renderVisualizer();
+                    this.updateProgress();
                 }
             }
         });
@@ -479,7 +479,7 @@ class Player {
             if (item[0] != '[') // Recover the line.
                 item = '[' + item;
 
-            if (!/\[(\d+):(\d+).(\d+)\](.*)/.test(lyric))
+            if (!/\[(\d+):(\d+).(\d+)\](.*)/.test(item))
                 return;
             let lyric = item.match(/\[(\d+):(\d+).(\d+)\](.*)/);
             if (lyric[4] == '') { // Content unedfined, push current offset into pending list.
@@ -636,6 +636,7 @@ class Player {
                 bandCount: this.barCount,
                 linearRegion: this.linearRegion,
                 showBuoy: this.showBuoy,
+                fps: 60,
             })
         }
 
