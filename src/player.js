@@ -51,7 +51,7 @@ class Player {
 
         let lyrics = createElement({
             tagName: 'div',
-            classList: ['lyrics'],
+            classList: ['lyrics', 'gpu'],
         });
 
         // Container for control buttons, progress bar and visualizer
@@ -209,7 +209,7 @@ class Player {
         // Album cover.
         let cover =  createElement({
             tagName: 'div',
-            classList: ['cover'],
+            classList: ['cover', 'gpu'],
             style: {
                 zIndex: '1',
                 backgroundSize: 'cover'
@@ -219,7 +219,7 @@ class Player {
         // Legacy album cover.
         let legacyCover = createElement({
             tagName: 'div',
-            classList: ['cover'],
+            classList: ['cover', 'gpu'],
             innerHTML: require('./defaultcover'),
             style: {
                 backgroundColor: 'white',
@@ -530,14 +530,13 @@ class Player {
         this.initLyrics();
         this.intervals.lyrics = setInterval(() => { this.updateLyrics(false) }, 20);
         this.intervals.progress = setInterval(() => { this.updateProgress() }, 200);
-        this.spectral.start();
         this.domAudio.play();
         this.flushStatus();
     }
 
     pause() {
         clearInterval(this.intervals.lyrics);
-        this.spectral.pause();
+        // this.spectral.pause();
         this.domAudio.pause();
         this.flushStatus();
     }
@@ -636,8 +635,9 @@ class Player {
                 bandCount: this.barCount,
                 linearRegion: this.linearRegion,
                 showBuoy: this.showBuoy,
-                fps: 60,
+                fps: 50,
             })
+            this.spectral.start();
         }
 
         // let's rock and roll.

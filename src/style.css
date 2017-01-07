@@ -1,3 +1,8 @@
+.__nano_player__ .gpu{
+    transform: translateZ(0);
+    will-change: transform;
+}
+
 .__nano_player__ .cover {
     position: absolute;
     width: 100%;
