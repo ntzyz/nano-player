@@ -7,8 +7,12 @@ class Visualizer {
         if (typeof param === undefined || typeof param.audio === undefined) {
             throw 'Missing parameter.'
         }
+        if (typeof param.audioAnalyser === 'undefined' || !param.audioAnalyser instanceof AnalyserNode) {
+            throw 'audioAnalyser is required.'
+        }
 
         this.domAudio = param.audio;
+        this.audioAnalyser = param.audioAnalyser;
     }
 
     start() {

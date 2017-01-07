@@ -26,30 +26,23 @@ class Oscillator extends Visualizer {
         }
 
         // Initialize
-        try {
-            // AudioSource and AudioAnalyser
-            this.audioAnalyser = param.audioAnalyser;
-            this.dataArray = new Uint8Array(this.audioAnalyser.fftSize);
+        this.dataArray = new Uint8Array(this.audioAnalyser.fftSize);
 
-            // Fix HiDPI support
-            let rect = this.canvas.getBoundingClientRect();
-            this.canvas.width = rect.width * window.devicePixelRatio;// * 2;
-            this.canvas.height = rect.height * window.devicePixelRatio;// * 2;
+        // Fix HiDPI support
+        let rect = this.canvas.getBoundingClientRect();
+        this.canvas.width = rect.width * window.devicePixelRatio;
+        this.canvas.height = rect.height * window.devicePixelRatio;
 
-            // Canvas
-            this.canvasContext = this.canvas.getContext('2d');
-            this.canvasFillStyle = param.fillStyle || 'rgba(255, 255, 255, 0.3)';
+        // Canvas
+        this.canvasContext = this.canvas.getContext('2d');
+        this.canvasFillStyle = param.fillStyle || 'rgba(255, 255, 255, 0.3)';
 
-            // Some other options
-            this.fps = param.fps || 50;
-            this.intervalId = null;
+        // Some other options
+        this.fps = param.fps || 50;
+        this.intervalId = null;
 
-            // Modern browser!
-            this.initialized = true;
-        } catch(ex) {
-            console.log('Unable to finish initialization due to this ancient browser.' + ex);
-            this.initialized = false;
-        }
+        // Modern browser!
+        this.initialized = true;
     }
 
     start() {
@@ -77,7 +70,7 @@ class Oscillator extends Visualizer {
 
         let tempValue = []; // FIXME: rename this variable.
         let canvasContext = this.canvasContext;
-        this.canvasContext.strokeStyle ='rgba(255, 255, 255, 1)';
+        this.canvasContext.strokeStyle ='rgb(255, 255, 255)';
         canvasContext.clearRect(0, 0, this.canvas.width, this.canvas.height);
         canvasContext.beginPath();
 

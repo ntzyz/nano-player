@@ -26,36 +26,29 @@ class Spectral extends Visualizer {
         }
 
         // Initialize
-        try {
-            // AudioSource and AudioAnalyser
-            this.audioAnalyser = param.audioAnalyser;
-            this.freq = new Uint8Array(this.audioAnalyser.frequencyBinCount);
+        this.freq = new Uint8Array(this.audioAnalyser.frequencyBinCount);
 
-            // Fix HiDPI support
-            let rect = this.canvas.getBoundingClientRect();
-            this.canvas.width = rect.width * window.devicePixelRatio * 2;
-            this.canvas.height = rect.height * window.devicePixelRatio * 2;
-            this.canvas.classList.add('nearestNeighbor');
+        // Fix HiDPI support
+        let rect = this.canvas.getBoundingClientRect();
+        this.canvas.width = rect.width * window.devicePixelRatio * 2;
+        this.canvas.height = rect.height * window.devicePixelRatio * 2;
+        this.canvas.classList.add('nearestNeighbor');
 
-            // Canvas
-            this.canvasContext = this.canvas.getContext('2d');
-            this.canvasFillStyle = param.fillStyle || 'rgba(255, 255, 255, 0.3)';
+        // Canvas
+        this.canvasContext = this.canvas.getContext('2d');
+        this.canvasFillStyle = param.fillStyle || 'rgba(255, 255, 255, 0.3)';
 
-            // Some other options
-            this.logarithmic = param.logarithmic || false;
-            this.bandCount = param.bandCount || 32;
-            this.linearRegion = param.linearRegion || [0, 0.75];
-            this.fps = param.fps || 50;
-            this.showBuoy = param.showBuoy || false;
-            this.intervalId = null;
-            this.showingBuoy = new Array(this.bandCount).fill(this.canvas.height);
+        // Some other options
+        this.logarithmic = param.logarithmic || false;
+        this.bandCount = param.bandCount || 32;
+        this.linearRegion = param.linearRegion || [0, 0.75];
+        this.fps = param.fps || 50;
+        this.showBuoy = param.showBuoy || false;
+        this.intervalId = null;
+        this.showingBuoy = new Array(this.bandCount).fill(this.canvas.height);
 
-            // Modern browser!
-            this.initialized = true;
-        } catch(ex) {
-            console.log('Unable to finish initialization due to this ancient browser.' + ex);
-            this.initialized = false;
-        }
+        // Modern browser!
+        this.initialized = true;
     }
 
     start() {

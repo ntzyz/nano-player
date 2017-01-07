@@ -5,6 +5,7 @@ require('./style.css');
 
 const createElement = require('./element-helper');
 const defaultCover = require('./default-cover');
+
 const Spectral = require('./spectral');
 const Oscillator = require('./oscillator');
 

@@ -55,6 +55,7 @@
 
 	var createElement = __webpack_require__(6);
 	var defaultCover = __webpack_require__(7);
+
 	var Spectral = __webpack_require__(8);
 	var Oscillator = __webpack_require__(10);
 
@@ -1485,36 +1486,29 @@
 	        }
 
 	        // Initialize
-	        try {
-	            // AudioSource and AudioAnalyser
-	            _this.audioAnalyser = param.audioAnalyser;
-	            _this.freq = new Uint8Array(_this.audioAnalyser.frequencyBinCount);
+	        _this.freq = new Uint8Array(_this.audioAnalyser.frequencyBinCount);
 
-	            // Fix HiDPI support
-	            var rect = _this.canvas.getBoundingClientRect();
-	            _this.canvas.width = rect.width * window.devicePixelRatio * 2;
-	            _this.canvas.height = rect.height * window.devicePixelRatio * 2;
-	            _this.canvas.classList.add('nearestNeighbor');
+	        // Fix HiDPI support
+	        var rect = _this.canvas.getBoundingClientRect();
+	        _this.canvas.width = rect.width * window.devicePixelRatio * 2;
+	        _this.canvas.height = rect.height * window.devicePixelRatio * 2;
+	        _this.canvas.classList.add('nearestNeighbor');
 
-	            // Canvas
-	            _this.canvasContext = _this.canvas.getContext('2d');
-	            _this.canvasFillStyle = param.fillStyle || 'rgba(255, 255, 255, 0.3)';
+	        // Canvas
+	        _this.canvasContext = _this.canvas.getContext('2d');
+	        _this.canvasFillStyle = param.fillStyle || 'rgba(255, 255, 255, 0.3)';
 
-	            // Some other options
-	            _this.logarithmic = param.logarithmic || false;
-	            _this.bandCount = param.bandCount || 32;
-	            _this.linearRegion = param.linearRegion || [0, 0.75];
-	            _this.fps = param.fps || 50;
-	            _this.showBuoy = param.showBuoy || false;
-	            _this.intervalId = null;
-	            _this.showingBuoy = new Array(_this.bandCount).fill(_this.canvas.height);
+	        // Some other options
+	        _this.logarithmic = param.logarithmic || false;
+	        _this.bandCount = param.bandCount || 32;
+	        _this.linearRegion = param.linearRegion || [0, 0.75];
+	        _this.fps = param.fps || 50;
+	        _this.showBuoy = param.showBuoy || false;
+	        _this.intervalId = null;
+	        _this.showingBuoy = new Array(_this.bandCount).fill(_this.canvas.height);
 
-	            // Modern browser!
-	            _this.initialized = true;
-	        } catch (ex) {
-	            console.log('Unable to finish initialization due to this ancient browser.' + ex);
-	            _this.initialized = false;
-	        }
+	        // Modern browser!
+	        _this.initialized = true;
 	        return _this;
 	    }
 
@@ -1644,8 +1638,12 @@
 	        if ((typeof param === 'undefined' ? 'undefined' : _typeof(param)) === undefined || _typeof(param.audio) === undefined) {
 	            throw 'Missing parameter.';
 	        }
+	        if (typeof param.audioAnalyser === 'undefined' || !param.audioAnalyser instanceof AnalyserNode) {
+	            throw 'audioAnalyser is required.';
+	        }
 
 	        this.domAudio = param.audio;
+	        this.audioAnalyser = param.audioAnalyser;
 	    }
 
 	    _createClass(Visualizer, [{
@@ -1712,30 +1710,23 @@
 	        }
 
 	        // Initialize
-	        try {
-	            // AudioSource and AudioAnalyser
-	            _this.audioAnalyser = param.audioAnalyser;
-	            _this.dataArray = new Uint8Array(_this.audioAnalyser.fftSize);
+	        _this.dataArray = new Uint8Array(_this.audioAnalyser.fftSize);
 
-	            // Fix HiDPI support
-	            var rect = _this.canvas.getBoundingClientRect();
-	            _this.canvas.width = rect.width * window.devicePixelRatio; // * 2;
-	            _this.canvas.height = rect.height * window.devicePixelRatio; // * 2;
+	        // Fix HiDPI support
+	        var rect = _this.canvas.getBoundingClientRect();
+	        _this.canvas.width = rect.width * window.devicePixelRatio;
+	        _this.canvas.height = rect.height * window.devicePixelRatio;
 
-	            // Canvas
-	            _this.canvasContext = _this.canvas.getContext('2d');
-	            _this.canvasFillStyle = param.fillStyle || 'rgba(255, 255, 255, 0.3)';
+	        // Canvas
+	        _this.canvasContext = _this.canvas.getContext('2d');
+	        _this.canvasFillStyle = param.fillStyle || 'rgba(255, 255, 255, 0.3)';
 
-	            // Some other options
-	            _this.fps = param.fps || 50;
-	            _this.intervalId = null;
+	        // Some other options
+	        _this.fps = param.fps || 50;
+	        _this.intervalId = null;
 
-	            // Modern browser!
-	            _this.initialized = true;
-	        } catch (ex) {
-	            console.log('Unable to finish initialization due to this ancient browser.' + ex);
-	            _this.initialized = false;
-	        }
+	        // Modern browser!
+	        _this.initialized = true;
 	        return _this;
 	    }
 
@@ -1771,7 +1762,7 @@
 
 	            var tempValue = []; // FIXME: rename this variable.
 	            var canvasContext = this.canvasContext;
-	            this.canvasContext.strokeStyle = 'rgba(255, 255, 255, 1)';
+	            this.canvasContext.strokeStyle = 'rgb(255, 255, 255)';
 	            canvasContext.clearRect(0, 0, this.canvas.width, this.canvas.height);
 	            canvasContext.beginPath();
 
