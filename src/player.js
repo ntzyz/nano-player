@@ -3,8 +3,10 @@
 require('classlist-polyfill');
 require('./style.css');
 
-let createElement = require('./element-helper');
-let Spectral = require('./spectral');
+const createElement = require('./element-helper');
+const defaultCover = require('./default-cover');
+const Spectral = require('./spectral');
+const Oscillator = require('./oscillator');
 
 class Player {
     get nowPlaying() {
@@ -220,7 +222,7 @@ class Player {
         let legacyCover = createElement({
             tagName: 'div',
             classList: ['cover', 'gpu'],
-            innerHTML: require('./defaultcover'),
+            innerHTML: defaultCover,
             style: {
                 backgroundColor: 'white',
             }
@@ -411,6 +413,19 @@ class Player {
         this.domAudio = document.createElement('AUDIO');
         this.domAudio.crossOrigin = 'anonymous';
         this.element.appendChild(this.domAudio);
+
+        try {
+            // AudioSource and AudioAnalyser
+            this.audioContext = new AudioContext();
+            this.audioSource = this.audioContext.createMediaElementSource(this.domAudio);
+            this.audioAnalyser = this.audioContext.createAnalyser();
+            this.audioAnalyser.fftSize = this.fftSize || this.audioAnalyser.fftSize;
+            this.audioSource.connect(this.audioAnalyser);
+            this.audioSource.connect(this.audioContext.destination);
+        }
+        catch(ex) {
+            this.audioContext = null;
+        }
 
         this.domAudio.addEventListener('ended', () => {
             this.nextTrack();
@@ -627,17 +642,50 @@ class Player {
         // Immediate fill the data of now playing song.
         this.reinit();
 
-        if (this.showVisualizer) {
-            this.spectral = new Spectral({
-                audio: this.domAudio,
-                canvas: this.visualNode,
-                logarithmic: this.logarithmic,
-                bandCount: this.barCount,
-                linearRegion: this.linearRegion,
-                showBuoy: this.showBuoy,
-                fps: 50,
-            })
-            this.spectral.start();
+        let switchVisualizer = () => {
+            if (typeof this.showingVisualizer !== 'undefined') {
+                this.visualizer.dispose();
+                if (this.showingVisualizer === 'spectral') {
+                    this.showingVisualizer = 'oscillator';
+                }
+                else {
+                    this.showingVisualizer = 'spectral';
+                }
+            }
+            else {
+                this.showingVisualizer = 'spectral';
+            }
+            if (this.showingVisualizer === 'spectral') {
+                this.visualizer = new Spectral({
+                    audio: this.domAudio,
+                    audioAnalyser: this.audioAnalyser,
+                    canvas: this.visualNode,
+                    logarithmic: this.logarithmic,
+                    bandCount: this.barCount,
+                    linearRegion: this.linearRegion,
+                    showBuoy: this.showBuoy,
+                    fps: 50,
+                })
+            }
+            else {
+                this.visualizer = new Oscillator({
+                    audio: this.domAudio,
+                    audioAnalyser: this.audioAnalyser,
+                    canvas: this.visualNode,
+                    fps: 50,
+                })
+            }
+            this.visualizer.start();
+        }
+
+        if (this.showVisualizer && this.audioContext) {
+            this.visualNode.addEventListener('click', event => {
+                if (this.uiStatus == 'unfocus')
+                    return;
+                event.stopPropagation();
+                switchVisualizer();
+            });
+            switchVisualizer();
         }
 
         // let's rock and roll.

@@ -8,7 +8,7 @@ class Spectral extends Visualizer {
 
         // Check if HTMLElement exist
         if (typeof param.canvas === 'string') {
-            this.canvas = document.querySelector(param.el);
+            this.canvas = document.querySelector(param.canvas);
             if (!this.canvas instanceof HTMLElement) {
                 throw 'Unable to get HTMLElement';
             }
@@ -28,18 +28,14 @@ class Spectral extends Visualizer {
         // Initialize
         try {
             // AudioSource and AudioAnalyser
-            this.audioContext = new AudioContext();
-            this.audioSource = this.audioContext.createMediaElementSource(this.domAudio);
-            this.audioAnalyser = this.audioContext.createAnalyser();
-            this.audioAnalyser.fftSize = param.fftSize || this.audioAnalyser.fftSize;
-            this.audioSource.connect(this.audioAnalyser);
-            this.audioSource.connect(this.audioContext.destination);
+            this.audioAnalyser = param.audioAnalyser;
             this.freq = new Uint8Array(this.audioAnalyser.frequencyBinCount);
 
             // Fix HiDPI support
             let rect = this.canvas.getBoundingClientRect();
             this.canvas.width = rect.width * window.devicePixelRatio * 2;
             this.canvas.height = rect.height * window.devicePixelRatio * 2;
+            this.canvas.classList.add('nearestNeighbor');
 
             // Canvas
             this.canvasContext = this.canvas.getContext('2d');
@@ -76,7 +72,8 @@ class Spectral extends Visualizer {
     }
 
     dispose() {
-        // TODO:
+        this.canvas.classList.remove('nearestNeighbor');
+        this.pause();
     }
 
     renderFrame() {
