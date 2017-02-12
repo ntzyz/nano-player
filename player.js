@@ -348,12 +348,35 @@
 	                var face = document.createElement('DIV');
 	                face.className = 'face';
 	                face.style.backgroundImage = 'url(\'' + _this.playList[offset].cover + '\')';
+	                face.style.position = 'absolute';
+	                face.style.zIndex = 2;
+	                face.style.width = '100%';
+	                face.style.height = '100%';
+
+	                var fallbackFace = document.createElement('DIV');
+	                fallbackFace.innerHTML = defaultCover;
+	                fallbackFace.style.position = 'absolute';
+	                fallbackFace.style.zIndex = 1;
+	                fallbackFace.style.backgroundColor = 'grey';
+	                fallbackFace.style.width = '100%';
+	                fallbackFace.style.height = '100%';
+
+	                var faceContainer = document.createElement('DIV');
+	                faceContainer.className = 'face';
+
+	                var faceWrapper = document.createElement('DIV');
+	                faceWrapper.className = 'face faceWrapper';
+	                faceWrapper.style.position = 'relative';
+
+	                faceWrapper.appendChild(face);
+	                faceWrapper.appendChild(fallbackFace);
+	                faceContainer.appendChild(faceWrapper);
 
 	                var title = document.createElement('DIV');
 	                title.className = 'title';
 	                title.innerHTML = _this.playList[offset].title + ' <br /> <span style="font-size: 0.8em">' + _this.playList[offset].artist + '</span>';
 
-	                item.appendChild(face);
+	                item.appendChild(faceContainer);
 	                item.appendChild(title);
 
 	                item.addEventListener('click', function () {
@@ -611,9 +634,11 @@
 	            var _this4 = this;
 
 	            this.initLyrics();
-	            this.intervals.lyrics = setInterval(function () {
-	                _this4.updateLyrics(false);
-	            }, 20);
+	            if (this.showLyrics) {
+	                this.intervals.lyrics = setInterval(function () {
+	                    _this4.updateLyrics(false);
+	                }, 20);
+	            }
 	            this.intervals.progress = setInterval(function () {
 	                _this4.updateProgress();
 	            }, 200);
@@ -779,14 +804,18 @@
 	    _createClass(Player, [{
 	        key: 'switchTo',
 	        value: function switchTo(track, isFirst) {
+	            var isEnd = false;
 	            this.pause();
 	            if (this.nowPlaying.onfinish && !isFirst) this.nowPlaying.onfinish(this);
 	            this.currentTrack = track;
 	            if (this.currentTrack < 0) this.currentTrack += this.playList.length;
+	            if (this.currentTrack === this.playList.length) {
+	                isEnd = true;
+	            }
 	            this.currentTrack %= this.playList.length;
 	            this.reinit();
 	            if (this.nowPlaying.onstart) this.nowPlaying.onstart(this);
-	            this.play();
+	            isEnd || this.play();
 	            this.flushStatus();
 	        }
 	    }]);
@@ -1078,7 +1107,7 @@
 
 
 	// module
-	exports.push([module.id, ".__nano_player__ .gpu{\n    transform: translateZ(0);\n    will-change: transform;\n}\n\n.__nano_player__ .cover {\n    position: absolute;\n    width: 100%;\n    height: 100%;\n    transition: all ease 0.3s;\n    color: white;\n    cursor: default;\n}\n.__nano_player__ .blur {\n    filter: blur(10px);\n}\n.__nano_player__ .hidden {\n    opacity: 0;\n}\n.__nano_player__ h1.songTitle {\n    font-weight: normal;\n    margin: 1%;\n    font-size: 150%;\n    text-align: center;\n    white-space: pre;\n    display: inline-block;\n}\n.__nano_player__ h2.songArtist {\n    font-weight: normal;\n    margin-top: 2%;\n    margin-bottom: 0;\n    font-size: 100%;\n    text-align: center;\n    line-height: 1em;\n}\n.__nano_player__ div.lyrics {\n    font-weight: normal;\n    margin: 1%;\n    font-size: 80%;\n    text-align: center;\n    transition: all ease 0.05s\n}\n.__nano_player__ .progress {\n    position: absolute;\n    bottom: 5%;\n    left: 25%;\n    width: 50%;\n    height: 1%;\n    margin: 0 auto;\n    border: 1px solid white;\n}\n.__nano_player__ .controls {\n    position: absolute;\n    height: 20%;\n    width: 100%;\n    bottom: 35%;\n    text-align: center;\n}\n.__nano_player__ .visualizer {\n    position: absolute;\n    bottom: 7%;\n    left: 25%;\n    width: 50%;\n    height: 12%;\n    margin: 0 auto;\n    border: 1px solid rgba(0,0,0,0);\n}\n.__nano_player__ canvas.nearestNeighbor {\n    image-rendering: optimizeSpeed;             /* Older versions of FF          */\n    image-rendering: -moz-crisp-edges;          /* FF 6.0+                       */\n    image-rendering: -webkit-optimize-contrast; /* Safari                        */\n    image-rendering: -o-crisp-edges;            /* OS X & Windows Opera (12.02+) */\n    image-rendering: pixelated;                 /* Awesome future-browsers       */\n    -ms-interpolation-mode: nearest-neighbor;   /* IE                            */\n}\n.__nano_player__ i.controlButton {\n    min-width: 50px;\n    display: inline-block;\n    text-align: center;\n}\n.__nano_player__ i.navButton {\n    cursor: pointer;\n}\n.__nano_player__ .pointer {\n    cursor: pointer;\n}\n.__nano_player__ .outside-left {\n    margin-left: -100%;\n}\n.__nano_player__ .outside-right {\n    margin-left: 100%;\n}\n.__nano_player__ .playlist {\n    position: absolute;\n    overflow: hidden;\n}\n\n.__nano_player__ .headbar {\n    background-color: #000;\n    height: 44px;\n    width: 100%;\n    text-align: center;\n    position: absolute;\n}\n\n.__nano_player__ .list {\n    width: 100%;\n    height: 64px;\n    transition: all ease 0.2s;\n}\n.__nano_player__ .now_playing {\n    background-color: #333;\n}\n.__nano_player__ .listContainer {\n    position: absolute;\n    top: 44px;\n    left: 0;\n    right: -17px;\n    bottom: 0;\n    overflow-y: scroll;\n    -webkit-overflow-scrolling: touch;\n}\n.__nano_player__ .list>.face {\n    position: absolute;\n    height: 64px;\n    width: 64px;\n    display: inline-block;\n    background-size: cover;\n}\n\n.__nano_player__ .list>.title {\n    position: absolute;\n    padding-left: 12px; \n    left: 64px;\n    right: 0;\n    padding-top: 12px;\n    display: inline-block;\n    text-overflow: ellipsis;\n    overflow: hidden;\n    line-height: 20px;\n    white-space: nowrap;\n}", ""]);
+	exports.push([module.id, ".__nano_player__ .gpu{\r\n    transform: translateZ(0);\r\n    will-change: transform;\r\n}\r\n\r\n.__nano_player__ .cover {\r\n    position: absolute;\r\n    width: 100%;\r\n    height: 100%;\r\n    transition: all ease 0.3s;\r\n    color: white;\r\n    cursor: default;\r\n}\r\n.__nano_player__ .blur {\r\n    filter: blur(10px);\r\n}\r\n.__nano_player__ .hidden {\r\n    opacity: 0;\r\n}\r\n.__nano_player__ h1.songTitle {\r\n    font-weight: normal;\r\n    margin: 1%;\r\n    font-size: 150%;\r\n    text-align: center;\r\n    white-space: pre;\r\n    display: inline-block;\r\n}\r\n.__nano_player__ h2.songArtist {\r\n    font-weight: normal;\r\n    margin-top: 2%;\r\n    margin-bottom: 0;\r\n    font-size: 100%;\r\n    text-align: center;\r\n    line-height: 1em;\r\n}\r\n.__nano_player__ div.lyrics {\r\n    font-weight: normal;\r\n    margin: 1%;\r\n    font-size: 80%;\r\n    text-align: center;\r\n    transition: all ease 0.05s\r\n}\r\n.__nano_player__ .progress {\r\n    position: absolute;\r\n    bottom: 5%;\r\n    left: 25%;\r\n    width: 50%;\r\n    height: 1%;\r\n    margin: 0 auto;\r\n    border: 1px solid white;\r\n}\r\n.__nano_player__ .controls {\r\n    position: absolute;\r\n    height: 20%;\r\n    width: 100%;\r\n    bottom: 35%;\r\n    text-align: center;\r\n}\r\n.__nano_player__ .visualizer {\r\n    position: absolute;\r\n    bottom: 7%;\r\n    left: 25%;\r\n    width: 50%;\r\n    height: 12%;\r\n    margin: 0 auto;\r\n    border: 1px solid rgba(0,0,0,0);\r\n}\r\n.__nano_player__ canvas.nearestNeighbor {\r\n    image-rendering: optimizeSpeed;             /* Older versions of FF          */\r\n    image-rendering: -moz-crisp-edges;          /* FF 6.0+                       */\r\n    image-rendering: -webkit-optimize-contrast; /* Safari                        */\r\n    image-rendering: -o-crisp-edges;            /* OS X & Windows Opera (12.02+) */\r\n    image-rendering: pixelated;                 /* Awesome future-browsers       */\r\n    -ms-interpolation-mode: nearest-neighbor;   /* IE                            */\r\n}\r\n.__nano_player__ i.controlButton {\r\n    min-width: 50px;\r\n    display: inline-block;\r\n    text-align: center;\r\n}\r\n.__nano_player__ i.navButton {\r\n    cursor: pointer;\r\n}\r\n.__nano_player__ .pointer {\r\n    cursor: pointer;\r\n}\r\n.__nano_player__ .outside-left {\r\n    margin-left: -100%;\r\n}\r\n.__nano_player__ .outside-right {\r\n    margin-left: 100%;\r\n}\r\n.__nano_player__ .playlist {\r\n    position: absolute;\r\n    overflow: hidden;\r\n}\r\n\r\n.__nano_player__ .headbar {\r\n    background-color: #000;\r\n    height: 44px;\r\n    width: 100%;\r\n    text-align: center;\r\n    position: absolute;\r\n}\r\n\r\n.__nano_player__ .list {\r\n    width: 100%;\r\n    height: 64px;\r\n    transition: all ease 0.2s;\r\n}\r\n.__nano_player__ .now_playing {\r\n    background-color: #333;\r\n}\r\n.__nano_player__ .listContainer {\r\n    position: absolute;\r\n    top: 44px;\r\n    left: 0;\r\n    right: -17px;\r\n    bottom: 0;\r\n    overflow-y: scroll;\r\n    -webkit-overflow-scrolling: touch;\r\n}\r\n.__nano_player__ .list .face {\r\n    position: absolute;\r\n    height: 64px;\r\n    width: 64px;\r\n    display: inline-block;\r\n    background-size: cover;\r\n}\r\n\r\n.__nano_player__ .list>.title {\r\n    position: absolute;\r\n    padding-left: 12px; \r\n    left: 64px;\r\n    right: 0;\r\n    padding-top: 12px;\r\n    display: inline-block;\r\n    text-overflow: ellipsis;\r\n    overflow: hidden;\r\n    line-height: 20px;\r\n    white-space: nowrap;\r\n}", ""]);
 
 	// exports
 

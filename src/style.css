@@ -120,7 +120,7 @@
     overflow-y: scroll;
     -webkit-overflow-scrolling: touch;
 }
-.__nano_player__ .list>.face {
+.__nano_player__ .list .face {
     position: absolute;
     height: 64px;
     width: 64px;

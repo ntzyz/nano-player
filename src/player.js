@@ -298,13 +298,35 @@ class Player {
             let face = document.createElement('DIV');
             face.className = 'face';
             face.style.backgroundImage = `url('${this.playList[offset].cover}')`;
+            face.style.position = 'absolute';
+            face.style.zIndex = 2;
+            face.style.width = '100%';
+            face.style.height = '100%';
 
+            let fallbackFace = document.createElement('DIV');
+            fallbackFace.innerHTML = defaultCover;
+            fallbackFace.style.position = 'absolute';
+            fallbackFace.style.zIndex = 1;
+            fallbackFace.style.backgroundColor = 'grey';
+            fallbackFace.style.width = '100%';
+            fallbackFace.style.height = '100%';
+
+            let faceContainer = document.createElement('DIV');
+            faceContainer.className = 'face';
+
+            let faceWrapper = document.createElement('DIV');
+            faceWrapper.className = 'face faceWrapper';
+            faceWrapper.style.position = 'relative';
+
+            faceWrapper.appendChild(face);
+            faceWrapper.appendChild(fallbackFace);
+            faceContainer.appendChild(faceWrapper);
 
             let title = document.createElement('DIV');
             title.className = 'title';
             title.innerHTML = `${this.playList[offset].title} <br /> <span style="font-size: 0.8em">${this.playList[offset].artist}</span>`;
 
-            item.appendChild(face);
+            item.appendChild(faceContainer);
             item.appendChild(title);
 
             item.addEventListener('click', () => {
@@ -544,7 +566,9 @@ class Player {
 
     play() {
         this.initLyrics();
-        this.intervals.lyrics = setInterval(() => { this.updateLyrics(false) }, 20);
+        if (this.showLyrics) {
+            this.intervals.lyrics = setInterval(() => { this.updateLyrics(false) }, 20);
+        }
         this.intervals.progress = setInterval(() => { this.updateProgress() }, 200);
         this.domAudio.play();
         this.flushStatus();
@@ -695,17 +719,21 @@ class Player {
     }
 
     switchTo(track, isFirst) {
+        let isEnd = false;
         this.pause();
         if (this.nowPlaying.onfinish && !isFirst)
             this.nowPlaying.onfinish(this);
         this.currentTrack = track;
         if (this.currentTrack < 0)
             this.currentTrack += this.playList.length;
+        if (this.currentTrack === this.playList.length) {
+            isEnd = true;
+        }
         this.currentTrack %= this.playList.length;
         this.reinit();
         if (this.nowPlaying.onstart)
             this.nowPlaying.onstart(this);
-        this.play();
+        isEnd || this.play();
         this.flushStatus();
     }
 }
