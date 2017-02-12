@@ -1,3 +1,7 @@
+.__nano_player__ {
+    user-select: none;
+}
+
 .__nano_player__ .gpu{
     transform: translateZ(0);
     will-change: transform;
@@ -19,7 +23,8 @@
 }
 .__nano_player__ h1.songTitle {
     font-weight: normal;
-    margin: 1%;
+    margin-top: 1%;
+    margin-bottom: 1%;
     font-size: 150%;
     text-align: center;
     white-space: pre;
@@ -27,11 +32,15 @@
 }
 .__nano_player__ h2.songArtist {
     font-weight: normal;
-    margin-top: 2%;
-    margin-bottom: 0;
+    margin: 2% auto 0 auto;
     font-size: 100%;
     text-align: center;
     line-height: 1em;
+    height: 1em;
+    text-overflow: ellipsis;
+    max-width: 90%;
+    white-space: pre;
+    overflow: hidden;
 }
 .__nano_player__ div.lyrics {
     font-weight: normal;
