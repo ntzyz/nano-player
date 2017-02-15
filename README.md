@@ -11,7 +11,6 @@ Nano Player
 Here is an example on how to use it:
 
 ``` html
-<link href="//cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.css" rel="stylesheet">
 <div id="player"></div>
 <script src="player.js"></script>
 <script>
@@ -29,7 +28,6 @@ var nanoPlayer = new Player({
     showProgressBar: true,      // Optional, show progress bar or not
     showLyrics: true,           // Optional, show lyrics or not
     enableBlur: true,           // Optional, enable the blur effect or not
-    renderMode: 'canvas',       // Optional, both dom and canvas can be used to display the visualizer.
     playList: [
         {
             url: 'STYX HELIX.aac',      // Required, URL of the song.
@@ -73,7 +71,6 @@ var nanoPlayer = new Player({
     showLyrics: true,
     autoStart: true,
     enableBlur: navigator.userAgent.match(/Mobile|Android/) === null,
-    renderMode: 'canvas',
     playList: [
         {
             url: 'VOICES.mp3',
