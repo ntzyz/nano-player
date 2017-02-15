@@ -25,7 +25,6 @@
     font-weight: normal;
     margin-top: 1%;
     margin-bottom: 1%;
-    font-size: 150%;
     text-align: center;
     white-space: pre;
     display: inline-block;
@@ -33,7 +32,6 @@
 .__nano_player__ h2.songArtist {
     font-weight: normal;
     margin: 2% auto 0 auto;
-    font-size: 100%;
     text-align: center;
     line-height: 1em;
     height: 1em;
@@ -45,7 +43,6 @@
 .__nano_player__ div.lyrics {
     font-weight: normal;
     margin: 1%;
-    font-size: 80%;
     text-align: center;
     transition: all ease 0.05s
 }
@@ -61,8 +58,10 @@
 .__nano_player__ .controls {
     position: absolute;
     height: 20%;
+    max-height: 100px;
     width: 100%;
-    bottom: 35%;
+    top: 50%;
+    transform: translateY(-40%);
     text-align: center;
 }
 .__nano_player__ .visualizer {
@@ -82,12 +81,12 @@
     image-rendering: pixelated;                 /* Awesome future-browsers       */
     -ms-interpolation-mode: nearest-neighbor;   /* IE                            */
 }
-.__nano_player__ i.controlButton {
+.__nano_player__ .controlButton {
     min-width: 50px;
     display: inline-block;
     text-align: center;
 }
-.__nano_player__ i.navButton {
+.__nano_player__ .navButton {
     cursor: pointer;
 }
 .__nano_player__ .pointer {

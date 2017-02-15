@@ -4,7 +4,14 @@ require('classlist-polyfill');
 require('./style.css');
 
 const createElement = require('./element-helper');
-const defaultCover = require('./default-cover');
+
+const defaultCoverSvg = require('./svgs/default-cover');
+const playButtonSvg = require('./svgs/play-button');
+const pauseButtonSvg = require('./svgs/pause-button');
+const nextTrackButtonSvg = require('./svgs/next-track');
+const prevTrackButtonSvg = require('./svgs/prev-track');
+const playListButtonSvg = require('./svgs/play-list');
+const backwardSvg = require('./svgs/backwards');
 
 const Spectral = require('./spectral');
 const Oscillator = require('./oscillator');
@@ -45,16 +52,25 @@ class Player {
         let songTitle = createElement({
             tagName: 'h1',
             classList: ['songTitle'],
+            style: {
+                fontSize: `${ this.element.clientWidth / 12 }px`
+            }
         });
 
         let songArtist = createElement({
             tagName: 'h2',
             classList: ['songArtist'],
+            style: {
+                fontSize: `${ this.element.clientWidth / 18 }px`
+            }
         });
 
         let lyrics = createElement({
             tagName: 'div',
             classList: ['lyrics', 'gpu'],
+            style: {
+                fontSize: `${ this.element.clientWidth / 25 }px`
+            }
         });
 
         // Container for control buttons, progress bar and visualizer
@@ -73,15 +89,18 @@ class Player {
         });
 
         let playButton = createElement({
-            tagName: 'i',
-            classList: ['fa', 'fa-play', 'controlButton'],
+            tagName: 'div',
+            classList: ['controlButton'],
             attr: {
                 'aria-hidden': true,
             },
+            innerHTML: playButtonSvg,
             style: {
                 fontSize: '3em',
-                marginLeft: '10%',
-                marginRight: '10%',
+                marginLeft: '8%',
+                marginRight: '7%',
+                display: 'inline-block',
+                width: '20%',
             },
             eventListener: {
                 click: event => {   // play <-> pause
@@ -98,13 +117,11 @@ class Player {
         });
 
         let nextButton = createElement({
-            tagName: 'i',
-            classList: ['fa', 'fa-forward', 'controlButton'],
-            attr: {
-                'aria-hidden': true,
-            },
+            tagName: 'div',
+            innerHTML: nextTrackButtonSvg,
             style: {
-                fontSize: '3em',
+                display: 'inline-block',
+                width: '20%',
             },
             eventListener: {
                 click: event => { // Same as above.
@@ -117,13 +134,11 @@ class Player {
         });
 
         let prevButton = createElement({
-            tagName: 'i',
-            classList: ['fa', 'fa-backward', 'controlButton'],
-            attr: {
-                'aria-hidden': true,
-            },
+            tagName: 'div',
+            innerHTML: prevTrackButtonSvg,
             style: {
-                fontSize: '3em',
+                display: 'inline-block',
+                width: '20%',
             },
             eventListener: {
                 click: event => {
@@ -177,16 +192,18 @@ class Player {
         }
 
         let playListButton = createElement({
-            tagName: 'i',
-            classList: ['fa', 'fa-list-ul', 'navButton'],
+            tagName: 'div',
+            classList: ['navButton'],
             attr: {
                 'aria-hidden': true,
             },
+            innerHTML: playListButtonSvg,
             style: {
                 position: 'absolute',
-                bottom: '3%',
-                right: '3%',
-                fontSize: '1.2em',
+                bottom: '1%',
+                right: '1%',
+                width: '10%',
+                height: '10%',
                 color: 'white',
             },
             eventListener: {
@@ -223,7 +240,7 @@ class Player {
         let legacyCover = createElement({
             tagName: 'div',
             classList: ['cover', 'gpu'],
-            innerHTML: defaultCover,
+            innerHTML: defaultCoverSvg,
             style: {
                 backgroundColor: 'white',
             }
@@ -245,18 +262,15 @@ class Player {
         });
 
         let returnButton = createElement({
-            tagName: 'i',
+            tagName: 'div',
             parent: headbar,
-            classList: ['fa', 'fa-chevron-left', 'navButton'],
-            attr: {
-                'aria-hidden': true,
-            },
+            classList: ['navButton'],
+            innerHTML: backwardSvg,
             style: {
                 position: 'absolute',
-                left: '3%',
-                fontSize: '1.2em',
-                lineHeight: '44px',
-                color: 'white',
+                left: '2.5%',
+                top: '2.5%',
+                width: '10%',
             },
             eventListener: {
                 click: event => {
@@ -304,7 +318,7 @@ class Player {
             face.style.height = '100%';
 
             let fallbackFace = document.createElement('DIV');
-            fallbackFace.innerHTML = defaultCover;
+            fallbackFace.innerHTML = defaultCoverSvg;
             fallbackFace.style.position = 'absolute';
             fallbackFace.style.zIndex = 1;
             fallbackFace.style.backgroundColor = 'grey';
@@ -556,11 +570,9 @@ class Player {
 
     flushStatus() {
         if (this.domAudio.paused) {
-            this.uiCollection.playButton.classList.remove('fa-pause');
-            this.uiCollection.playButton.classList.add('fa-play');
+            this.uiCollection.playButton.innerHTML = playButtonSvg;
         } else {
-            this.uiCollection.playButton.classList.remove('fa-play');
-            this.uiCollection.playButton.classList.add('fa-pause');
+            this.uiCollection.playButton.innerHTML = pauseButtonSvg;
         }
     }
 
