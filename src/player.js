@@ -53,7 +53,7 @@ class Player {
             tagName: 'h1',
             classList: ['songTitle'],
             style: {
-                fontSize: `${ this.element.clientWidth / 12 }px`
+                fontSize: `${ Math.min(this.element.clientWidth, this.element.clientHeight) / 12 }px`
             }
         });
 
@@ -61,7 +61,7 @@ class Player {
             tagName: 'h2',
             classList: ['songArtist'],
             style: {
-                fontSize: `${ this.element.clientWidth / 18 }px`
+                fontSize: `${ Math.min(this.element.clientWidth, this.element.clientHeight) / 18 }px`
             }
         });
 
@@ -69,7 +69,7 @@ class Player {
             tagName: 'div',
             classList: ['lyrics', 'gpu'],
             style: {
-                fontSize: `${ this.element.clientWidth / 25 }px`
+                fontSize: `${ Math.min(this.element.clientWidth, this.element.clientHeight) / 25 }px`
             }
         });
 
@@ -101,6 +101,7 @@ class Player {
                 marginRight: '7%',
                 display: 'inline-block',
                 width: '20%',
+                height: '100%',
             },
             eventListener: {
                 click: event => {   // play <-> pause
@@ -122,6 +123,7 @@ class Player {
             style: {
                 display: 'inline-block',
                 width: '20%',
+                height: '100%',
             },
             eventListener: {
                 click: event => { // Same as above.
@@ -139,6 +141,7 @@ class Player {
             style: {
                 display: 'inline-block',
                 width: '20%',
+                height: '100%',
             },
             eventListener: {
                 click: event => {
@@ -232,7 +235,8 @@ class Player {
             classList: ['cover', 'gpu'],
             style: {
                 zIndex: '1',
-                backgroundSize: 'cover'
+                backgroundSize: 'cover',
+                backgroundPosition: 'center',
             }
         });
 
