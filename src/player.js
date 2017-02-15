@@ -268,9 +268,10 @@ class Player {
             innerHTML: backwardSvg,
             style: {
                 position: 'absolute',
-                left: '2.5%',
-                top: '2.5%',
-                width: '10%',
+                left: '10px',
+                top: '10px',
+                width: '24px',
+                height: '24px',
             },
             eventListener: {
                 click: event => {
