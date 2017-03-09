@@ -36,7 +36,7 @@ class Spectral extends Visualizer {
 
         // Canvas
         this.canvasContext = this.canvas.getContext('2d');
-        this.canvasFillStyle = param.fillStyle || 'rgba(255, 255, 255, 0.3)';
+        this.canvasFillStyle = param.fillStyle || 'rgba(255, 255, 255, .1)';
 
         // Some other options
         this.logarithmic = param.logarithmic || false;
@@ -114,7 +114,7 @@ class Spectral extends Visualizer {
         canvasContext.fill();
 
         if (this.showBuoy) {
-            this.canvasContext.strokeStyle ='rgba(255, 255, 255, 1)';
+            this.canvasContext.strokeStyle ='rgba(255, 255, 255, .5)';
             this.canvasContext.beginPath();
             for (let i = 0; i < this.bandCount; ++i) {
                 this.updateBuoy(i, tempValue[i]);

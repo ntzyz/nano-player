@@ -1,150 +1,133 @@
-.__nano_player__ {
-    user-select: none;
+.nano-player {
+  z-index: 2;
+  position: relative;
+  margin: 5px;
+  width: 400px;
+  overflow: hidden;
+  border-radius: 5px;
 }
-
-.__nano_player__ .gpu{
-    transform: translateZ(0);
-    will-change: transform;
+.nano-player .blurbg,
+.nano-player .album-face {
+  transition: background-image ease 0.2s;
 }
-
-.__nano_player__ .cover {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    transition: all ease 0.3s;
-    color: white;
-    cursor: default;
+.nano-player .blurbg {
+  z-index: 0;
+  top: -20px; left: -20px; right: -20px; bottom: -20px;
+  filter: blur(20px) brightness(50%);
+  background-size: cover;
+  background-position: center;
 }
-.__nano_player__ .blur {
-    filter: blur(10px);
+.nano-player .visualizer {
+  z-index: 0;
+  width: 100%;
+  height: 100%;
 }
-.__nano_player__ .hidden {
-    opacity: 0;
+.nano-player .blurbg,
+.nano-player .visualizer {
+  position: absolute;
 }
-.__nano_player__ h1.songTitle {
-    font-weight: normal;
-    margin-top: 1%;
-    margin-bottom: 1%;
-    text-align: center;
-    white-space: pre;
-    display: inline-block;
+.nano-player .container {
+  display: flex;
 }
-.__nano_player__ h2.songArtist {
-    font-weight: normal;
-    margin: 2% auto 0 auto;
-    text-align: center;
-    line-height: 1em;
-    height: 1em;
-    text-overflow: ellipsis;
-    max-width: 90%;
-    white-space: pre;
-    overflow: hidden;
+.nano-player .album-face {
+  z-index: 2;
+  flex: 0 0 120px;
+  height: 120px;
+  margin: 10px;
+  background-size: cover;
+  background-position: center;
+  border-radius: 4px;
 }
-.__nano_player__ div.lyrics {
-    font-weight: normal;
-    margin: 1%;
-    text-align: center;
-    transition: all ease 0.05s
+.nano-player .meta-and-controls {
+  margin: 10px 10px 10px 0;
+  overflow: hidden;
+  position: relative;
+  flex-grow: 1;
 }
-.__nano_player__ .progress {
-    position: absolute;
-    bottom: 5%;
-    left: 25%;
-    width: 50%;
-    height: 1%;
-    margin: 0 auto;
-    border: 1px solid white;
+.nano-player .title {
+  margin: 0 0 2px 0;
+  font-size: 1.2em;
+  color: white;
+  font-weight: normal;
+  white-space: pre;
+  display: inline-block;
 }
-.__nano_player__ .controls {
-    position: absolute;
-    height: 20%;
-    max-height: 100px;
-    width: 100%;
-    top: 50%;
-    transform: translateY(-40%);
-    text-align: center;
+.nano-player .artist {
+  text-overflow: ellipsis;
+  overflow: hidden;
+  margin: 0 0 2px 0;
+  font-size: 0.9em;
+  color: white;
+  font-weight: normal;
+  white-space: nowrap;
 }
-.__nano_player__ .visualizer {
-    position: absolute;
-    bottom: 7%;
-    left: 25%;
-    width: 50%;
-    height: 12%;
-    margin: 0 auto;
-    border: 1px solid rgba(0,0,0,0);
+.nano-player .lyrics {
+  display: block;
+  font-size: 0.8em;
+  color: white;
 }
-.__nano_player__ canvas.nearestNeighbor {
-    image-rendering: optimizeSpeed;             /* Older versions of FF          */
-    image-rendering: -moz-crisp-edges;          /* FF 6.0+                       */
-    image-rendering: -webkit-optimize-contrast; /* Safari                        */
-    image-rendering: -o-crisp-edges;            /* OS X & Windows Opera (12.02+) */
-    image-rendering: pixelated;                 /* Awesome future-browsers       */
-    -ms-interpolation-mode: nearest-neighbor;   /* IE                            */
+.nano-player .controls {
+  position: absolute;
+  display: flex;
+  bottom: 5px;
+  height: 30px;
+  left: 0;
+  right: 5px;
 }
-.__nano_player__ .controlButton {
-    min-width: 50px;
-    display: inline-block;
-    text-align: center;
+.nano-player .button {
+  display: inline-block;
+  height: 30px;
+  box-sizing: border-box;
+  background-position: center;
+  background-size: contain;
+  background-repeat: no-repeat;
+  z-index: 3;
 }
-.__nano_player__ .navButton {
-    cursor: pointer;
+.nano-player .play-button {
+  flex: 0 0 30px;
+  /*background-image: url(play.svg);*/
 }
-.__nano_player__ .pointer {
-    cursor: pointer;
+.nano-player .list-button {
+  flex: 0 0 30px;
+  /*background-image: url(play-list.svg);*/
 }
-.__nano_player__ .outside-left {
-    margin-left: -100%;
+.nano-player .next-button {
+  flex: 0 0 20px;
+  /*background-image: url(next.svg);*/
 }
-.__nano_player__ .outside-right {
-    margin-left: 100%;
+.nano-player .prev-button {
+  flex: 0 0 20px;
+  /*background-image: url(prev.svg);*/
 }
-.__nano_player__ .playlist {
-    position: absolute;
-    overflow: hidden;
+.nano-player .progress-container {
+  flex-grow: 1;
+  display: inline-block;
+  position: relative;
+  height: 30px;
+  margin-left: 5px;
+  margin-right: 5px;
+  z-index: 3;
 }
-
-.__nano_player__ .headbar {
-    background-color: #000;
-    height: 44px;
-    width: 100%;
-    text-align: center;
-    position: absolute;
+.nano-player .progress {
+  position: absolute;
+  top: 50%;
+  width: 100%;
+  transform: translateY(-50%);
+  border: 1px solid white;
+  box-sizing: border-box;
 }
-
-.__nano_player__ .list {
-    width: 100%;
-    height: 64px;
-    transition: all ease 0.2s;
+.nano-player .progress-indicater {
+  position: absolute;
+  display: inline-block;
+  border: 1px solid white;
+  width: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  box-sizing: border-box;
+  height: 50%;
+  border-radius: 1px;
 }
-.__nano_player__ .now_playing {
-    background-color: #333;
-}
-.__nano_player__ .listContainer {
-    position: absolute;
-    top: 44px;
-    left: 0;
-    right: -17px;
-    bottom: 0;
-    overflow-y: scroll;
-    -webkit-overflow-scrolling: touch;
-}
-.__nano_player__ .list .face {
-    position: absolute;
-    height: 64px;
-    width: 64px;
-    display: inline-block;
-    background-size: cover;
-}
-
-.__nano_player__ .list>.title {
-    position: absolute;
-    padding-left: 12px; 
-    left: 64px;
-    right: 0;
-    padding-top: 12px;
-    display: inline-block;
-    text-overflow: ellipsis;
-    overflow: hidden;
-    line-height: 20px;
-    white-space: nowrap;
+.nano-player .button > svg {
+  width: 100%;
+  height: 100%;
 }

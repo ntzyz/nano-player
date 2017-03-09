@@ -18,6 +18,10 @@ module.exports = {
                 query: {
                     presets: ['es2015']
                 }
+            },  {
+                test: /\.(svg|html)$/,
+                exclude: /(node_modules|bower_components)/,
+                loader: 'raw-loader'
             }
         ]
     },
