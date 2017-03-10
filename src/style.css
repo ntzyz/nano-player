@@ -5,6 +5,10 @@
   width: 400px;
   overflow: hidden;
   border-radius: 5px;
+  box-shadow: 1px 1px 6px rgba(32, 32, 32, 0.4);
+}
+.nano-player *::selection {
+  background: rgba(255, 255, 255, 0.2);
 }
 .nano-player .blurbg,
 .nano-player .album-face {
@@ -33,13 +37,14 @@
   z-index: 2;
   flex: 0 0 120px;
   height: 120px;
-  margin: 10px;
+  margin: 15px;
   background-size: cover;
   background-position: center;
   border-radius: 4px;
+  box-shadow: 1px 1px 6px rgba(32, 32, 32, 0.4);
 }
 .nano-player .meta-and-controls {
-  margin: 10px 10px 10px 0;
+  margin: 15px 15px 15px 0;
   overflow: hidden;
   position: relative;
   flex-grow: 1;
@@ -69,10 +74,11 @@
 .nano-player .controls {
   position: absolute;
   display: flex;
-  bottom: 5px;
+  bottom: 0px;
   height: 30px;
   left: 0;
   right: 5px;
+  user-select: none;
 }
 .nano-player .button {
   display: inline-block;
@@ -82,22 +88,19 @@
   background-size: contain;
   background-repeat: no-repeat;
   z-index: 3;
+  cursor: pointer;
 }
 .nano-player .play-button {
   flex: 0 0 30px;
-  /*background-image: url(play.svg);*/
 }
 .nano-player .list-button {
   flex: 0 0 30px;
-  /*background-image: url(play-list.svg);*/
 }
 .nano-player .next-button {
   flex: 0 0 20px;
-  /*background-image: url(next.svg);*/
 }
 .nano-player .prev-button {
   flex: 0 0 20px;
-  /*background-image: url(prev.svg);*/
 }
 .nano-player .progress-container {
   flex-grow: 1;
@@ -130,4 +133,11 @@
 .nano-player .button > svg {
   width: 100%;
   height: 100%;
+}
+.nano-player .play-list {
+  height: 0;
+  transition: height ease 0.2s;
+}
+.nano-player .active {
+  height: 200px;
 }

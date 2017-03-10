@@ -9,8 +9,9 @@ const nextButton = require('./svgs/next.svg');
 const prevButton = require('./svgs/prev.svg');
 const playButton = require('./svgs/play.svg');
 const listButton = require('./svgs/play-list.svg');
+const pauseButton = require('./svgs/pause.svg');
 const Spectral = require('./spectral');
-const Oscillator = require('./oscillator');
+// const Oscillator = require('./oscillator');
 
 class Player {
     get nowPlaying() {
@@ -19,35 +20,50 @@ class Player {
 
     initUI() {
         let $ = (selector) => document.querySelector(selector);
-        let $$ = (selector) => Array.from(document.querySelectorAll(selector));
+        let $$ = (selector) => [...document.querySelectorAll(selector)];
         this.element.innerHTML = layout;
 
-        let progress = $('.progress-container');
+        this.UI = {
+            songTitle: $('.nano-player .title'),
+            songArtist: $('.nano-player .artist'),
+            cover: $('.nano-player .album-face'),
+            bg: $('.nano-player .blurbg'),
+            progressBar: $('.progress-indicater'),
+            playButton: $('.play-button'),
+            nextButton: $('.next-button'),
+            prevButton: $('.prev-button'),
+            listButton: $('.list-button'),
+            lyrics: $('.lyrics'),
+            playlist: $('.play-list'),
+        }
 
-        $('.prev-button').innerHTML = prevButton;
-        $('.prev-button').addEventListener('click', e => { this.prevTrack(); })
-        $('.next-button').innerHTML = nextButton;
-        $('.next-button').addEventListener('click', e => { this.nextTrack(); })
-        $('.play-button').innerHTML = playButton;
-        $('.play-button').addEventListener('click', e => { this.domAudio.paused ? this.play() : this.pause() })
-        $('.list-button').innerHTML = listButton;
+        this.UI.prevButton.innerHTML = prevButton;
+        this.UI.prevButton.addEventListener('click', e => { this.prevTrack(); })
+        this.UI.nextButton.innerHTML = nextButton;
+        this.UI.nextButton.addEventListener('click', e => { this.nextTrack(); })
+        this.UI.playButton.innerHTML = playButton;
+        this.UI.playButton.addEventListener('click', e => { this.domAudio.paused ? this.play() : this.pause() })
+        this.UI.listButton.innerHTML = listButton;
+        this.UI.listButton.active = false;
+        this.UI.listButton.addEventListener('click', e => {
+            if (!this.UI.listButton.active) {
+                this.UI.playlist.classList.add('active');
+            } else {
+                this.UI.playlist.classList.remove('active');
+            }
+            this.UI.listButton.active = !this.UI.listButton.active;
+        })
+        this.UI.cover.style.backgroundImage = `url('${this.nowPlaying.cover}')`;
+        this.UI.bg.style.backgroundImage = `url('${this.nowPlaying.cover}')`;
+
+        let progress = $('.progress-container');
         progress.addEventListener('click', event => {
             event.stopPropagation();
             let { left } = progress.getBoundingClientRect();
             this.domAudio.currentTime = this.domAudio.duration * (event.clientX - left) / progress.clientWidth;
             this.updateProgress();
         })
-        $$('.nano-player .album-face, .nano-player .blurbg').forEach(el => {
-            el.style.backgroundImage = `url(${this.nowPlaying.cover})`;
-        });
-        this.uiCollection = {
-            songTitle: $('.nano-player .title'),
-            songArtist: $('.nano-player .artist'),
-            cover: $('.nano-player .album-face'),
-            bg: $('.nano-player .blurbg'),
-            progressBar: $('.progress-indicater')
-        }
-        this.lrcNode = $('.lyrics');
+
         this.visualNode = $('.visualizer');
         this.progressBar = $('.progress-indicater');
     }
@@ -96,15 +112,15 @@ class Player {
                 }
                 while (this.lyrics.table[this.lyrics.lines].offset <= currentOffset) {
                     if (immediateUpdate) {
-                        this.lrcNode.innerText = this.lyrics.table[this.lyrics.lines].lyric;
+                        this.UI.lyrics.innerText = this.lyrics.table[this.lyrics.lines].lyric;
                         this.lyrics.lines++;
                     }
                     else {
-                        this.lrcNode.style.opacity = 0.5;
+                        this.UI.lyrics.style.opacity = 0.5;
                         this.lyrics.lines++;
                         setTimeout(() => {
-                            this.lrcNode.innerText = this.lyrics.table[this.lyrics.lines - 1].lyric;
-                            this.lrcNode.style.opacity = 1;
+                            this.UI.lyrics.innerText = this.lyrics.table[this.lyrics.lines - 1].lyric;
+                            this.UI.lyrics.style.opacity = 1;
                         }, 50)
                     }
                 }
@@ -118,7 +134,7 @@ class Player {
             }
             // No lyric found, no need to go further.
             this.lyrics = {};
-            this.lrcNode.innerText = '♪～(￣ε￣)'
+            this.UI.lyrics.innerText = '♪～(￣ε￣)'
             return;
         }
         // Storage the parsed lyrics.
@@ -141,7 +157,7 @@ class Player {
             if (!/\[(\d+):(\d+).(\d+)\](.*)/.test(item))
                 return;
             let lyric = item.match(/\[(\d+):(\d+).(\d+)\](.*)/);
-            if (lyric[4] == '') { // Content unedfined, push current offset into pending list.
+            if (lyric[4] == '') { // Content undefined, push current offset into pending list.
                 pending.push(off);
                 let offset = f(lyric);
                 this.lyrics.table.push({
@@ -177,9 +193,9 @@ class Player {
 
     flushStatus() {
         if (this.domAudio.paused) {
-            //this.uiCollection.playButton.innerHTML = playButtonSvg;
+            this.UI.playButton.innerHTML = playButton;
         } else {
-            //this.uiCollection.playButton.innerHTML = pauseButtonSvg;
+            this.UI.playButton.innerHTML = pauseButton;
         }
     }
 
@@ -210,11 +226,13 @@ class Player {
 
     reinit() {
         // UI part
-        this.uiCollection.songTitle.innerHTML = this.nowPlaying.title ? this.nowPlaying.title : '未知歌曲';
-        this.uiCollection.songArtist.innerHTML = this.nowPlaying.artist ? this.nowPlaying.artist : '未知艺术家';
-        this.uiCollection.progressBar.style.left = '0';
-        this.uiCollection.cover.style.backgroundImage = `url('${this.nowPlaying.cover}')`;
-        this.uiCollection.bg.style.backgroundImage = `url('${this.nowPlaying.cover}')`;
+        this.UI.songTitle.innerHTML = this.nowPlaying.title ? this.nowPlaying.title : '未知歌曲';
+        this.UI.songArtist.innerHTML = this.nowPlaying.artist ? this.nowPlaying.artist : '未知艺术家';
+        this.UI.progressBar.style.left = '0';
+        this.UI.cover.style.backgroundImage = `url('${this.nowPlaying.cover}')`;
+        setTimeout(() => {
+            this.UI.bg.style.backgroundImage = `url('${this.nowPlaying.cover}')`;
+        }, 500);
         // this.playListElem.forEach((item, offset) => {
         //     if (offset == this.currentTrack) {
         //         item.classList.add('now_playing');
@@ -230,10 +248,10 @@ class Player {
         this.initLyrics();
 
         clearInterval(this.intervals.songTitleMarq);
-        this.uiCollection.songTitle.style.marginLeft = '';
-        if (this.uiCollection.songArtist.clientWidth < this.uiCollection.songTitle.clientWidth) {
+        this.UI.songTitle.style.marginLeft = '';
+        if (this.UI.songArtist.clientWidth < this.UI.songTitle.clientWidth) {
             // We do not hope that the overflow part is really hidden. Fix it.
-            let songTitle = this.uiCollection.songTitle;
+            let songTitle = this.UI.songTitle;
             songTitle.innerText = songTitle.innerText + '        ';
             let actualWidth = songTitle.clientWidth;
             let mleft = 40;
@@ -250,7 +268,7 @@ class Player {
         }
 
         // Clear the remaining lyric.
-        this.lrcNode.innerHTML = '';
+        this.UI.lyrics.innerHTML = '';
 
         // flush Status
         this.flushStatus();
